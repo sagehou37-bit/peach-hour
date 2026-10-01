@@ -1,0 +1,300 @@
+(function () {
+  const VENUES = window.VENUES || [];
+  const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const $ = id => document.getElementById(id);
+
+  const state = {
+    q: "", mode: "any", pickDay: 0, pickTime: 17 * 60,
+    hoods: new Set(), prices: new Set(), deals: new Set(), cuisines: new Set(),
+    vibes: new Set(), types: new Set(), conf: new Set(), sort: "smart", view: "list",
+    favsOnly: false, userLoc: null,
+  };
+
+  // ── storage (per-viewer favorites) ─────────────────────────────
+  const store = {
+    get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  };
+  const favs = new Set(store.get("ph-favs", []));
+
+  // ── time helpers ───────────────────────────────────────────────
+  const toMin = s => { const [h, m] = s.split(":").map(Number); return h * 60 + m; };
+  function fmt(min) {
+    min = ((min % 1440) + 1440) % 1440;
+    let h = Math.floor(min / 60); const m = min % 60; const ap = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return m ? `${h}:${String(m).padStart(2, "0")}${ap}` : `${h}${ap}`;
+  }
+  const hoursAsWindows = v => v.hours.map((x, d) => x && { days: [d], start: x[0], end: x[1] }).filter(Boolean);
+  const startOf = w => (w.allDay ? "00:00" : w.start);
+  const endOf = w => (w.allDay ? "24:00" : w.end);
+
+  // Window active at (day, mins)? Handles windows crossing midnight.
+  function activeWindow(list, day, mins) {
+    const prev = (day + 6) % 7;
+    for (const w of list) {
+      const s = toMin(startOf(w)), e = toMin(endOf(w)), cross = e <= s;
+      if (w.days.includes(day)) {
+        if (!cross && mins >= s && mins < e) return { w, endsAt: e };
+        if (cross && mins >= s) return { w, endsAt: e };
+      }
+      if (cross && w.days.includes(prev) && mins < e) return { w, endsAt: e };
+    }
+    return null;
+  }
+  function nextStart(list, day, mins) {
+    let best = null;
+    for (let d = 0; d < 7; d++) {
+      const dd = (day + d) % 7;
+      for (const w of list) {
+        if (!w.days.includes(dd)) continue;
+        const inMin = toMin(startOf(w)) + d * 1440 - mins;
+        if (inMin > 0 && (!best || inMin < best.inMin)) best = { inMin, w, day: dd, offset: d };
+      }
+    }
+    return best;
+  }
+  function daysLabel(days) {
+    const s = [...days].sort((a, b) => a - b);
+    if (s.length === 7) return "Daily";
+    const runs = []; let start = s[0], prev = s[0];
+    for (let i = 1; i <= s.length; i++) {
+      if (s[i] === prev + 1) { prev = s[i]; continue; }
+      runs.push(start === prev ? DAYS[start] : prev === start + 1 ? `${DAYS[start]}, ${DAYS[prev]}` : `${DAYS[start]}–${DAYS[prev]}`);
+      start = prev = s[i];
+    }
+    return runs.join(", ");
+  }
+
+  // Current day/minute in Atlanta, regardless of the viewer's time zone.
+  function atlNow() {
+    const parts = Object.fromEntries(new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York", weekday: "short", hour: "numeric", minute: "numeric", hourCycle: "h23",
+    }).formatToParts(new Date()).map(p => [p.type, p.value]));
+    return { day: DAYS.indexOf(parts.weekday), mins: (+parts.hour % 24) * 60 + +parts.minute };
+  }
+  function refTime() {
+    if (state.mode === "hhat") return { day: state.pickDay, mins: state.pickTime, live: false };
+    return { ...atlNow(), live: true };
+  }
+
+  function statusFor(v, t) {
+    // open: true/false when hours are known, null when they aren't
+    const open = v.hours ? !!activeWindow(hoursAsWindows(v), t.day, t.mins) : null;
+    const hh = open === false ? null : activeWindow(v.happyHours, t.day, t.mins);
+    const next = nextStart(v.happyHours, t.day, t.mins);
+    let label, cls, rank;
+    if (hh) {
+      const what = hh.w.note || (t.live ? "Happy hour now" : "Happy hour");
+      label = hh.w.allDay ? `${what} · today` : `${what} · until ${fmt(hh.endsAt)}`; cls = "live"; rank = 0;
+    } else if (next && next.offset === 0) {
+      const soon = next.inMin <= 90;
+      label = `Starts ${t.live && soon ? `in ${next.inMin} min` : `at ${fmt(toMin(next.w.start))}`} · ends ${fmt(toMin(next.w.end))}`;
+      if (next.w.allDay) label = `${next.w.note || "Special"} · today`;
+      cls = soon ? "soon" : "later"; rank = 1 + next.inMin / 1440;
+    } else if (next) {
+      label = `Next: ${next.offset === 1 ? "tomorrow" : DAYS[next.day]}${next.w.allDay ? "" : " " + fmt(toMin(next.w.start))}`; cls = "none"; rank = 3 + next.inMin / 1440;
+    } else { label = "Happy hour not confirmed — ask the bar"; cls = "none"; rank = 9; }
+    return { hh, open, label, cls, rank };
+  }
+
+  function milesTo(v) {
+    if (!state.userLoc) return null;
+    const R = 3958.8, rad = x => x * Math.PI / 180;
+    const dLat = rad(v.lat - state.userLoc.lat), dLng = rad(v.lng - state.userLoc.lng);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(rad(state.userLoc.lat)) * Math.cos(rad(v.lat)) * Math.sin(dLng / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(a));
+  }
+
+  // ── filter UI ─────────────────────────────────────────────────
+  // Neighborhood chips come from the data; known ones keep a north-to-south order, new ones go last.
+  const HOOD_ORDER = ["Virginia-Highland", "Poncey-Highland", "Eastside Beltline", "Inman Park", "Little Five Points", "Reynoldstown"];
+  const hoodRank = h => (HOOD_ORDER.includes(h) ? HOOD_ORDER.indexOf(h) : 99);
+  const uniq = key => [...new Set(VENUES.flatMap(v => [].concat(v[key])))].sort();
+  const DEAL_LABELS = { beer: "Beer", wine: "Wine", cocktails: "Cocktails", food: "Food" };
+  const groups = {
+    hoods: { el: "hoods", values: uniq("neighborhood").sort((x, y) => hoodRank(x) - hoodRank(y)) },
+    prices: { el: "prices", values: [1, 2, 3], label: p => "$".repeat(p) },
+    deals: { el: "deals", values: Object.keys(DEAL_LABELS), label: d => DEAL_LABELS[d] },
+    cuisines: { el: "cuisines", values: uniq("cuisine") },
+    vibes: { el: "vibes", values: uniq("vibes") },
+    types: { el: "types", values: uniq("type") },
+    conf: { el: "conf", values: ["confirmed", "reported", "unknown"], label: c => ({ confirmed: "Confirmed", reported: "Call to confirm", unknown: "HH unknown" })[c] },
+  };
+  for (const [key, g] of Object.entries(groups)) {
+    const box = $(g.el);
+    g.values.forEach(val => {
+      const b = document.createElement("button");
+      b.className = "chip"; b.type = "button"; b.textContent = g.label ? g.label(val) : val;
+      b.onclick = () => {
+        state[key].has(val) ? state[key].delete(val) : state[key].add(val);
+        b.classList.toggle("on", state[key].has(val)); render();
+      };
+      box.appendChild(b);
+    });
+  }
+
+  state.pickDay = atlNow().day;
+  DAYS.forEach((d, i) => $("pickDay").add(new Option(d, i, false, i === state.pickDay)));
+  for (let m = 11 * 60; m <= 26 * 60; m += 30) $("pickTime").add(new Option(fmt(m), m % 1440, false, m === state.pickTime));
+  $("pickDay").onchange = e => { state.pickDay = +e.target.value; render(); };
+  $("pickTime").onchange = e => { state.pickTime = +e.target.value; render(); };
+
+  $("mode").onclick = e => {
+    const b = e.target.closest("button"); if (!b) return;
+    state.mode = b.dataset.mode;
+    [...$("mode").children].forEach(x => x.classList.toggle("on", x === b));
+    $("pick").hidden = state.mode !== "hhat"; render();
+  };
+  $("view").onclick = e => {
+    const b = e.target.closest("button"); if (!b) return;
+    state.view = b.dataset.view;
+    [...$("view").children].forEach(x => x.classList.toggle("on", x === b));
+    $("list").hidden = state.view !== "list"; $("map").hidden = state.view !== "map";
+    render();
+  };
+  $("q").oninput = e => { state.q = e.target.value.trim().toLowerCase(); render(); };
+  $("sort").onchange = e => {
+    state.sort = e.target.value;
+    if (state.sort === "near" && !state.userLoc) locate(); else render();
+  };
+  $("favsOnly").onclick = () => {
+    state.favsOnly = !state.favsOnly; $("favsOnly").setAttribute("aria-pressed", state.favsOnly); render();
+  };
+  function setPanel(open) {
+    $("filters").hidden = $("backdrop").hidden = !open;
+    $("toggleFilters").setAttribute("aria-expanded", open);
+    document.body.classList.toggle("noscroll", open);
+    if (!open) window.scrollTo({ top: $("q").getBoundingClientRect().top + scrollY - 16, behavior: "smooth" });
+  }
+  $("toggleFilters").onclick = () => setPanel(true);
+  $("applyFilters").onclick = $("closeFilters").onclick = $("backdrop").onclick = () => setPanel(false);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("filters").hidden) setPanel(false); });
+  $("locate").onclick = locate;
+  $("clearAll").onclick = () => {
+    for (const k of Object.keys(groups)) state[k].clear();
+    document.querySelectorAll(".chip.on").forEach(c => c.classList.remove("on"));
+    state.q = ""; $("q").value = ""; state.favsOnly = false; $("favsOnly").setAttribute("aria-pressed", false);
+    $("mode").querySelector('[data-mode="any"]').click();
+  };
+
+  function locate() {
+    if (!navigator.geolocation) return alert("Location isn't available in this browser.");
+    navigator.geolocation.getCurrentPosition(
+      p => { state.userLoc = { lat: p.coords.latitude, lng: p.coords.longitude }; state.sort = "near"; $("sort").value = "near"; render(); },
+      () => alert("Couldn't get your location."));
+  }
+
+  // ── filtering + rendering ─────────────────────────────────────
+  const anyOf = (set, arr) => !set.size || [].concat(arr).some(x => set.has(x));
+  function filtered() {
+    const t = refTime();
+    return VENUES.map(v => ({ v, s: statusFor(v, t), mi: milesTo(v) })).filter(({ v, s }) => {
+      if (state.q && ![v.name, v.address, v.neighborhood, v.type, ...v.cuisine, ...v.vibes, v.dealText, ...v.happyHours.map(w => w.note || "")].join(" ").toLowerCase().includes(state.q)) return false;
+      if (state.mode === "hhnow" || state.mode === "hhat") { if (!s.hh) return false; }
+      if (state.mode === "opennow" && s.open !== true) return false;
+      if (state.favsOnly && !favs.has(v.id)) return false;
+      return anyOf(state.hoods, v.neighborhood) && anyOf(state.prices, v.price) && anyOf(state.deals, v.deals)
+        && anyOf(state.cuisines, v.cuisine) && anyOf(state.vibes, v.vibes) && anyOf(state.types, v.type) && anyOf(state.conf, v.hhStatus);
+    }).sort((a, b) => {
+      if (state.sort === "near" && a.mi != null) return a.mi - b.mi;
+      if (state.sort === "price") return a.v.price - b.v.price || a.s.rank - b.s.rank;
+      if (state.sort === "name") return a.v.name.localeCompare(b.v.name);
+      return a.s.rank - b.s.rank || a.v.name.localeCompare(b.v.name);
+    });
+  }
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const mapsUrl = v => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v.name + " " + v.address + " Atlanta GA")}`;
+
+  function card({ v, s, mi }) {
+    const fav = favs.has(v.id);
+    const price = `<span class="price" aria-label="Price ${v.price} of 3"><b>${"$".repeat(v.price)}</b>${"$".repeat(3 - v.price)}</span>`;
+    const dist = mi != null ? ` · ${mi.toFixed(1)} mi (${Math.max(1, Math.round(mi * 20))} min walk)` : "";
+    const sched = v.happyHours.map(w => `<li><span>${daysLabel(w.days)}</span><span>${w.allDay ? "All day" : `${fmt(toMin(w.start))}–${fmt(toMin(w.end))}`}${w.note ? ` · ${esc(w.note)}` : ""}</span></li>`).join("");
+    const openRow = s.open === null ? "Hours not listed" : s.open ? "Open" : "Closed";
+    const badge = { reported: ["warn", "Call to confirm"], unknown: ["muted", "HH unknown"] }[v.hhStatus];
+    const srcs = v.sources.map(x => `<a href="${x.url}" target="_blank" rel="noopener">${esc(x.label)}</a>`).join(", ");
+    return `<article class="card">
+      <div class="card-top">
+        <div>
+          <h4>${esc(v.name)}${badge ? ` <span class="badge ${badge[0]}">${badge[1]}</span>` : ""}</h4>
+          <p class="meta">${esc(v.neighborhood)} · ${esc(v.type)} · ${price}</p>
+          <p class="meta">${esc(v.address)}${dist}</p>
+        </div>
+        <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${fav ? "♥" : "♡"}</button>
+      </div>
+      <span class="status ${s.cls}">${s.label}</span>
+      <ul class="sched">${sched}<li><span>Now</span><span>${openRow}</span></li></ul>
+      <p class="deal">${esc(v.dealText)}</p>
+      <div class="tags">${[...v.cuisine, ...v.vibes].map(x => `<span class="tag">${esc(x)}</span>`).join("")}</div>
+      <p class="src">Source: ${srcs} · checked ${v.checked}</p>
+      <div class="actions">
+        <a class="btn solid" href="${mapsUrl(v)}" target="_blank" rel="noopener">Directions</a>
+        <button class="btn ghost" data-share="${v.id}">Share</button>
+      </div>
+    </article>`;
+  }
+
+  let map, layer;
+  function renderMap(items) {
+    if (!window.L) { $("map").textContent = "Map couldn't load."; return; }
+    if (!map) {
+      map = L.map("map").setView([33.768, -84.357], 14);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19, attribution: "&copy; OpenStreetMap contributors",
+      }).addTo(map);
+      layer = L.layerGroup().addTo(map);
+    }
+    setTimeout(() => map.invalidateSize(), 0);
+    layer.clearLayers();
+    const color = { live: "#2f7a4f", soon: "#d9a21b", later: "#f28c5b", none: "#9c8b7e" };
+    items.forEach(({ v, s }) => {
+      L.circleMarker([v.lat, v.lng], { radius: 9, color: "#fff", weight: 2, fillColor: color[s.cls], fillOpacity: 1 })
+        .bindPopup(`<b>${esc(v.name)}</b><br>${esc(s.label)}<br><small>${esc(v.dealText)}</small><br><a href="${mapsUrl(v)}" target="_blank" rel="noopener">Directions</a>`)
+        .addTo(layer);
+    });
+    if (state.userLoc) L.circleMarker([state.userLoc.lat, state.userLoc.lng], { radius: 7, color: "#2a1e17", fillColor: "#fff", fillOpacity: 1 }).bindPopup("You").addTo(layer);
+  }
+
+  function render() {
+    const items = filtered();
+    const t = refTime();
+    const when = state.mode === "hhat" ? ` on ${DAYS[t.day]} at ${fmt(t.mins)}` : "";
+    $("count").textContent = `${items.length} spot${items.length === 1 ? "" : "s"}${when}`;
+    $("applyFilters").textContent = `Show ${items.length} spot${items.length === 1 ? "" : "s"}`;
+    const active = Object.keys(groups).reduce((n, k) => n + state[k].size, state.mode === "any" ? 0 : 1);
+    $("toggleFilters").innerHTML = active ? `Filters <span class="n">${active}</span>` : "Filters";
+    if (state.view === "list") {
+      $("list").innerHTML = items.length ? items.map(card).join("")
+        : `<p class="empty">Nothing matches those filters. Try loosening a few.</p>`;
+    } else renderMap(items);
+  }
+
+  $("list").onclick = async e => {
+    const f = e.target.closest("[data-fav]"), sh = e.target.closest("[data-share]");
+    if (f) {
+      const id = f.dataset.fav; favs.has(id) ? favs.delete(id) : favs.add(id);
+      store.set("ph-favs", [...favs]); render();
+    }
+    if (sh) {
+      const v = VENUES.find(x => x.id === sh.dataset.share);
+      const url = `${location.origin}${location.pathname}?q=${encodeURIComponent(v.name)}`;
+      const s = statusFor(v, refTime());
+      try {
+        if (navigator.share) await navigator.share({ title: v.name, text: `${v.name} — ${s.label}`, url });
+        else { await navigator.clipboard.writeText(url); sh.textContent = "Link copied"; setTimeout(() => (sh.textContent = "Share"), 1500); }
+      } catch {}
+    }
+  };
+
+  function tick() {
+    const n = atlNow();
+    $("clock").textContent = `${DAYS[n.day]} · ${fmt(n.mins)} in Atlanta`;
+  }
+
+  const qp = new URLSearchParams(location.search).get("q");
+  if (qp) { $("q").value = qp; state.q = qp.toLowerCase(); }
+  tick(); render();
+  setInterval(() => { tick(); if (state.mode !== "hhat") render(); }, 60_000);
+})();
