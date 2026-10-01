@@ -6,8 +6,8 @@
   const state = {
     q: "", mode: "any", pickDay: 0, pickTime: 17 * 60,
     hoods: new Set(), prices: new Set(), deals: new Set(), cuisines: new Set(),
-    vibes: new Set(), types: new Set(), conf: new Set(), sort: "smart", view: "list",
-    favsOnly: false, userLoc: null,
+    vibes: new Set(), types: new Set(), outdoor: new Set(), conf: new Set(), sort: "smart", view: "list",
+    favsOnly: false, userLoc: null, campus: "", maxDrive: 15,
   };
 
   // ── storage (per-viewer favorites) ─────────────────────────────
@@ -98,84 +98,138 @@
     return { hh, open, label, cls, rank };
   }
 
-  function milesTo(v) {
-    if (!state.userLoc) return null;
+  function haversine(a, b) {
     const R = 3958.8, rad = x => x * Math.PI / 180;
-    const dLat = rad(v.lat - state.userLoc.lat), dLng = rad(v.lng - state.userLoc.lng);
-    const a = Math.sin(dLat / 2) ** 2 + Math.cos(rad(state.userLoc.lat)) * Math.cos(rad(v.lat)) * Math.sin(dLng / 2) ** 2;
-    return 2 * R * Math.asin(Math.sqrt(a));
+    const dLat = rad(b.lat - a.lat), dLng = rad(b.lng - a.lng);
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(h));
   }
+  const milesTo = v => (state.userLoc ? haversine(state.userLoc, v) : null);
+
+  // Rough drive time: straight-line miles × 1.35 for real roads, ~20 mph city driving, + 2 min to park.
+  const CAMPUSES = {
+    emory: { name: "Emory", lat: 33.7925, lng: -84.3240 },
+    gt: { name: "Georgia Tech", lat: 33.7756, lng: -84.3963 },
+  };
+  const driveMin = v => (state.campus ? Math.round(haversine(CAMPUSES[state.campus], v) * 1.35 / 20 * 60 + 2) : null);
 
   // ── filter UI ─────────────────────────────────────────────────
-  // Neighborhood chips come from the data; known ones keep a north-to-south order, new ones go last.
-  const HOOD_ORDER = ["Virginia-Highland", "Poncey-Highland", "Eastside Beltline", "Inman Park", "Little Five Points", "Reynoldstown"];
+  // Every filter control writes to `state`, then syncUI() repaints the controls.
+  const HOOD_ORDER = ["Buckhead", "Midtown", "West Midtown", "Home Park", "Virginia-Highland", "Poncey-Highland", "Eastside Beltline",
+    "Edgewood", "Inman Park", "Little Five Points", "Reynoldstown", "Emory / Druid Hills", "Toco Hills", "Decatur"];
   const hoodRank = h => (HOOD_ORDER.includes(h) ? HOOD_ORDER.indexOf(h) : 99);
-  const uniq = key => [...new Set(VENUES.flatMap(v => [].concat(v[key])))].sort();
-  const DEAL_LABELS = { beer: "Beer", wine: "Wine", cocktails: "Cocktails", food: "Food" };
+  const uniq = key => [...new Set(VENUES.flatMap(v => [].concat(v[key] || [])))].sort();
+  const DEAL_LABELS = { beer: "Beer", wine: "Wine", cocktails: "Cocktails", oysters: "Oysters", food: "Food" };
   const groups = {
-    hoods: { el: "hoods", values: uniq("neighborhood").sort((x, y) => hoodRank(x) - hoodRank(y)) },
-    prices: { el: "prices", values: [1, 2, 3], label: p => "$".repeat(p) },
-    deals: { el: "deals", values: Object.keys(DEAL_LABELS), label: d => DEAL_LABELS[d] },
-    cuisines: { el: "cuisines", values: uniq("cuisine") },
-    vibes: { el: "vibes", values: uniq("vibes") },
-    types: { el: "types", values: uniq("type") },
-    conf: { el: "conf", values: ["confirmed", "reported", "unknown"], label: c => ({ confirmed: "Confirmed", reported: "Call to confirm", unknown: "HH unknown" })[c] },
+    hoods: { els: ["hoods"], values: uniq("neighborhood").sort((x, y) => hoodRank(x) - hoodRank(y)) },
+    prices: { els: ["prices"], values: [1, 2, 3], label: p => "$".repeat(p) },
+    deals: { els: ["deals"], values: Object.keys(DEAL_LABELS), label: d => DEAL_LABELS[d] },
+    vibes: { els: ["vibes"], values: uniq("vibes") },
+    types: { els: ["types"], values: uniq("type") },
+    outdoor: { els: ["outdoor"], values: uniq("outdoor") },
+    cuisines: { els: ["cuisines"], values: uniq("cuisine") },
+    conf: { els: ["conf"], values: ["confirmed", "reported"], label: c => ({ confirmed: "Confirmed", reported: "Call to confirm" })[c] },
   };
   for (const [key, g] of Object.entries(groups)) {
-    const box = $(g.el);
-    g.values.forEach(val => {
-      const b = document.createElement("button");
-      b.className = "chip"; b.type = "button"; b.textContent = g.label ? g.label(val) : val;
-      b.onclick = () => {
-        state[key].has(val) ? state[key].delete(val) : state[key].add(val);
-        b.classList.toggle("on", state[key].has(val)); render();
-      };
-      box.appendChild(b);
+    for (const el of g.els) {
+      g.values.forEach((val, i) => {
+        const b = document.createElement("button");
+        b.className = "chip"; b.type = "button"; b.dataset.k = key; b.dataset.i = i;
+        b.textContent = g.label ? g.label(val) : val;
+        b.onclick = () => { state[key].has(val) ? state[key].delete(val) : state[key].add(val); update(); };
+        $(el).appendChild(b);
+      });
+    }
+  }
+  const all = sel => document.querySelectorAll(sel);
+
+  function syncUI() {
+    all(".chip[data-k]").forEach(b => b.classList.toggle("on", state[b.dataset.k].has(groups[b.dataset.k].values[b.dataset.i])));
+    all(".mode-seg button").forEach(b => b.classList.toggle("on", b.dataset.mode === state.mode));
+    all(".pick").forEach(p => { p.hidden = state.mode !== "hhat"; });
+    all(".pickDay").forEach(x => { x.value = state.pickDay; });
+    all(".pickTime").forEach(x => { x.value = state.pickTime; });
+    all(".campus-seg button").forEach(b => b.classList.toggle("on", b.dataset.campus === state.campus));
+    all(".campus-range-wrap").forEach(w => { w.hidden = !state.campus; });
+    all(".campus-range").forEach(r => { r.value = state.maxDrive; });
+    all(".campus-label").forEach(l => {
+      l.textContent = state.campus ? `Within about ${state.maxDrive} min drive of ${CAMPUSES[state.campus].name}` : "";
     });
   }
+  function update() { syncUI(); render(); }
 
   state.pickDay = atlNow().day;
-  DAYS.forEach((d, i) => $("pickDay").add(new Option(d, i, false, i === state.pickDay)));
-  for (let m = 11 * 60; m <= 26 * 60; m += 30) $("pickTime").add(new Option(fmt(m), m % 1440, false, m === state.pickTime));
-  $("pickDay").onchange = e => { state.pickDay = +e.target.value; render(); };
-  $("pickTime").onchange = e => { state.pickTime = +e.target.value; render(); };
+  all(".pickDay").forEach(sel => {
+    DAYS.forEach((d, i) => sel.add(new Option(d, i)));
+    sel.onchange = e => { state.pickDay = +e.target.value; update(); };
+  });
+  all(".pickTime").forEach(sel => {
+    for (let m = 11 * 60; m <= 26 * 60; m += 30) sel.add(new Option(fmt(m), m % 1440));
+    sel.onchange = e => { state.pickTime = +e.target.value; update(); };
+  });
+  all(".campus-range").forEach(r => { r.oninput = e => { state.maxDrive = +e.target.value; update(); }; });
+  document.addEventListener("click", e => {
+    const m = e.target.closest(".mode-seg button");
+    if (m) { state.mode = m.dataset.mode; update(); }
+    const c = e.target.closest(".campus-seg button");
+    if (c) { state.campus = c.dataset.campus; update(); }
+  });
 
-  $("mode").onclick = e => {
-    const b = e.target.closest("button"); if (!b) return;
-    state.mode = b.dataset.mode;
-    [...$("mode").children].forEach(x => x.classList.toggle("on", x === b));
-    $("pick").hidden = state.mode !== "hhat"; render();
-  };
   $("view").onclick = e => {
     const b = e.target.closest("button"); if (!b) return;
     state.view = b.dataset.view;
-    [...$("view").children].forEach(x => x.classList.toggle("on", x === b));
+    [...$("view").children].forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-selected", x === b); });
     $("list").hidden = state.view !== "list"; $("map").hidden = state.view !== "map";
     render();
   };
   $("q").oninput = e => { state.q = e.target.value.trim().toLowerCase(); render(); };
   $("sort").onchange = e => {
     state.sort = e.target.value;
-    if (state.sort === "near" && !state.userLoc) locate(); else render();
+    if (state.sort === "near" && !state.userLoc && !state.campus) locate(); else render();
   };
-  $("favsOnly").onclick = () => {
-    state.favsOnly = !state.favsOnly; $("favsOnly").setAttribute("aria-pressed", state.favsOnly); render();
+  // Scroll so the target sits just below the sticky top bar.
+  const scrollToEl = el => window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - $("topbar").offsetHeight - 8, behavior: "smooth" });
+  const scrollToResults = () => scrollToEl($("results"));
+
+  $("navSaved").onclick = () => {
+    state.favsOnly = !state.favsOnly; $("navSaved").setAttribute("aria-pressed", state.favsOnly);
+    render(); scrollToResults();
   };
-  function setPanel(open) {
-    $("filters").hidden = $("backdrop").hidden = !open;
-    $("toggleFilters").setAttribute("aria-expanded", open);
-    document.body.classList.toggle("noscroll", open);
-    if (!open) window.scrollTo({ top: $("q").getBoundingClientRect().top + scrollY - 16, behavior: "smooth" });
+
+  // "More filters" expands the extra filters inside the same box.
+  function setMore(open) {
+    $("moreGrid").hidden = !open;
+    $("moreFilters").setAttribute("aria-expanded", open);
+    $("moreFilters").textContent = open ? "Fewer filters ▴" : "More filters ▾";
   }
-  $("toggleFilters").onclick = () => setPanel(true);
-  $("applyFilters").onclick = $("closeFilters").onclick = $("backdrop").onclick = () => setPanel(false);
-  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("filters").hidden) setPanel(false); });
+  $("moreFilters").onclick = () => setMore($("moreGrid").hidden);
+  $("toggleFilters").onclick = () => { setMore(true); scrollToEl($("finder")); };
+  $("homeShow").onclick = scrollToResults;
+
+  // Contact form: Netlify Forms collects submissions (Netlify dashboard → Forms).
+  all('[data-topic]').forEach(a => { a.onclick = () => { $("topic").value = a.dataset.topic; }; });
+  $("contactForm").onsubmit = async e => {
+    e.preventDefault();
+    const form = e.target, status = $("formStatus");
+    status.textContent = "Sending…";
+    try {
+      const res = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(new FormData(form)).toString(),
+      });
+      if (!res.ok) throw new Error(res.status);
+      form.reset(); status.textContent = "Thanks! We got your message.";
+    } catch {
+      status.textContent = "Sorry, that didn't send. Please try again in a minute.";
+    }
+  };
   $("locate").onclick = locate;
   $("clearAll").onclick = () => {
     for (const k of Object.keys(groups)) state[k].clear();
-    document.querySelectorAll(".chip.on").forEach(c => c.classList.remove("on"));
-    state.q = ""; $("q").value = ""; state.favsOnly = false; $("favsOnly").setAttribute("aria-pressed", false);
-    $("mode").querySelector('[data-mode="any"]').click();
+    Object.assign(state, { mode: "any", campus: "", maxDrive: 15, q: "", favsOnly: false });
+    $("q").value = ""; $("navSaved").setAttribute("aria-pressed", false);
+    update();
   };
 
   function locate() {
@@ -189,15 +243,17 @@
   const anyOf = (set, arr) => !set.size || [].concat(arr).some(x => set.has(x));
   function filtered() {
     const t = refTime();
-    return VENUES.map(v => ({ v, s: statusFor(v, t), mi: milesTo(v) })).filter(({ v, s }) => {
-      if (state.q && ![v.name, v.address, v.neighborhood, v.type, ...v.cuisine, ...v.vibes, v.dealText, ...v.happyHours.map(w => w.note || "")].join(" ").toLowerCase().includes(state.q)) return false;
+    return VENUES.map(v => ({ v, s: statusFor(v, t), mi: milesTo(v), dm: driveMin(v) })).filter(({ v, s, dm }) => {
+      if (state.campus && dm > state.maxDrive) return false;
+      if (state.q && ![v.name, v.address, v.neighborhood, v.type, ...v.cuisine, ...v.vibes, ...v.outdoor, v.dealText, ...v.happyHours.map(w => w.note || "")].join(" ").toLowerCase().includes(state.q)) return false;
       if (state.mode === "hhnow" || state.mode === "hhat") { if (!s.hh) return false; }
       if (state.mode === "opennow" && s.open !== true) return false;
       if (state.favsOnly && !favs.has(v.id)) return false;
       return anyOf(state.hoods, v.neighborhood) && anyOf(state.prices, v.price) && anyOf(state.deals, v.deals)
-        && anyOf(state.cuisines, v.cuisine) && anyOf(state.vibes, v.vibes) && anyOf(state.types, v.type) && anyOf(state.conf, v.hhStatus);
+        && anyOf(state.cuisines, v.cuisine) && anyOf(state.vibes, v.vibes) && anyOf(state.types, v.type) && anyOf(state.outdoor, v.outdoor) && anyOf(state.conf, v.hhStatus);
     }).sort((a, b) => {
       if (state.sort === "near" && a.mi != null) return a.mi - b.mi;
+      if (state.sort === "near" && a.dm != null) return a.dm - b.dm;
       if (state.sort === "price") return a.v.price - b.v.price || a.s.rank - b.s.rank;
       if (state.sort === "name") return a.v.name.localeCompare(b.v.name);
       return a.s.rank - b.s.rank || a.v.name.localeCompare(b.v.name);
@@ -207,12 +263,13 @@
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const mapsUrl = v => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v.name + " " + v.address + " Atlanta GA")}`;
 
-  function card({ v, s, mi }) {
+  function card({ v, s, mi, dm }) {
     const fav = favs.has(v.id);
     const price = `<span class="price" aria-label="Price ${v.price} of 3"><b>${"$".repeat(v.price)}</b>${"$".repeat(3 - v.price)}</span>`;
-    const dist = mi != null ? ` · ${mi.toFixed(1)} mi (${Math.max(1, Math.round(mi * 20))} min walk)` : "";
+    const dist = (mi != null ? ` · ${mi.toFixed(1)} mi (${Math.max(1, Math.round(mi * 20))} min walk)` : "")
+      + (dm != null ? ` · ~${dm} min drive from ${CAMPUSES[state.campus].name}` : "");
     const sched = v.happyHours.map(w => `<li><span>${daysLabel(w.days)}</span><span>${w.allDay ? "All day" : `${fmt(toMin(w.start))}–${fmt(toMin(w.end))}`}${w.note ? ` · ${esc(w.note)}` : ""}</span></li>`).join("");
-    const openRow = s.open === null ? "Hours not listed" : s.open ? "Open" : "Closed";
+    const openRow = s.open === null ? "" : `<li><span>Now</span><span>${s.open ? "Open" : "Closed"}</span></li>`;
     const badge = { reported: ["warn", "Call to confirm"], unknown: ["muted", "HH unknown"] }[v.hhStatus];
     const srcs = v.sources.map(x => `<a href="${x.url}" target="_blank" rel="noopener">${esc(x.label)}</a>`).join(", ");
     return `<article class="card">
@@ -225,9 +282,9 @@
         <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${fav ? "♥" : "♡"}</button>
       </div>
       <span class="status ${s.cls}">${s.label}</span>
-      <ul class="sched">${sched}<li><span>Now</span><span>${openRow}</span></li></ul>
+      <ul class="sched">${sched}${openRow}</ul>
       <p class="deal">${esc(v.dealText)}</p>
-      <div class="tags">${[...v.cuisine, ...v.vibes].map(x => `<span class="tag">${esc(x)}</span>`).join("")}</div>
+      <div class="tags">${[...v.cuisine, ...v.vibes, ...v.outdoor].map(x => `<span class="tag">${esc(x)}</span>`).join("")}</div>
       <p class="src">Source: ${srcs} · checked ${v.checked}</p>
       <div class="actions">
         <a class="btn solid" href="${mapsUrl(v)}" target="_blank" rel="noopener">Directions</a>
@@ -262,8 +319,10 @@
     const t = refTime();
     const when = state.mode === "hhat" ? ` on ${DAYS[t.day]} at ${fmt(t.mins)}` : "";
     $("count").textContent = `${items.length} spot${items.length === 1 ? "" : "s"}${when}`;
-    $("applyFilters").textContent = `Show ${items.length} spot${items.length === 1 ? "" : "s"}`;
-    const active = Object.keys(groups).reduce((n, k) => n + state[k].size, state.mode === "any" ? 0 : 1);
+    const showLabel = `Show ${items.length} spot${items.length === 1 ? "" : "s"}`;
+    $("homeShow").textContent = `${showLabel} ↓`;
+    $("savedCount").textContent = favs.size;
+    const active = Object.keys(groups).reduce((n, k) => n + state[k].size, (state.mode === "any" ? 0 : 1) + (state.campus ? 1 : 0));
     $("toggleFilters").innerHTML = active ? `Filters <span class="n">${active}</span>` : "Filters";
     if (state.view === "list") {
       $("list").innerHTML = items.length ? items.map(card).join("")
@@ -295,6 +354,6 @@
 
   const qp = new URLSearchParams(location.search).get("q");
   if (qp) { $("q").value = qp; state.q = qp.toLowerCase(); }
-  tick(); render();
+  tick(); update();
   setInterval(() => { tick(); if (state.mode !== "hhat") render(); }, 60_000);
 })();

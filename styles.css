@@ -47,22 +47,8 @@ h1 { font-family: Fraunces, Georgia, serif; font-weight: 800; font-size: clamp(2
 .layout { padding-top: 24px; padding-bottom: 40px; }
 .search { display: block; margin-bottom: 12px; }
 
-/* Filter panel: slides in from the left, closes on "Show spots" */
-.backdrop { position: fixed; inset: 0; background: rgba(42, 30, 23, .45); z-index: 1999; }
-.filters {
-  position: fixed; top: 0; left: 0; bottom: 0; width: min(420px, 100%); z-index: 2000;
-  background: var(--card); display: flex; flex-direction: column;
-  box-shadow: 8px 0 32px rgba(0, 0, 0, .18); animation: slide-in .2s ease-out;
-}
-@keyframes slide-in { from { transform: translateX(-100%); } }
-.filters-head { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px 4px; }
-.filters h2 { font-family: Fraunces, serif; margin: 0; font-size: 1.5rem; }
-.filters-body { flex: 1; overflow: auto; padding: 0 20px 20px; }
-.filters-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; border-top: 1.5px solid var(--line); }
-.close { background: none; border: 0; font-size: 1.8rem; line-height: 1; cursor: pointer; color: var(--ink); padding: 4px 8px; }
+.filters-btn .n, .toplink .n { background: var(--peach); color: #fff; border-radius: 999px; padding: 0 7px; font-size: .78rem; font-weight: 700; }
 .btn.apply { padding: 10px 22px; font-weight: 700; font-size: 1rem; }
-.filters-btn .n { background: var(--peach); color: #fff; border-radius: 999px; padding: 0 7px; font-size: .78rem; font-weight: 700; }
-body.noscroll { overflow: hidden; }
 .filters h3 { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 18px 0 8px; }
 .link { background: none; border: 0; color: var(--clay); cursor: pointer; font: inherit; font-size: .9rem; }
 
@@ -136,3 +122,47 @@ body.noscroll { overflow: hidden; }
 .badge.muted { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
 .src { margin: 0; font-size: .78rem; color: var(--muted); }
 .src a { color: var(--muted); }
+
+/* Landing "Find your happy hour" section */
+.finder { margin-top: 20px; background: var(--card); border: 1.5px solid var(--line); border-radius: var(--radius); padding: 24px 20px; max-width: 1208px; }
+.finder h2 { font-family: Fraunces, serif; font-size: clamp(1.5rem, 4vw, 2rem); margin: 0 0 4px; }
+.finder h3 { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 18px 0 8px; }
+.finder-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 32px; }
+.finder-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.campus-range-wrap { margin-top: 12px; max-width: 360px; }
+.campus-range { width: 100%; accent-color: var(--peach); }
+.range-ticks { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); }
+.campus-label { margin: 6px 0 0; font-weight: 700; font-size: .92rem; }
+@media (max-width: 860px) { .finder-grid { grid-template-columns: 1fr; } }
+
+/* Top bar */
+.topbar { position: sticky; top: 0; z-index: 1500; background: var(--bg); border-bottom: 1.5px solid var(--line); }
+.topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; flex-wrap: wrap; }
+.topbar-brand { display: inline-flex; align-items: center; gap: 8px; font-family: Fraunces, serif; font-weight: 800; font-size: 1.2rem; color: var(--ink); text-decoration: none; }
+.sun.small { width: 22px; height: 22px; box-shadow: none; border: 1.5px solid var(--clay); }
+.topbar-links { display: flex; gap: 4px; flex-wrap: wrap; }
+.toplink { background: none; border: 0; font: inherit; font-size: .92rem; font-weight: 500; color: var(--ink); text-decoration: none; padding: 6px 10px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.toplink:hover, .toplink[aria-pressed="true"] { background: var(--peach-soft); }
+
+.finder-grid.more { margin-top: 8px; padding-top: 4px; border-top: 1.5px dashed var(--line); }
+.finder-actions { align-items: center; }
+
+/* Full-width 50/50 List | Map switch */
+.viewbar { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 16px; border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); }
+.viewbar button { border: 0; background: none; font: inherit; font-weight: 700; padding: 12px; cursor: pointer; color: var(--muted); }
+.viewbar button + button { border-left: 1.5px solid var(--line); }
+.viewbar button.on { background: var(--peach); color: #fff; }
+
+/* Contact */
+.contact { margin-top: 8px; margin-bottom: 32px; background: var(--card); border: 1.5px solid var(--line); border-radius: var(--radius); padding: 24px 20px; max-width: 1208px; scroll-margin-top: 72px; }
+.contact h2 { font-family: Fraunces, serif; font-size: 1.6rem; margin: 0; }
+.contact-sub { color: var(--muted); margin: 6px 0 16px; }
+.contact form { display: grid; gap: 14px; max-width: 640px; }
+.contact label { display: grid; gap: 6px; font-weight: 500; font-size: .92rem; }
+.contact input, .contact textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font: inherit; }
+.contact input:focus, .contact textarea:focus { outline: 2px solid var(--peach); border-color: transparent; }
+.contact .btn { justify-self: start; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.opt { color: var(--muted); font-weight: 400; }
+.form-status { margin: 0; font-weight: 700; }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .toplink { padding: 6px 8px; font-size: .85rem; } }
