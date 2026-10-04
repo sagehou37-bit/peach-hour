@@ -37,7 +37,7 @@
     <h2>Where to?</h2>
     <p class="finder-sub">Pick what matters. Results update as you go.</p>
     <div class="finder-grid">
-      <div>
+      <div class="finder-col">
         <h3>When</h3>
         <div class="seg mode-seg">
           <button data-mode="any" class="on">Any time</button>
@@ -49,8 +49,12 @@
           <select class="pickDay" aria-label="Day"></select>
           <select class="pickTime" aria-label="Time"></select>
         </div>
+        <h3>Deals on</h3>
+        <div class="chips" id="deals"></div>
+        <h3>Vibe</h3>
+        <div class="chips" id="vibes"></div>
       </div>
-      <div>
+      <div class="finder-col">
         <h3>Near campus</h3>
         <div class="seg campus-seg">
           <button data-campus="" class="on">Anywhere</button>
@@ -62,12 +66,6 @@
           <div class="range-ticks"><span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30 min</span></div>
           <p class="campus-label"></p>
         </div>
-      </div>
-      <div>
-        <h3>Deals on</h3>
-        <div class="chips" id="deals"></div>
-      </div>
-      <div>
         <h3>Neighborhood</h3>
         <div class="chips" id="hoods"></div>
       </div>
@@ -75,7 +73,6 @@
 
     <div class="finder-grid more" id="moreGrid" hidden>
       <div><h3>Price</h3><div class="chips" id="prices"></div></div>
-      <div><h3>Vibe</h3><div class="chips" id="vibes"></div></div>
       <div><h3>Spot type</h3><div class="chips" id="types"></div></div>
       <div><h3>Outdoor seating</h3><div class="chips" id="outdoor"></div></div>
       <div><h3>Food type</h3><div class="chips" id="cuisines"></div></div>
