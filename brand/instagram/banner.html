@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Peach Hour · Instagram grid banner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* One 3240x1440 canvas = three 1080x1440 (3:4) Instagram posts side by side. */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #1b1f3b; }
+  .canvas {
+    width: 3240px; height: 1440px; position: relative; overflow: hidden; color: #fff;
+    font-family: Figtree, sans-serif;
+    background:
+      radial-gradient(1500px 900px at 50% 118%, rgba(255, 106, 61, .38), transparent 60%),
+      radial-gradient(2400px 1200px at 50% 120%, #4a2f5c 0%, #2b2a55 40%, #1b1f3b 72%);
+  }
+  .display { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; letter-spacing: -.03em; }
+
+  /* Big striped sunset behind the phone, spilling into the side posts */
+  .sun-wrap { position: absolute; left: 50%; bottom: 250px; width: 1500px; height: 750px; transform: translateX(-50%); overflow: hidden; }
+  .sun { position: absolute; inset: 0 0 -750px 0; border-radius: 50%; overflow: hidden; background: linear-gradient(#ffb347 6%, #ff6a3d 46%); opacity: .95;
+    -webkit-mask: linear-gradient(#000 13%, transparent 13%), repeating-linear-gradient(to bottom, #000 0 64px, transparent 64px 82px);
+    -webkit-mask-composite: source-over; mask: linear-gradient(#000 13%, transparent 13%), repeating-linear-gradient(to bottom, #000 0 64px, transparent 64px 82px); mask-composite: add; }
+  .horizon { position: absolute; left: 0; right: 0; bottom: 250px; height: 3px; background: rgba(255, 179, 71, .35); }
+  .stripes { position: absolute; left: 0; right: 0; bottom: 0; height: 250px; background: repeating-linear-gradient(to bottom, rgba(255, 106, 61, .14) 0 6px, transparent 6px 34px); }
+
+  .tile { position: absolute; top: 0; width: 1080px; height: 1440px; }
+  .t1 { left: 0; } .t2 { left: 1080px; } .t3 { left: 2160px; }
+
+  /* Left post: headline */
+  .t1 .inner { position: absolute; left: 110px; right: 90px; top: 190px; }
+  .kicker { font-weight: 700; font-size: 38px; color: #ffb347; letter-spacing: .02em; margin: 0 0 40px; }
+  .t1 h1 { margin: 0; font-size: 196px; line-height: .9; }
+  .grad { background: linear-gradient(90deg, #ffb347, #ff6a3d); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hoods { margin: 52px 0 0; font-size: 44px; line-height: 1.35; color: rgba(255, 255, 255, .78); font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 60px; }
+  .chip { font-weight: 700; font-size: 36px; padding: 16px 26px; border-radius: 16px; background: rgba(255, 255, 255, .1); border: 2px solid rgba(255, 255, 255, .18); }
+  .chip.live { background: #e3f4ea; color: #16804f; border-color: #e3f4ea; display: inline-flex; align-items: center; gap: 14px; }
+  .chip.live::before { content: ""; width: 16px; height: 16px; border-radius: 50%; background: #16804f; }
+
+  /* Middle post: phone showing the real site */
+  .phone { position: absolute; left: 50%; top: 150px; transform: translateX(-50%); width: 560px; height: 1140px; border-radius: 76px; background: #0b0c14; padding: 22px; box-shadow: 0 50px 120px rgba(0, 0, 0, .55), 0 0 0 3px rgba(255, 255, 255, .08) inset; }
+  .screen { width: 516px; height: 1096px; border-radius: 56px; overflow: hidden; position: relative; background: #f4f3f0; }
+  .statusbar { height: 76px; background: #1b1f3b; position: relative; color: #fff; font-weight: 700; font-size: 24px; }
+  .statusbar .time { position: absolute; left: 52px; top: 26px; }
+  .statusbar .icons { position: absolute; right: 48px; top: 30px; display: flex; gap: 8px; }
+  .statusbar .icons i { display: block; width: 26px; height: 15px; border-radius: 4px; background: #fff; }
+  .statusbar .icons i:first-child { width: 20px; opacity: .8; }
+  .screen iframe { width: 430px; height: 850px; border: 0; transform: scale(1.2); transform-origin: 0 0; }
+  .notch { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); width: 140px; height: 40px; border-radius: 20px; background: #0b0c14; z-index: 2; }
+
+  /* Right post: logo + call to action */
+  .t3 .inner { position: absolute; left: 90px; right: 110px; top: 250px; text-align: center; }
+  .mark { width: 300px; height: 150px; margin: 0 auto 46px; position: relative; overflow: hidden; }
+  .mark .s { position: absolute; inset: 0 0 -150px 0; border-radius: 50%; overflow: hidden; background: linear-gradient(#ffb347 10%, #ff6a3d 75%);
+    -webkit-mask: linear-gradient(#000 12%, transparent 12%), repeating-linear-gradient(to bottom, #000 0 28px, transparent 28px 37px);
+    -webkit-mask-composite: source-over; mask: linear-gradient(#000 12%, transparent 12%), repeating-linear-gradient(to bottom, #000 0 28px, transparent 28px 37px); mask-composite: add; }
+  .brand { font-size: 150px; line-height: 1; margin: 0; }
+  .cta { margin: 70px 0 0; font-size: 92px; line-height: 1.02; }
+  .url { display: inline-block; margin-top: 64px; font-weight: 700; font-size: 52px; padding: 26px 46px; border-radius: 22px; background: #ff6a3d; box-shadow: 0 20px 50px rgba(255, 106, 61, .45); }
+  .bio { margin-top: 34px; font-size: 38px; color: rgba(255, 255, 255, .7); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="sun-wrap"><div class="sun"></div></div>
+  <div class="horizon"></div>
+  <div class="stripes"></div>
+
+  <section class="tile t1">
+    <div class="inner">
+      <p class="kicker">ATLANTA · PEACH HOUR</p>
+      <h1 class="display">Every<br><span class="grad">happy hour</span><br>in Atlanta.</h1>
+      <p class="hoods">Buckhead · Midtown · Inman Park<br>VaHi · Beltline · Decatur · Emory</p>
+      <div class="chips">
+        <span class="chip live">Happy hour now</span>
+        <span class="chip">$1 oysters</span>
+        <span class="chip">$5 margs</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="tile t2">
+    <div class="phone"><div class="screen"><div class="notch"></div><div class="statusbar"><span class="time">5:42</span><span class="icons"><i></i><i></i></span></div><iframe id="site" src="/?banner=1"></iframe></div></div>
+  </section>
+
+  <section class="tile t3">
+    <div class="inner">
+      <div class="mark"><div class="s"></div></div>
+      <p class="brand display">Peach Hour</p>
+      <p class="cta display">Find your<br><span class="grad">happy hour</span><br>now.</p>
+      <span class="url">peachhouratl.com</span>
+      <p class="bio">Link in bio ↑</p>
+    </div>
+  </section>
+</div>
+<script>
+  // Scroll the phone's copy of the site down to the bar cards.
+  const f = document.getElementById("site");
+  f.addEventListener("load", () => setTimeout(() => {
+    const d = f.contentDocument, list = d.getElementById("list");
+    f.contentWindow.scrollTo(0, list.getBoundingClientRect().top + f.contentWindow.scrollY - 150);
+  }, 1500));
+</script>
+</body>
+</html>
