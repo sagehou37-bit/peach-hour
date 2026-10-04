@@ -437,6 +437,23 @@
       deals: ["food"], dealText: "Deals on lettuce wraps & Brussels sprouts starters · EmoryCard: free drink or appetizer with a dine-in entrée",
       hhStatus: "reported", sources: [{ label: "Yelp listing", url: "https://www.yelp.com/biz/salaryman-toco-hills-atlanta" }, { label: "EmoryCard discounts", url: "https://www.onecard.emory.edu/emorycard/use-card/eagle-discounts.html" }] },
 
+    // ── Emory Village / North Decatur ─────────────────────────────
+    { id: "double-zero", name: "Double Zero", neighborhood: "Emory / Druid Hills",
+      address: "1577 N Decatur Rd NE (Emory Village)", lat: 33.78798, lng: -84.32617, price: 2, type: "Restaurant",
+      cuisine: ["Italian", "Pizza"], vibes: ["Date night", "Games", "Groups"], outdoor: [],
+      hours: days({ 1: ["17:00", "21:00"], 2: ["17:00", "21:00"], 3: ["17:00", "21:00"], 4: ["17:00", "21:00"], 5: ["17:00", "22:00"], 6: ["17:00", "22:00"] }),
+      happyHours: [{ days: [1, 2, 3, 4, 5, 6], start: "17:00", end: "18:00" }],
+      deals: ["cocktails", "beer", "food"], dealText: "$9 Negronis · $5 Peronis · $5 meatballs & cauliflower · $9 pastas & cheese bread · shuffleboard & foosball in the bar · walk from campus",
+      hhStatus: "reported", sources: [{ label: "Yelp listing", url: "https://www.yelp.com/biz/double-zero-atlanta-3" }, { label: "doublezeroatl.com (hours)", url: "https://www.doublezeroatl.com/" }] },
+
+    { id: "poboy-shop", name: "The Po'Boy Shop & Basement Bar", neighborhood: "North Decatur",
+      address: "1369 Clairmont Rd, Decatur", lat: 33.79343, lng: -84.30548, price: 1, type: "Bar",
+      cuisine: ["Cajun", "Sandwiches"], vibes: ["Late night", "Sports", "Games"], outdoor: [],
+      hours: [0, 1, 2, 3, 4, 5, 6].map(() => ["11:00", "02:00"]),
+      happyHours: [{ days: [0, 1, 2, 3, 4, 5, 6], allDay: true, note: "Daily shot specials (Basement Bar, 21+)" }],
+      deals: ["cocktails", "beer"], dealText: "Daily shot specials in the 21+ basement bar · 24+ drafts, 80+ tequilas, hurricanes · pool, TVs · open till 2AM",
+      hhStatus: "reported", sources: [{ label: "thepoboyshopatl.com", url: "https://www.thepoboyshopatl.com/basementbar" }] },
+
     // ── Decatur ───────────────────────────────────────────────────
     { id: "kimball-house", name: "Kimball House", neighborhood: "Decatur",
       address: "303 E Howard Ave, Decatur", lat: 33.77154, lng: -84.29236, price: 3, type: "Cocktail bar",

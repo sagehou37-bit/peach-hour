@@ -116,7 +116,7 @@
   // ── filter UI ─────────────────────────────────────────────────
   // Every filter control writes to `state`, then syncUI() repaints the controls.
   const HOOD_ORDER = ["Buckhead", "Midtown", "West Midtown", "Home Park", "Virginia-Highland", "Poncey-Highland", "Eastside Beltline",
-    "Edgewood", "Inman Park", "Little Five Points", "Reynoldstown", "Emory / Druid Hills", "Toco Hills", "Decatur"];
+    "Edgewood", "Inman Park", "Little Five Points", "Reynoldstown", "Emory / Druid Hills", "Toco Hills", "North Decatur", "Decatur"];
   const hoodRank = h => (HOOD_ORDER.includes(h) ? HOOD_ORDER.indexOf(h) : 99);
   const uniq = key => [...new Set(VENUES.flatMap(v => [].concat(v[key] || [])))].sort();
   const DEAL_LABELS = { beer: "Beer", wine: "Wine", cocktails: "Cocktails", oysters: "Oysters", food: "Food" };
