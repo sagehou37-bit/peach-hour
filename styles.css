@@ -254,10 +254,25 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 @container (max-width: 400px) {
   .act { padding: 8px 9px; font-size: .84rem; }
 }
-@container (max-width: 320px) { /* phones: Share shows just its icon */
+/* Phones (any phone width) and narrow cards: Share shows just its icon */
+@media (max-width: 600px) {
   .share-lbl { display: none; }
   .act-share { flex: 0 0 auto; width: 40px; padding: 8px 0; }
 }
-@container (max-width: 280px) { /* smallest phones: drop the Directions icon */
+@container (max-width: 320px) {
+  .share-lbl { display: none; }
+  .act-share { flex: 0 0 auto; width: 40px; padding: 8px 0; }
+}
+@container (max-width: 300px) { /* narrow phones (~360px screens) */
+  .card-foot { gap: 5px; }
+  .act { padding: 8px 7px; gap: 5px; font-size: .82rem; }
+  .act .i { width: 15px; height: 15px; }
+  .pf-logo { width: 18px; height: 18px; }
+}
+@container (max-width: 270px) { /* smallest phones (~320px screens): drop the Directions icon */
+  .card-foot { gap: 4px; }
   .act:not(.act-party):not(.act-share) .i { display: none; }
+  .act { padding: 8px 5px; font-size: .78rem; }
+  .act-party { gap: 4px; }
+  .pf-logo { width: 16px; height: 16px; }
 }
