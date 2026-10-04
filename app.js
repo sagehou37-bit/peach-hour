@@ -393,7 +393,6 @@
     }
 
     const confirm = v.hhStatus === "reported" ? `<span class="confirm" title="Info came from older or third-party sources">Call to confirm</span>` : "";
-    const srcs = v.sources.map(x => `<a href="${x.url}" target="_blank" rel="noopener">${esc(x.label)}</a>`).join(", ");
     const tags = TAG_GROUPS.flatMap(g => (v[g.field] || []).map(x =>
       `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(x)}</button>`)).join("");
     return `<article class="card">
@@ -406,7 +405,7 @@
         </div>
         <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${ICON.heart}</button>
       </header>
-      <div class="status-row"><span class="status ${s.cls}">${s.label}</span></div>
+      <div class="status-row"><span class="status ${s.cls}">${s.label}</span>${confirm}</div>
       <p class="deal">${esc(v.dealText)}</p>
       <div class="hours-block">
         ${sched ? `<p class="hb-label">Happy hour</p><dl class="sched">${sched}</dl>` : ""}
@@ -417,8 +416,6 @@
         <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
         <button class="act" data-share="${v.id}">${shareLabel}</button>
         <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create a Partiful</span></a>
-        <div class="card-meta">${confirm}
-        <details class="src"><summary>Source</summary><p>${srcs}. Checked ${v.checked}.</p></details></div>
       </footer>
     </article>`;
   }

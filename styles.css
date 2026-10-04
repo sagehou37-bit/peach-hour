@@ -203,16 +203,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .act-party { background: #000; border-color: #000; color: #fff; padding-left: 8px; }
 .act-party:hover { background: #fff; border-color: #000; color: #000; }
 .pf-logo { width: 20px; height: 20px; border-radius: 5px; display: block; }
-.card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%; margin-top: 4px; }
 .confirm { font-size: .78rem; font-weight: 700; color: #8a5a00; background: var(--soon-bg); padding: 3px 8px; border-radius: 6px; }
-.src { margin-left: auto; font-size: .8rem; color: var(--muted); }
-.card-meta .src:only-child { margin-left: 0; }
-.src summary { cursor: pointer; list-style: none; }
-.src summary::-webkit-details-marker { display: none; }
-.src summary:hover { color: var(--ink); }
-.src[open] { flex-basis: 100%; margin-left: 0; }
-.src p { margin: 6px 0 0; }
-.src a { color: var(--muted); }
 
 /* ── Map ─────────────────────────────────── */
 .map { height: 70vh; min-height: 420px; border-radius: 12px; border: 1px solid var(--line); }
