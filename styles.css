@@ -213,12 +213,19 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .leaflet-popup-content b { font-family: var(--display); font-size: 1.05rem; }
 
 /* ── Contact ─────────────────────────────── */
-.contact { padding-top: 48px; padding-bottom: 56px; border-top: 1px solid var(--line); }
+.contact {
+  width: min(560px, calc(100vw - 32px)); max-height: calc(100svh - 32px); overflow: auto; margin: auto;
+  padding: 28px 24px; border: 0; border-radius: 16px; background: var(--card); color: var(--ink);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .3); position: relative;
+}
+.contact::backdrop { background: rgba(27, 31, 59, .55); }
+.contact-close { position: absolute; top: 12px; right: 14px; background: none; border: 0; font-size: 1.8rem; line-height: 1; color: var(--muted); cursor: pointer; padding: 4px 8px; }
+.contact-close:hover { color: var(--ink); }
 .contact h2 { font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800; margin: 0; line-height: 1; }
 .contact-sub { color: var(--muted); margin: 10px 0 22px; max-width: 52ch; }
-.contact form { display: grid; gap: 14px; max-width: 640px; }
+.contact form { display: grid; gap: 14px; }
 .contact label { display: grid; gap: 6px; font-weight: 600; font-size: .92rem; }
-.contact input, .contact textarea { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font: inherit; }
+.contact input, .contact textarea, .contact select { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; }
 .contact input:focus, .contact textarea:focus { outline: 2px solid var(--peach); border-color: transparent; }
 .contact .btn { justify-self: start; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }

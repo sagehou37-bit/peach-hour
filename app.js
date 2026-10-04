@@ -212,7 +212,13 @@
   $("heroCta").onclick = e => { e.preventDefault(); scrollToEl($("finder")); };
 
   // Contact form: Netlify Forms collects submissions (Netlify dashboard → Forms).
-  all('[data-topic]').forEach(a => { a.onclick = () => { $("topic").value = a.dataset.topic; }; });
+  // The contact form lives in a pop-up opened from the header links.
+  const dlg = $("contact");
+  all('[data-topic]').forEach(a => {
+    a.onclick = e => { e.preventDefault(); $("topic").value = a.dataset.topic; $("formStatus").textContent = ""; dlg.showModal(); };
+  });
+  $("contactClose").onclick = () => dlg.close();
+  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); }); // click outside the box
   $("contactForm").onsubmit = async e => {
     e.preventDefault();
     const form = e.target, status = $("formStatus");
