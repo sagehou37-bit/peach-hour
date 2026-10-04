@@ -367,7 +367,7 @@
     return "https://partiful.com/create?" + new URLSearchParams({
       title: `Happy hour at ${v.name}`,
       location: `${v.name}, ${street}, ${city}, GA ${v.zip || ""}`.trim(),
-      description: `${v.dealText}\n\nHappy hour:\n${when}\n\nFound on Peach Hour: https://peach-hour-atl.netlify.app`,
+      description: `${v.dealText}\n\nHappy hour:\n${when}\n\nFound on Peach Hour: https://peachhouratl.com`,
     });
   }
   const rangeLabel = r => `${fmt(toMin(r[0]))}–${fmt(toMin(r[1]))}`;
