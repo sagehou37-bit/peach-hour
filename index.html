@@ -90,8 +90,11 @@
     <section class="results" id="results">
       <label class="search">
         <span class="sr">Search</span>
-        <input id="q" type="search" placeholder="Search bars, food, streets…">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Search bars, food, neighborhoods or ZIP" autocomplete="off">
       </label>
+      <p class="try-row">Try <button class="try" type="button">4pm happy hour in Inman Park with oysters</button><button class="try" type="button">margaritas near Emory tonight</button><button class="try" type="button">cheap beer in VaHi</button><button class="try" type="button">30307</button></p>
+      <p class="q-chips" id="qChips" hidden></p>
       <div class="toolbar">
         <button class="btn ghost filters-btn" id="toggleFilters">Filters</button>
         <p id="count" class="count"></p>
