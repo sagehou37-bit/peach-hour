@@ -17,6 +17,7 @@
   website: official site (linked from the name). zip: ZIP code, searchable.
   Happy-hour windows: { days, start, end, note? }. "24:00" start = midnight that night.
   allDay: true = a day-long special (still only counts while the venue is open).
+  end: "close" = runs until that day's closing time (needs hours).
 */
 (function () {
   const WEEKDAYS = [1, 2, 3, 4, 5];
@@ -550,9 +551,9 @@
       address: "537 W Howard Ave, Decatur", lat: 33.76787, lng: -84.30458, price: 1, type: "Pub",
       website: "https://www.thinkingmantavern.com/", zip: "30030",
       cuisine: ["Bar food"], vibes: ["Late night", "Cozy"], outdoor: ["Patio"], hours: days({ 0: ["11:30", "02:00"], 1: ["16:00", "24:00"], 2: ["11:30", "24:00"], 3: ["11:30", "24:00"], 4: ["11:30", "24:00"], 5: ["11:30", "01:00"], 6: ["11:30", "01:00"] }),
-      happyHours: [{ days: WEEKDAYS, start: "22:00", end: "24:00", note: "Late-night happy hour (from 10PM)" }, { days: [0], allDay: true, note: "Industry night: $2.50 PBR, $4 wells" }],
-      deals: ["beer", "cocktails"], dealText: "Late-night weekday specials from 10PM · Sunday industry night",
-      hhStatus: "reported", sources: [{ label: "Rough Draft Atlanta (2025)", url: "https://roughdraftatlanta.com/2025/04/09/thinking-man-tavern-decatur-regulars-industry-night/" }] },
+      happyHours: [{ days: WEEKDAYS, start: "15:00", end: "18:00" }, { days: [0, 1, 2, 3, 4, 5, 6], start: "22:00", end: "close", note: "Late-night happy hour" }],
+      deals: ["beer", "cocktails"], dealText: "$2.50 PBRs · $4 well drinks · $5 Paddy's Irish whiskey · $2 Koji sakes",
+      hhStatus: "confirmed", sources: [{ label: "thinkingmantavern.com (happy hour flyer)", url: "https://www.thinkingmantavern.com/" }] },
 
     { id: "pinewood", name: "The Pinewood", neighborhood: "Decatur",
       address: "254 W Ponce de Leon Ave, Decatur", lat: 33.77542, lng: -84.29989, price: 2, type: "Cocktail bar",

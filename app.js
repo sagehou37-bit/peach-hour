@@ -1,5 +1,18 @@
 (function () {
   const VENUES = window.VENUES || [];
+  // Happy hours that run "until close" are expanded into one window per day using
+  // that day's closing time; the original list is kept for display ("10PM–close").
+  VENUES.forEach(v => {
+    v.hhDisplay = v.happyHours;
+    v.happyHours = v.happyHours.flatMap(w => {
+      if (w.end !== "close") return [w];
+      return w.days.map(d => {
+        const r = v.hours && v.hours[d];
+        const ranges = !r ? [] : Array.isArray(r[0]) ? r : [r];
+        return { ...w, days: [d], end: ranges.length ? ranges[ranges.length - 1][1] : "24:00" };
+      });
+    });
+  });
   const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const $ = id => document.getElementById(id);
 
@@ -363,7 +376,7 @@
   function partifulUrl(v) {
     const street = v.address.replace(/\s*\(.*?\)/g, "").replace(/,\s*Decatur$/, "");
     const city = /,\s*Decatur\b/.test(v.address) ? "Decatur" : "Atlanta";
-    const when = v.happyHours.map(w => `${daysLabel(w.days)} ${w.allDay ? "all day" : `${fmt(toMin(w.start))}–${fmt(toMin(w.end))}`}${w.note ? ` (${w.note})` : ""}`).join("\n");
+    const when = v.hhDisplay.map(w => `${daysLabel(w.days)} ${w.allDay ? "all day" : `${fmt(toMin(w.start))}–${w.end === "close" ? "close" : fmt(toMin(w.end))}`}${w.note ? ` (${w.note})` : ""}`).join("\n");
     return "https://partiful.com/create?" + new URLSearchParams({
       title: `Happy hour at ${v.name}`,
       location: `${v.name}, ${street}, ${city}, GA ${v.zip || ""}`.trim(),
@@ -380,9 +393,9 @@
 
     // Happy hour rows, starting from today's day of the week.
     const offset = w => Math.min(...w.days.map(d => (d - today + 7) % 7));
-    const sched = [...v.happyHours].sort((a, b) => offset(a) - offset(b)).map(w => {
+    const sched = [...v.hhDisplay].sort((a, b) => offset(a) - offset(b)).map(w => {
       const isToday = w.days.includes(today);
-      return `<div class="${isToday ? "today" : ""}"><dt>${isToday ? "Today" : daysLabel(w.days)}</dt><dd>${w.allDay ? "All day" : `${fmt(toMin(w.start))}–${fmt(toMin(w.end))}`}${w.note ? ` <span class="note">${esc(w.note)}</span>` : ""}</dd></div>`;
+      return `<div class="${isToday ? "today" : ""}"><dt>${isToday ? "Today" : daysLabel(w.days)}</dt><dd>${w.allDay ? "All day" : `${fmt(toMin(w.start))}–${w.end === "close" ? "close" : fmt(toMin(w.end))}`}${w.note ? ` <span class="note">${esc(w.note)}</span>` : ""}</dd></div>`;
     }).join("");
 
     // Today's regular hours: "Open · until 11PM" / "Closed · opens 5PM".
