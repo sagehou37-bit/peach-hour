@@ -344,6 +344,7 @@
     heart: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
     pin: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.7-6-11a6 6 0 0 1 12 0c0 5.3-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>',
     share: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4m0 0L8 8m4-4 4 4M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>',
+    party: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l5-14 9 9-14 5zM7.5 10.5l6 6M14 4c1 1 1 2 0 3M20 10c-1-1-2-1-3 0M17 3v2M21 7h-2"/></svg>',
   };
   const shareLabel = `${ICON.share}<span>Share</span>`;
 
@@ -352,6 +353,18 @@
     { key: "vibes", field: "vibes", cls: "vibe", icon: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>' },
     { key: "outdoor", field: "outdoor", cls: "out", icon: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>' },
   ];
+  // Opens Partiful's "create event" page with the title, location and deal filled in.
+  // (These URL parameters aren't documented by Partiful; they worked as of Oct 2026.)
+  function partifulUrl(v) {
+    const street = v.address.replace(/\s*\(.*?\)/g, "").replace(/,\s*Decatur$/, "");
+    const city = /,\s*Decatur\b/.test(v.address) ? "Decatur" : "Atlanta";
+    const when = v.happyHours.map(w => `${daysLabel(w.days)} ${w.allDay ? "all day" : `${fmt(toMin(w.start))}–${fmt(toMin(w.end))}`}${w.note ? ` (${w.note})` : ""}`).join("\n");
+    return "https://partiful.com/create?" + new URLSearchParams({
+      title: `Happy hour at ${v.name}`,
+      location: `${v.name}, ${street}, ${city}, GA ${v.zip || ""}`.trim(),
+      description: `${v.dealText}\n\nHappy hour:\n${when}\n\nFound on Peach Hour: https://peach-hour-atl.netlify.app`,
+    });
+  }
   const rangeLabel = r => `${fmt(toMin(r[0]))}–${fmt(toMin(r[1]))}`;
 
   function card({ v, s, mi, dm }) {
@@ -404,6 +417,7 @@
       <footer class="card-foot">
         <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
         <button class="act" data-share="${v.id}">${shareLabel}</button>
+        <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful">${ICON.party}<span>Partiful</span></a>
         ${confirm}
         <details class="src"><summary>Source</summary><p>${srcs}. Checked ${v.checked}.</p></details>
       </footer>

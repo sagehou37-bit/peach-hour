@@ -195,6 +195,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .card-foot { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
 .act { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; padding: 4px 0; font: inherit; font-size: .9rem; font-weight: 600; color: var(--ink); text-decoration: none; cursor: pointer; }
 .act:hover { color: var(--peach-ink); }
+.act-party { color: var(--peach-ink); }
 .confirm { font-size: .78rem; font-weight: 700; color: #8a5a00; background: var(--soon-bg); padding: 3px 8px; border-radius: 6px; }
 .src { margin-left: auto; font-size: .8rem; color: var(--muted); }
 .src summary { cursor: pointer; list-style: none; }
