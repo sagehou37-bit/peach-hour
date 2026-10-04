@@ -7,16 +7,16 @@
   <meta name="description" content="Find happy hours happening right now across Atlanta: Midtown, Decatur, Virginia-Highland, Inman Park, the Eastside Beltline and near Emory and Georgia Tech.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <nav class="topbar" id="topbar">
     <div class="wrap topbar-inner">
-      <a class="topbar-brand" href="#top"><span class="sun small" aria-hidden="true"></span>Peach Hour</a>
+      <a class="topbar-brand" href="#top"><span class="mark" aria-hidden="true"></span>Peach Hour</a>
       <div class="topbar-links">
-        <button class="toplink" id="navSaved" aria-pressed="false">♡ Saved <span class="n" id="savedCount">0</span></button>
+        <button class="toplink" id="navSaved" aria-pressed="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>Saved <span class="n" id="savedCount">0</span></button>
         <a class="toplink" href="#contact" data-topic="listing">List your happy hour</a>
         <a class="toplink" href="#contact" data-topic="question">Contact</a>
       </div>
@@ -24,22 +24,18 @@
   </nav>
 
   <header class="hero" id="top">
-    <div class="wrap hero-inner">
-      <div class="brand">
-        <span class="sun" aria-hidden="true"></span>
-        <h1>Peach&nbsp;Hour</h1>
-      </div>
-      <p class="tagline">Atlanta happy hours, sorted by what's pouring <em>right now</em>.</p>
+    <div class="hero-inner">
+      <div class="sunset" aria-hidden="true"><span class="sun"></span></div>
+      <h1>Peach Hour</h1>
+      <p class="tagline">Every happy hour in Atlanta, from Buckhead to Decatur. Know what's pouring before you leave the house.</p>
+      <a class="cta" href="#finder" id="heroCta">Find your happy hour</a>
       <p class="clock" id="clock"></p>
     </div>
   </header>
 
-  <div class="demo-banner wrap" role="note">
-    Deals change often. Each spot shows where its info came from and when it was checked, so confirm with the bar before you go.
-  </div>
-
   <section class="wrap finder" id="finder" aria-label="Find a happy hour">
-    <h2>Find your happy hour</h2>
+    <h2>Where to?</h2>
+    <p class="finder-sub">Pick what matters. Results update as you go.</p>
     <div class="finder-grid">
       <div>
         <h3>When</h3>
@@ -87,8 +83,8 @@
     </div>
 
     <div class="finder-actions">
-      <button class="btn solid apply" id="homeShow">Show spots ↓</button>
-      <button class="btn ghost" id="moreFilters" aria-expanded="false" aria-controls="moreGrid">More filters ▾</button>
+      <button class="btn solid apply" id="homeShow">Show spots</button>
+      <button class="btn ghost more-btn" id="moreFilters" aria-expanded="false" aria-controls="moreGrid">More filters</button>
       <button class="link" id="clearAll">Clear all</button>
     </div>
   </section>
@@ -146,8 +142,11 @@
     </form>
   </section>
 
-  <footer class="wrap foot">
-    <p>Peach Hour · Atlanta happy hours from Midtown to Decatur</p>
+  <footer class="foot">
+    <div class="wrap foot-inner">
+      <p class="foot-brand"><span class="mark" aria-hidden="true"></span>Peach Hour</p>
+      <p>Deals change often. Every listing shows its source and the date we checked it, so confirm with the bar before you go. 21+ for drink specials. Please drink responsibly.</p>
+    </div>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>

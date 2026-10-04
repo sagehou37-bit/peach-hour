@@ -430,6 +430,13 @@
       deals: ["cocktails"], dealText: "\"The Emory tradition\" · $4 lemon drop shots daily · Tequila Tuesday",
       hhStatus: "reported", sources: [{ label: "maggiestocohills.com", url: "https://www.maggiestocohills.com/" }] },
 
+    { id: "salaryman-toco", name: "Salaryman Toco Hills", neighborhood: "Toco Hills",
+      address: "2941 N Druid Hills Rd NE, Ste B", lat: 33.81523, lng: -84.31006, price: 2, type: "Restaurant",
+      cuisine: ["Asian"], vibes: ["Groups"], outdoor: [], hours: null,
+      happyHours: [{ days: [1, 2, 3, 4], start: "15:00", end: "18:00" }],
+      deals: ["food"], dealText: "Deals on lettuce wraps & Brussels sprouts starters · EmoryCard: free drink or appetizer with a dine-in entrée",
+      hhStatus: "reported", sources: [{ label: "Yelp listing", url: "https://www.yelp.com/biz/salaryman-toco-hills-atlanta" }, { label: "EmoryCard discounts", url: "https://www.onecard.emory.edu/emorycard/use-card/eagle-discounts.html" }] },
+
     // ── Decatur ───────────────────────────────────────────────────
     { id: "kimball-house", name: "Kimball House", neighborhood: "Decatur",
       address: "303 E Howard Ave, Decatur", lat: 33.77154, lng: -84.29236, price: 3, type: "Cocktail bar",

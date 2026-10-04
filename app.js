@@ -200,11 +200,12 @@
   function setMore(open) {
     $("moreGrid").hidden = !open;
     $("moreFilters").setAttribute("aria-expanded", open);
-    $("moreFilters").textContent = open ? "Fewer filters ▴" : "More filters ▾";
+    $("moreFilters").textContent = open ? "Fewer filters" : "More filters";
   }
   $("moreFilters").onclick = () => setMore($("moreGrid").hidden);
   $("toggleFilters").onclick = () => { setMore(true); scrollToEl($("finder")); };
   $("homeShow").onclick = scrollToResults;
+  $("heroCta").onclick = e => { e.preventDefault(); scrollToEl($("finder")); };
 
   // Contact form: Netlify Forms collects submissions (Netlify dashboard → Forms).
   all('[data-topic]').forEach(a => { a.onclick = () => { $("topic").value = a.dataset.topic; }; });
@@ -263,33 +264,41 @@
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const mapsUrl = v => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v.name + " " + v.address + " Atlanta GA")}`;
 
+  const ICON = {
+    heart: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
+    pin: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.7-6-11a6 6 0 0 1 12 0c0 5.3-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>',
+    share: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4m0 0L8 8m4-4 4 4M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>',
+  };
+  const shareLabel = `${ICON.share}<span>Share</span>`;
+
   function card({ v, s, mi, dm }) {
     const fav = favs.has(v.id);
-    const price = `<span class="price" aria-label="Price ${v.price} of 3"><b>${"$".repeat(v.price)}</b>${"$".repeat(3 - v.price)}</span>`;
-    const dist = (mi != null ? ` · ${mi.toFixed(1)} mi (${Math.max(1, Math.round(mi * 20))} min walk)` : "")
-      + (dm != null ? ` · ~${dm} min drive from ${CAMPUSES[state.campus].name}` : "");
-    const sched = v.happyHours.map(w => `<li><span>${daysLabel(w.days)}</span><span>${w.allDay ? "All day" : `${fmt(toMin(w.start))}–${fmt(toMin(w.end))}`}${w.note ? ` · ${esc(w.note)}` : ""}</span></li>`).join("");
-    const openRow = s.open === null ? "" : `<li><span>Now</span><span>${s.open ? "Open" : "Closed"}</span></li>`;
-    const badge = { reported: ["warn", "Call to confirm"], unknown: ["muted", "HH unknown"] }[v.hhStatus];
+    const price = `<span class="price" aria-label="Price ${v.price} of 3">${"$".repeat(v.price)}<span>${"$".repeat(3 - v.price)}</span></span>`;
+    const dist = [mi != null ? `${mi.toFixed(1)} mi away` : "", dm != null ? `~${dm} min drive from ${CAMPUSES[state.campus].name}` : ""].filter(Boolean).join(" · ");
+    const sched = v.happyHours.map(w => `<div><dt>${daysLabel(w.days)}</dt><dd>${w.allDay ? "All day" : `${fmt(toMin(w.start))}–${fmt(toMin(w.end))}`}${w.note ? ` <span class="note">${esc(w.note)}</span>` : ""}</dd></div>`).join("");
+    const openState = s.open === null ? "" : `<span class="open-state ${s.open ? "is-open" : ""}">${s.open ? "Open now" : "Closed now"}</span>`;
+    const confirm = v.hhStatus === "reported" ? `<span class="confirm" title="Info came from older or third-party sources">Call to confirm</span>` : "";
     const srcs = v.sources.map(x => `<a href="${x.url}" target="_blank" rel="noopener">${esc(x.label)}</a>`).join(", ");
+    const tags = [...v.cuisine, ...v.vibes, ...v.outdoor];
     return `<article class="card">
-      <div class="card-top">
+      <header class="card-head">
         <div>
-          <h4>${esc(v.name)}${badge ? ` <span class="badge ${badge[0]}">${badge[1]}</span>` : ""}</h4>
-          <p class="meta">${esc(v.neighborhood)} · ${esc(v.type)} · ${price}</p>
-          <p class="meta">${esc(v.address)}${dist}</p>
+          <p class="kicker">${esc(v.neighborhood)} <span>/</span> ${esc(v.type)} <span>/</span> ${price}</p>
+          <h4>${esc(v.name)}</h4>
         </div>
-        <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${fav ? "♥" : "♡"}</button>
-      </div>
-      <span class="status ${s.cls}">${s.label}</span>
-      <ul class="sched">${sched}${openRow}</ul>
+        <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${ICON.heart}</button>
+      </header>
+      <div class="status-row"><span class="status ${s.cls}">${s.label}</span>${openState}</div>
       <p class="deal">${esc(v.dealText)}</p>
-      <div class="tags">${[...v.cuisine, ...v.vibes, ...v.outdoor].map(x => `<span class="tag">${esc(x)}</span>`).join("")}</div>
-      <p class="src">Source: ${srcs} · checked ${v.checked}</p>
-      <div class="actions">
-        <a class="btn solid" href="${mapsUrl(v)}" target="_blank" rel="noopener">Directions</a>
-        <button class="btn ghost" data-share="${v.id}">Share</button>
-      </div>
+      <dl class="sched">${sched}</dl>
+      <p class="addr">${esc(v.address)}${dist ? `<span class="dist">${dist}</span>` : ""}</p>
+      ${tags.length ? `<p class="tags">${tags.map(esc).join(", ")}</p>` : ""}
+      <footer class="card-foot">
+        <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
+        <button class="act" data-share="${v.id}">${shareLabel}</button>
+        ${confirm}
+        <details class="src"><summary>Source</summary><p>${srcs}. Checked ${v.checked}.</p></details>
+      </footer>
     </article>`;
   }
 
@@ -305,13 +314,13 @@
     }
     setTimeout(() => map.invalidateSize(), 0);
     layer.clearLayers();
-    const color = { live: "#2f7a4f", soon: "#d9a21b", later: "#f28c5b", none: "#9c8b7e" };
+    const color = { live: "#16804f", soon: "#e8a020", later: "#ff6a3d", none: "#9a968f" };
     items.forEach(({ v, s }) => {
       L.circleMarker([v.lat, v.lng], { radius: 9, color: "#fff", weight: 2, fillColor: color[s.cls], fillOpacity: 1 })
         .bindPopup(`<b>${esc(v.name)}</b><br>${esc(s.label)}<br><small>${esc(v.dealText)}</small><br><a href="${mapsUrl(v)}" target="_blank" rel="noopener">Directions</a>`)
         .addTo(layer);
     });
-    if (state.userLoc) L.circleMarker([state.userLoc.lat, state.userLoc.lng], { radius: 7, color: "#2a1e17", fillColor: "#fff", fillOpacity: 1 }).bindPopup("You").addTo(layer);
+    if (state.userLoc) L.circleMarker([state.userLoc.lat, state.userLoc.lng], { radius: 7, color: "#1b1f3b", fillColor: "#fff", fillOpacity: 1 }).bindPopup("You").addTo(layer);
   }
 
   function render() {
@@ -320,7 +329,7 @@
     const when = state.mode === "hhat" ? ` on ${DAYS[t.day]} at ${fmt(t.mins)}` : "";
     $("count").textContent = `${items.length} spot${items.length === 1 ? "" : "s"}${when}`;
     const showLabel = `Show ${items.length} spot${items.length === 1 ? "" : "s"}`;
-    $("homeShow").textContent = `${showLabel} ↓`;
+    $("homeShow").textContent = showLabel;
     $("savedCount").textContent = favs.size;
     const active = Object.keys(groups).reduce((n, k) => n + state[k].size, (state.mode === "any" ? 0 : 1) + (state.campus ? 1 : 0));
     $("toggleFilters").innerHTML = active ? `Filters <span class="n">${active}</span>` : "Filters";
@@ -342,7 +351,7 @@
       const s = statusFor(v, refTime());
       try {
         if (navigator.share) await navigator.share({ title: v.name, text: `${v.name} — ${s.label}`, url });
-        else { await navigator.clipboard.writeText(url); sh.textContent = "Link copied"; setTimeout(() => (sh.textContent = "Share"), 1500); }
+        else { await navigator.clipboard.writeText(url); sh.innerHTML = `${ICON.share}<span>Link copied</span>`; setTimeout(() => (sh.innerHTML = shareLabel), 1500); }
       } catch {}
     }
   };
