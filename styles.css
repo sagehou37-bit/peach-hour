@@ -251,7 +251,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
   .card-foot { gap: 4px; }
   .act, .act-party { padding: 8px 6px; gap: 4px; font-size: .82rem; }
   .act .i { width: 14px; height: 14px; }
-  .pf-logo { width: 18px; height: 18px; }
+  .pf-logo { width: 17px; height: 17px; }
 }
 @container (max-width: 280px) { /* smallest phones: drop the Directions/Share icons */
   .act:not(.act-party) .i { display: none; }

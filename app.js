@@ -415,7 +415,7 @@
       <footer class="card-foot">
         <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
         <button class="act" data-share="${v.id}">${shareLabel}</button>
-        <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create a Partiful</span></a>
+        <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create Partiful</span></a>
       </footer>
     </article>`;
   }
