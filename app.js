@@ -344,7 +344,6 @@
     heart: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
     pin: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.7-6-11a6 6 0 0 1 12 0c0 5.3-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>',
     share: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4m0 0L8 8m4-4 4 4M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>',
-    party: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l5-14 9 9-14 5zM7.5 10.5l6 6M14 4c1 1 1 2 0 3M20 10c-1-1-2-1-3 0M17 3v2M21 7h-2"/></svg>',
   };
   const shareLabel = `${ICON.share}<span>Share</span>`;
 
@@ -417,7 +416,7 @@
       <footer class="card-foot">
         <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
         <button class="act" data-share="${v.id}">${shareLabel}</button>
-        <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful">${ICON.party}<span>Create a Partiful</span></a>
+        <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create a Partiful</span></a>
         <div class="card-meta">${confirm}
         <details class="src"><summary>Source</summary><p>${srcs}. Checked ${v.checked}.</p></details></div>
       </footer>

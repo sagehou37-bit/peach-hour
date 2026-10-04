@@ -200,8 +200,9 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 }
 .act:hover { border-color: var(--ink); }
 .act .i { width: 16px; height: 16px; }
-.act-party { background: var(--peach); border-color: var(--peach); color: #fff; }
-.act-party:hover { background: var(--peach-ink); border-color: var(--peach-ink); color: #fff; }
+.act-party { background: #000; border-color: #000; color: #fff; padding-left: 8px; }
+.act-party:hover { background: #fff; border-color: #000; color: #000; }
+.pf-logo { width: 20px; height: 20px; border-radius: 5px; display: block; }
 .card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%; margin-top: 4px; }
 .confirm { font-size: .78rem; font-weight: 700; color: #8a5a00; background: var(--soon-bg); padding: 3px 8px; border-radius: 6px; }
 .src { margin-left: auto; font-size: .8rem; color: var(--muted); }
