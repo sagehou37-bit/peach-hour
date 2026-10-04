@@ -144,7 +144,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .empty { grid-column: 1 / -1; text-align: center; padding: 56px 16px; color: var(--muted); }
 
 /* ── Card ────────────────────────────────── */
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; container-type: inline-size; }
 .card-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
 .kicker { margin: 0 0 4px; font-size: .82rem; font-weight: 600; color: var(--muted); }
 .kicker span { opacity: .5; margin: 0 2px; }
@@ -192,18 +192,14 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .tag-vibe { background: #e6e8f7; color: #2a2f6b; }
 .tag-out { background: #e2f3e8; color: #1d6b42; }
 
-/* All three actions stay on one row; on narrow cards the small icons drop out first. */
-.card-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; container-type: inline-size; }
+/* All three actions stay on one row; spacing tightens as cards narrow. */
+.card-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; }
 .act {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px;
   background: var(--card); font: inherit; font-size: .86rem; font-weight: 600; color: var(--ink); text-decoration: none; cursor: pointer;
   white-space: nowrap; flex: 1 1 auto; min-width: 0; transition: border-color .12s, background .12s, color .12s;
 }
 .act span { overflow: hidden; text-overflow: ellipsis; }
-@container (max-width: 400px) {
-  .act:not(.act-party) .i { display: none; }
-  .act { padding: 8px 9px; font-size: .84rem; }
-}
 .act:hover { border-color: var(--ink); }
 .act .i { width: 16px; height: 16px; }
 .act-party { background: #000; border-color: #000; color: #fff; padding-left: 8px; flex-grow: 1.4; }
@@ -245,4 +241,18 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
   .toplink { padding: 6px 8px; font-size: .88rem; }
   .form-row { grid-template-columns: 1fr; }
   .finder { padding-top: 40px; }
+}
+
+/* Card action buttons: tighten as the card narrows (kept last so these win). */
+@container (max-width: 400px) {
+  .act { padding: 8px 9px; font-size: .84rem; }
+}
+@container (max-width: 320px) {
+  .card-foot { gap: 4px; }
+  .act, .act-party { padding: 8px 6px; gap: 4px; font-size: .82rem; }
+  .act .i { width: 14px; height: 14px; }
+  .pf-logo { width: 18px; height: 18px; }
+}
+@container (max-width: 280px) { /* smallest phones: drop the Directions/Share icons */
+  .act:not(.act-party) .i { display: none; }
 }
