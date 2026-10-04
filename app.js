@@ -351,7 +351,7 @@
     pin: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.7-6-11a6 6 0 0 1 12 0c0 5.3-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>',
     share: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4m0 0L8 8m4-4 4 4M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>',
   };
-  const shareLabel = `${ICON.share}<span>Share</span>`;
+  const ICON_CHECK = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
   const TAG_GROUPS = [
     { key: "cuisines", field: "cuisine", cls: "food", icon: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1-3 4-3 7h3"/></svg>' },
@@ -420,7 +420,7 @@
       ${tags ? `<div class="tags">${tags}</div>` : ""}
       <footer class="card-foot">
         <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
-        <button class="act" data-share="${v.id}">${shareLabel}</button>
+        <button class="act act-share" data-share="${v.id}" aria-label="Share ${esc(v.name)}" title="Share">${ICON.share}<span class="share-lbl">Share</span></button>
         <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create Partiful</span></a>
       </footer>
     </article>`;
@@ -482,7 +482,8 @@
       const s = statusFor(v, refTime());
       try {
         if (navigator.share) await navigator.share({ title: v.name, text: `${v.name} — ${s.label}`, url });
-        else { await navigator.clipboard.writeText(url); sh.innerHTML = `${ICON.share}<span>Link copied</span>`; setTimeout(() => (sh.innerHTML = shareLabel), 1500); }
+        else { await navigator.clipboard.writeText(url); sh.innerHTML = `${ICON_CHECK}<span class="share-lbl">Copied</span>`; sh.title = "Link copied";
+        setTimeout(() => { sh.innerHTML = `${ICON.share}<span class="share-lbl">Share</span>`; sh.title = "Share"; }, 1500); }
       } catch {}
     }
   };
