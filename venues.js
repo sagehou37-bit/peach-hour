@@ -563,6 +563,18 @@
       deals: ["cocktails"], dealText: "Whiskey Wednesdays: half-priced whiskey cocktails",
       hhStatus: "reported", sources: [{ label: "AJC (2018)", url: "https://www.ajc.com/events/food--wine/dekalb-spots-with-food-and-drink-specials-you-won-want-miss/9jVhuGwrLixr969EjGibVP/" }] },
 
+    { id: "parkers-on-ponce", name: "Parker's on Ponce", neighborhood: "Decatur",
+      address: "116 E Ponce de Leon Ave, Decatur", lat: 33.77573, lng: -84.29588, price: 3, type: "Restaurant",
+      website: "https://parkersonponce.com/", zip: "30030",
+      cuisine: ["Steakhouse", "Seafood"], vibes: ["Date night"], outdoor: [], hours: null,
+      happyHours: [
+        { days: [1], start: "17:00", end: "22:00", note: "Half-price Parker's Martini & Manhattan" },
+        { days: [3], start: "17:00", end: "22:00", note: "50% off bottles of wine" },
+        { days: [4], start: "17:00", end: "22:00", note: "Half-price specialty cocktails" },
+      ],
+      deals: ["cocktails", "wine"], dealText: "Mon: half-price martinis & Manhattans · Wed: 50% off wine bottles · Thu: half-price specialty cocktails · Fri: featured whiskeys (not for parties of 6+)",
+      hhStatus: "confirmed", sources: [{ label: "parkersonponce.com (specials)", url: "https://parkersonponce.com/decatur-dekalb-parkers-on-ponce-happy-hours-specials" }] },
+
     { id: "brick-store", name: "Brick Store Pub", neighborhood: "Decatur",
       address: "125 E Court Sq, Decatur", lat: 33.77514, lng: -84.29581, price: 2, type: "Pub",
       website: "https://www.brickstorepub.com/", zip: "30030",
