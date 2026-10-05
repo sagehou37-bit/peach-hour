@@ -648,6 +648,15 @@
       deals: ["food"], dealText: "Weekday happy hour specials · walkable from Emory's campus",
       hhStatus: "reported", sources: [{ label: "OpenTable listing", url: "https://www.opentable.com/r/srithai-thai-kitchen-and-sushi-bar-emory-point-atlanta" }] },
 
+    { id: "general-muir", name: "The General Muir", neighborhood: "Emory / Druid Hills",
+      address: "1540 Avenue Pl, Ste B-230 (Emory Point)", lat: 33.80140, lng: -84.32690, price: 2, type: "Restaurant",
+      website: "https://www.thegeneralmuir.com/", zip: "30329",
+      cuisine: ["American", "Sandwiches", "Brunch"], vibes: ["Cozy", "Groups"], outdoor: [],
+      hours: days({ 0: ["08:00", "20:30"], 1: ["08:00", "14:00"], 2: ["08:00", "14:00"], 3: ["08:00", "20:30"], 4: ["08:00", "20:30"], 5: ["08:00", "21:00"], 6: ["08:00", "21:00"] }),
+      happyHours: [{ days: [3, 4, 5], start: "15:00", end: "17:30", note: "At the bar" }],
+      deals: ["cocktails", "food"], dealText: "Cocktail specials & small plates at the bar · NY-style Jewish deli with a full bar · walkable from Emory's campus",
+      hhStatus: "confirmed", sources: [{ label: "thegeneralmuir.com", url: "https://www.thegeneralmuir.com/" }] },
+
     { id: "hopdoddy-druid-hills", name: "Hopdoddy Burger Bar", neighborhood: "Emory / Druid Hills",
       address: "2470 Briarcliff Rd NE, Ste 47", lat: 33.82681, lng: -84.33269, price: 1, type: "Restaurant",
       website: "https://www.hopdoddy.com/locations/druidhills", zip: "30329",
