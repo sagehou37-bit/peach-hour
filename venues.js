@@ -432,8 +432,8 @@
       website: "https://eatboho.com/", zip: "30308",
       cuisine: ["Mexican / Tacos"], vibes: ["Groups"], outdoor: [], hours: [0, 1, 2, 3, 4, 5, 6].map(() => ["11:00", "22:00"]),
       happyHours: [{ days: [1], allDay: true, note: "$5 Margarita Monday" }],
-      deals: ["cocktails"], dealText: "$5 Margarita Monday · posts rotating deals on social media",
-      hhStatus: "reported", sources: [S.ramb] },
+      deals: ["cocktails"], dealText: "$5 house margaritas every Monday",
+      hhStatus: "confirmed", sources: [{ label: "Instagram @eatboho (Sep 21, 2026)", url: "https://www.instagram.com/eatboho/" }] },
 
     // ── West Midtown / Home Park (Georgia Tech) ───────────────────
     { id: "rocky-mountain", name: "Rocky Mountain Pizza", neighborhood: "Home Park",
@@ -500,9 +500,9 @@
       website: "https://www.doublezeroatl.com/", zip: "30307",
       cuisine: ["Italian", "Pizza"], vibes: ["Date night", "Games", "Groups"], outdoor: [],
       hours: days({ 1: ["17:00", "21:00"], 2: ["17:00", "21:00"], 3: ["17:00", "21:00"], 4: ["17:00", "21:00"], 5: ["17:00", "22:00"], 6: ["17:00", "22:00"] }),
-      happyHours: [{ days: [1, 2, 3, 4, 5, 6], start: "17:00", end: "18:00" }],
-      deals: ["cocktails", "beer", "food"], dealText: "$9 Negronis · $5 Peronis · $5 meatballs & cauliflower · $9 pastas & cheese bread · shuffleboard & foosball in the bar · walk from campus",
-      hhStatus: "reported", sources: [{ label: "Yelp listing", url: "https://www.yelp.com/biz/double-zero-atlanta-3" }, { label: "doublezeroatl.com (hours)", url: "https://www.doublezeroatl.com/" }] },
+      happyHours: [{ days: [1, 2, 3, 4, 5, 6], start: "17:00", end: "18:00", note: "Aperitivo hour" }, { days: [1], start: "17:00", end: "21:00", note: "Half-off bottles of wine" }],
+      deals: ["cocktails", "beer", "wine", "food"], dealText: "$9 Negronis · $5 Peronis · small plates & pastas · Mondays: half-off wine bottles 5–9PM · shuffleboard & foosball in the bar · walk from campus",
+      hhStatus: "confirmed", sources: [{ label: "Instagram @doublezeroatl (Sep 30, 2026)", url: "https://www.instagram.com/doublezeroatl/" }, { label: "doublezeroatl.com (hours)", url: "https://www.doublezeroatl.com/" }] },
 
     { id: "poboy-shop", name: "The Po'Boy Shop & Basement Bar", neighborhood: "North Decatur",
       address: "1369 Clairmont Rd, Decatur", lat: 33.79343, lng: -84.30548, price: 1, type: "Bar",
@@ -613,9 +613,14 @@
       address: "421 Edgewood Ave SE", lat: 33.75427, lng: -84.37358, price: 1, type: "Sports bar",
       zip: "30312",
       cuisine: [], vibes: ["Sports", "Late night"], outdoor: [], hours: null,
-      happyHours: [{ days: [1, 3, 4, 5], start: "17:00", end: "19:00" }],
-      deals: ["food", "cocktails"], dealText: "Daily specials like $5 hookah & $3 lamb chops",
-      hhStatus: "reported", sources: [{ label: "Yelp listing", url: "https://www.yelp.com/biz/happy-hour-atl-atlanta" }] },
+      happyHours: [
+        { days: [2], start: "17:00", end: "22:00", note: "Tito's + Tacos Tuesday" },
+        { days: [3], allDay: true, note: "Wishful Wednesdays: $1 wings, $2 tacos, $20 pitchers" },
+        { days: [4], allDay: true, note: "Football night: $1 wings, $5 shots" },
+        { days: [0], allDay: true, note: "NFL Sunday: $1 wings, $5 shots" },
+      ],
+      deals: ["food", "cocktails"], dealText: "Tue 5–10PM: $2 tacos, $10 nachos, $3 Tito's shots, $5 margs & lemon drops, $15 hookahs · Wed: $1 wings / $2 tacos + $20 pitchers · Thu & Sun football: $1 wings, $5 shots, 2-for-$25 pasta · closed Mondays",
+      hhStatus: "confirmed", sources: [{ label: "Instagram @happyhour.atl (Sep–Oct 2026)", url: "https://www.instagram.com/happyhour.atl/" }] },
 
     // ── Buckhead ──────────────────────────────────────────────────
     { id: "roshambo", name: "Roshambo", neighborhood: "Buckhead",
