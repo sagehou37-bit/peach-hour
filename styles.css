@@ -412,6 +412,8 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 /* Tags as small outline pills: hairline border, no fill or icons. Still clickable filters. */
 .book .tags { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
 .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.book .tags.one-line { flex-direction: row; flex-wrap: wrap; align-items: center; }
+.book .tags.one-line .tag-row { display: contents; }
 .book .tag { background: none !important; color: var(--muted) !important; border: 1px solid var(--line); border-radius: 999px; padding: 3px 11px; font-size: .78rem; font-weight: 600; letter-spacing: .01em; transition: border-color .12s, color .12s; }
 .book .tag .i { display: none; }
 .book .tag:hover { filter: none; border-color: var(--peach); color: var(--peach-ink) !important; }
@@ -419,3 +421,6 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 /* For now: Create Partiful matches the other card buttons (white, thin border) instead of black. */
 .book .act-party { background: var(--card); border-color: var(--line); color: var(--ink); }
 .book .act-party:hover { background: var(--card); border-color: var(--ink); color: var(--ink); }
+
+/* The ↗ after a bar's name matches the peach dashes before The Deals / When / Where. */
+.card h4 a::after { color: var(--peach); -webkit-text-stroke: 0; }

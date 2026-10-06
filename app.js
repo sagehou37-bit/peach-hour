@@ -388,6 +388,9 @@
   };
   const ICON_CHECK = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
+  // Phones/tablets open Partiful in the same tab: iOS only hands partiful.com/create to the
+  // Partiful app reliably from a same-tab tap (a new tab often needed a second tap).
+  const TOUCH = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
   const TAG_GROUPS = [
     { key: "cuisines", field: "cuisine", cls: "food", icon: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1-3 4-3 7h3"/></svg>' },
     { key: "vibes", field: "vibes", cls: "vibe", icon: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>' },
@@ -436,10 +439,10 @@
     // Deal text is written as "a · b · c"; show it as a short list instead of a paragraph.
     const deals = v.dealText.split(/\s+·\s+/).map(d => `<li>${esc(d.charAt(0).toUpperCase() + d.slice(1))}</li>`).join("");
     const confirm = v.hhStatus === "reported" ? `<span class="confirm" title="Info came from older or third-party sources">Call to confirm</span>` : "";
-    // Tags in two rows: food on top, then vibe + outdoor seating ("about the place").
+    // Tags in two rows: food on top, then the place (outdoor seating first, so it survives trimming, then vibes).
     const tagBtns = gs => gs.flatMap(g => (v[g.field] || []).map(x =>
       `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(titleCase(x))}</button>`)).join("");
-    const tags = [TAG_GROUPS.slice(0, 1), TAG_GROUPS.slice(1)].map(tagBtns).filter(Boolean)
+    const tags = [[TAG_GROUPS[0]], [TAG_GROUPS[2], TAG_GROUPS[1]]].map(tagBtns).filter(Boolean)
       .map(row => `<div class="tag-row">${row}</div>`).join("");
     return `<article class="card book">
       <div class="page page-photos">
@@ -477,7 +480,7 @@
           <div class="acts">
             <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
             <button class="act act-share" data-share="${v.id}" aria-label="Share ${esc(v.name)}" title="Share">${ICON.share}<span class="share-lbl">Share</span></button>
-            <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create Partiful</span></a>
+            <a class="act act-party" href="${partifulUrl(v)}"${TOUCH ? "" : ' target="_blank" rel="noopener"'} title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create Partiful</span></a>
           </div>
         </footer>
       </div>
@@ -538,8 +541,29 @@
     if (state.view === "list") {
       $("list").innerHTML = items.length ? items.map(card).join("")
         : `<p class="empty">Nothing matches those filters. Try loosening a few.</p>`;
+      fitTags();
     } else renderMap(items);
   }
+
+  // Tags: one line when everything fits; otherwise two lines (food, then the place),
+  // each kept to a single line by hiding the tags that would wrap. Never more than two lines.
+  function fitTags() {
+    const wraps = els => els.some(t => t.offsetTop > els[0].offsetTop);
+    for (const box of document.querySelectorAll("#list .tags")) {
+      const all = [...box.querySelectorAll(".tag")];
+      all.forEach(t => { t.hidden = false; });
+      box.classList.add("one-line");
+      if (!all.length || !wraps(all)) continue;
+      box.classList.remove("one-line");
+      for (const row of box.querySelectorAll(".tag-row")) {
+        const tags = [...row.children], top = tags[0].offsetTop;
+        tags.forEach(t => { if (t.offsetTop > top) t.hidden = true; });
+      }
+    }
+  }
+  let fitTimer;
+  window.addEventListener("resize", () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitTags, 120); });
+  document.fonts?.ready.then(fitTags);
 
   $("list").onclick = async e => {
     const f = e.target.closest("[data-fav]"), sh = e.target.closest("[data-share]"), tg = e.target.closest("[data-tag]");
