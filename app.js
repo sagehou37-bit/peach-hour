@@ -19,7 +19,7 @@
   const state = {
     q: "", mode: "any", pickDay: 0, pickTime: 17 * 60,
     hoods: new Set(), prices: new Set(), deals: new Set(), cuisines: new Set(),
-    vibes: new Set(), types: new Set(), outdoor: new Set(), conf: new Set(), sort: "smart", view: "list",
+    vibes: new Set(), types: new Set(), outdoor: new Set(), sort: "smart", view: "list",
     favsOnly: false, userLoc: null, campus: "", maxDrive: 15,
   };
 
@@ -144,14 +144,16 @@
     types: { els: ["types"], values: uniq("type") },
     outdoor: { els: ["outdoor"], values: uniq("outdoor") },
     cuisines: { els: ["cuisines"], values: uniq("cuisine") },
-    conf: { els: ["conf"], values: ["confirmed", "reported"], label: c => ({ confirmed: "Confirmed", reported: "Call to confirm" })[c] },
   };
+  // Button labels in Title Case ("Beltline access" -> "Beltline Access"); small words stay lower.
+  const SMALL = new Set(["a", "an", "and", "of", "the", "to", "in", "on", "at", "for", "or"]);
+  const titleCase = str => String(str).replace(/[A-Za-z][^\s/–-]*/g, (w, i) => (i > 0 && SMALL.has(w.toLowerCase()) ? w.toLowerCase() : w[0].toUpperCase() + w.slice(1)));
   for (const [key, g] of Object.entries(groups)) {
     for (const el of g.els) {
       g.values.forEach((val, i) => {
         const b = document.createElement("button");
         b.className = "chip"; b.type = "button"; b.dataset.k = key; b.dataset.i = i;
-        b.textContent = g.label ? g.label(val) : val;
+        b.textContent = g.label ? g.label(val) : titleCase(val);
         b.onclick = () => { state[key].has(val) ? state[key].delete(val) : state[key].add(val); update(); };
         $(el).appendChild(b);
       });
@@ -188,7 +190,7 @@
     const m = e.target.closest(".mode-seg button");
     if (m) { state.mode = m.dataset.mode; update(); }
     const c = e.target.closest(".campus-seg button");
-    if (c) { state.campus = c.dataset.campus; update(); }
+    if (c) { state.campus = state.campus === c.dataset.campus ? "" : c.dataset.campus; update(); }
   });
 
   $("view").onclick = e => {
@@ -217,7 +219,7 @@
   function setMore(open) {
     $("moreGrid").hidden = !open;
     $("moreFilters").setAttribute("aria-expanded", open);
-    $("moreFilters").textContent = open ? "Fewer filters" : "More filters";
+    $("moreFilters").textContent = open ? "Fewer Filters" : "More Filters";
   }
   $("moreFilters").onclick = () => setMore($("moreGrid").hidden);
   $("toggleFilters").onclick = () => { setMore(true); scrollToEl($("finder")); };
@@ -333,21 +335,36 @@
 
   // ── filtering + rendering ─────────────────────────────────────
   const anyOf = (set, arr) => !set.size || [].concat(arr).some(x => set.has(x));
-  let parsed = null;
+  let parsed = null, scored = [];
+  // Which venue field each chip group filters on.
+  const FIELD = { hoods: v => v.neighborhood, prices: v => v.price, deals: v => v.deals, vibes: v => v.vibes,
+    types: v => v.type, outdoor: v => v.outdoor, cuisines: v => v.cuisine };
+  // Does a venue pass every active filter? `skip` ignores one chip group (used to count its options).
+  function passes({ v, s, dm }, skip) {
+    if (state.campus && dm > state.maxDrive) return false;
+    if (parsed && !matchesQuery(v, parsed)) return false;
+    if ((state.mode === "hhnow" || state.mode === "hhat") && !s.hh) return false;
+    if (state.mode === "opennow" && s.open !== true) return false;
+    if (state.favsOnly && !favs.has(v.id)) return false;
+    return Object.entries(FIELD).every(([k, f]) => k === skip || anyOf(state[k], f(v)));
+  }
+  // Hide filter options that would leave zero spots (selected ones always stay visible).
+  function syncAvailability() {
+    for (const key of Object.keys(groups)) {
+      const pool = scored.filter(e => passes(e, key));
+      all(`.chip[data-k="${key}"]`).forEach(b => {
+        const val = groups[key].values[b.dataset.i];
+        b.hidden = !state[key].has(val) && !pool.some(e => [].concat(FIELD[key](e.v)).includes(val));
+      });
+    }
+  }
   function filtered() {
     parsed = state.q ? parseQuery(state.q) : null;
     // A time typed in the search box ("4pm", "tuesday") drives the card statuses too.
     const t = parsed && !parsed.now && parsed.day != null
       ? { day: parsed.day, mins: parsed.mins ?? 17 * 60, live: false } : refTime();
-    return VENUES.map(v => ({ v, s: statusFor(v, t), mi: milesTo(v), dm: driveMin(v) })).filter(({ v, s, dm }) => {
-      if (state.campus && dm > state.maxDrive) return false;
-      if (parsed && !matchesQuery(v, parsed)) return false;
-      if (state.mode === "hhnow" || state.mode === "hhat") { if (!s.hh) return false; }
-      if (state.mode === "opennow" && s.open !== true) return false;
-      if (state.favsOnly && !favs.has(v.id)) return false;
-      return anyOf(state.hoods, v.neighborhood) && anyOf(state.prices, v.price) && anyOf(state.deals, v.deals)
-        && anyOf(state.cuisines, v.cuisine) && anyOf(state.vibes, v.vibes) && anyOf(state.types, v.type) && anyOf(state.outdoor, v.outdoor) && anyOf(state.conf, v.hhStatus);
-    }).sort((a, b) => {
+    scored = VENUES.map(v => ({ v, s: statusFor(v, t), mi: milesTo(v), dm: driveMin(v) }));
+    return scored.filter(e => passes(e, null)).sort((a, b) => {
       if (state.sort === "near" && a.mi != null) return a.mi - b.mi;
       if (state.sort === "near" && a.dm != null) return a.dm - b.dm;
       if (state.sort === "price") return a.v.price - b.v.price || a.s.rank - b.s.rank;
@@ -413,7 +430,7 @@
 
     const confirm = v.hhStatus === "reported" ? `<span class="confirm" title="Info came from older or third-party sources">Call to confirm</span>` : "";
     const tags = TAG_GROUPS.flatMap(g => (v[g.field] || []).map(x =>
-      `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(x)}</button>`)).join("");
+      `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(titleCase(x))}</button>`)).join("");
     return `<article class="card">
       <header class="card-head">
         <div>
@@ -468,10 +485,11 @@
     renderItems(items);
   }
   function renderItems(items) {
+    syncAvailability();
     const t = refTime();
     const when = state.mode === "hhat" ? ` on ${DAYS[t.day]} at ${fmt(t.mins)}` : "";
     $("count").textContent = `${items.length} spot${items.length === 1 ? "" : "s"}${when}`;
-    const showLabel = `Show ${items.length} spot${items.length === 1 ? "" : "s"}`;
+    const showLabel = `Show ${items.length} Spot${items.length === 1 ? "" : "s"}`;
     $("homeShow").textContent = showLabel;
     $("savedCount").textContent = favs.size;
     const active = Object.keys(groups).reduce((n, k) => n + state[k].size, (state.mode === "any" ? 0 : 1) + (state.campus ? 1 : 0));

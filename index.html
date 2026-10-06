@@ -33,7 +33,7 @@
       <a class="topbar-brand" href="#top"><span class="mark" aria-hidden="true"></span>Peach Hour</a>
       <div class="topbar-links">
         <button class="toplink" id="navSaved" aria-pressed="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>Saved <span class="n" id="savedCount">0</span></button>
-        <a class="toplink" href="#contact" data-topic="listing">List your happy hour</a>
+        <a class="toplink" href="#contact" data-topic="listing">List Your Happy Hour</a>
         <a class="toplink" href="#contact" data-topic="question">Contact</a>
       </div>
     </div>
@@ -44,7 +44,7 @@
       <div class="sunset" aria-hidden="true"><span class="sun"></span></div>
       <h1>Peach Hour</h1>
       <p class="tagline">Every happy hour from Buckhead, to Inman Park, to VaHi to Decatur.</p>
-      <a class="cta" href="#finder" id="heroCta">Find your happy hour</a>
+      <a class="cta" href="#finder" id="heroCta">Find Your Happy Hour</a>
       <p class="clock" id="clock"></p>
     </div>
   </header>
@@ -56,10 +56,10 @@
       <div class="finder-col">
         <h3>When</h3>
         <div class="seg mode-seg">
-          <button data-mode="any" class="on">Any time</button>
-          <button data-mode="hhnow">Happy hour now</button>
-          <button data-mode="opennow">Open now</button>
-          <button data-mode="hhat">Pick a time</button>
+          <button data-mode="any" class="on">Any Time</button>
+          <button data-mode="hhnow">Happy Hour Now</button>
+          <button data-mode="opennow">Open Now</button>
+          <button data-mode="hhat">Pick a Time</button>
         </div>
         <div class="pick" hidden>
           <select class="pickDay" aria-label="Day"></select>
@@ -73,7 +73,6 @@
       <div class="finder-col">
         <h3>Near campus</h3>
         <div class="seg campus-seg">
-          <button data-campus="" class="on">Anywhere</button>
           <button data-campus="emory">Emory</button>
           <button data-campus="gt">Georgia Tech</button>
         </div>
@@ -88,17 +87,20 @@
     </div>
 
     <div class="finder-grid more" id="moreGrid" hidden>
-      <div><h3>Price</h3><div class="chips" id="prices"></div></div>
-      <div><h3>Spot type</h3><div class="chips" id="types"></div></div>
-      <div><h3>Outdoor seating</h3><div class="chips" id="outdoor"></div></div>
-      <div><h3>Food type</h3><div class="chips" id="cuisines"></div></div>
-      <div><h3>Data confidence</h3><div class="chips" id="conf"></div></div>
+      <div class="finder-col">
+        <h3>Price</h3><div class="chips" id="prices"></div>
+        <h3>Spot type</h3><div class="chips" id="types"></div>
+        <h3>Outdoor seating</h3><div class="chips" id="outdoor"></div>
+      </div>
+      <div class="finder-col">
+        <h3>Food type</h3><div class="chips" id="cuisines"></div>
+      </div>
     </div>
 
     <div class="finder-actions">
-      <button class="btn solid apply" id="homeShow">Show spots</button>
-      <button class="btn ghost more-btn" id="moreFilters" aria-expanded="false" aria-controls="moreGrid">More filters</button>
-      <button class="link" id="clearAll">Clear all</button>
+      <button class="btn solid apply" id="homeShow">Show Spots</button>
+      <button class="btn ghost more-btn" id="moreFilters" aria-expanded="false" aria-controls="moreGrid">More Filters</button>
+      <button class="link" id="clearAll">Clear All</button>
     </div>
   </section>
 
@@ -115,9 +117,9 @@
         <button class="btn ghost filters-btn" id="toggleFilters">Filters</button>
         <p id="count" class="count"></p>
         <div class="toolbar-right">
-          <button class="btn ghost" id="locate">Near me</button>
+          <button class="btn ghost" id="locate">Near Me</button>
           <select id="sort" aria-label="Sort">
-            <option value="smart">Happening soonest</option>
+            <option value="smart">Happening Soonest</option>
             <option value="near">Nearest</option>
             <option value="price">Cheapest</option>
             <option value="name">A–Z</option>
