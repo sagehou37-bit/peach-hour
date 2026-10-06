@@ -225,5 +225,13 @@ window.PHOTOS = {
   "assets/venues/general-muir-1.jpg",
   "assets/venues/general-muir-2.jpg",
   "assets/venues/general-muir-3.jpg"
+ ],
+ "bar-bacoa": [
+  "assets/venues/bar-bacoa-1.jpg",
+  "assets/venues/bar-bacoa-2.jpg",
+  "assets/venues/bar-bacoa-3.jpg"
+ ],
+ "ghee": [
+  "assets/venues/ghee-1.jpg"
  ]
 };
