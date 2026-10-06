@@ -408,3 +408,10 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
   .nameplate h4 { font-size: 1.5rem; }
   .page-info { padding: 16px 16px 14px; }
 }
+
+/* Tags as a light text line ("Mexican / Tacos · Groups · Patio"), not pills. Still clickable filters. */
+.book .tags { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 0; }
+.book .tag { background: none !important; padding: 0; border-radius: 0; font-size: .86rem; font-weight: 600; color: var(--peach-ink) !important; }
+.book .tag .i { display: none; }
+.book .tag + .tag::before { content: "·"; margin: 0 7px; color: var(--muted); font-weight: 400; }
+.book .tag:hover { filter: none; text-decoration: underline; text-underline-offset: 3px; }
