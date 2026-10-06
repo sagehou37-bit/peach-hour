@@ -414,3 +414,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .book .tag { background: none !important; color: var(--muted) !important; border: 1px solid var(--line); border-radius: 999px; padding: 3px 11px; font-size: .78rem; font-weight: 600; letter-spacing: .01em; transition: border-color .12s, color .12s; }
 .book .tag .i { display: none; }
 .book .tag:hover { filter: none; border-color: var(--peach); color: var(--peach-ink) !important; }
+
+/* For now: Create Partiful matches the other card buttons (white, thin border) instead of black. */
+.book .act-party { background: var(--card); border-color: var(--line); color: var(--ink); }
+.book .act-party:hover { background: var(--card); border-color: var(--ink); color: var(--ink); }
