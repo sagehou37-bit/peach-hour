@@ -1,4 +1,4 @@
-/* Peach Hour: dusk navy + peach, Bricolage Grotesque / Figtree */
+/* Peach Hour: dusk navy + peach, Instrument Serif / DM Sans */
 :root {
   --dusk: #1b1f3b;
   --dusk-2: #2a2f55;
@@ -15,7 +15,8 @@
   --soon-bg: #fff1d6;
   --later-bg: #ffe6dc;
   --topbar-h: 60px;
-  --display: "Bricolage Grotesque", "Figtree", system-ui, sans-serif;
+  --display: "Instrument Serif", Georgia, serif;
+  --sans: "DM Sans", system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .tag-food, :root[data-theme="dark"] .tag-food { background: #3d2017; color: #ffb59a; }
@@ -34,17 +35,17 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { scroll-padding-top: calc(var(--topbar-h) + 8px); }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 Figtree, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
 .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 a { color: var(--peach-ink); }
-h1, h2, h4 { font-family: var(--display); letter-spacing: -.02em; }
+h1, h2, h4 { font-family: var(--display); font-weight: 400; letter-spacing: -.01em; }
 .i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
 /* ── Top bar ─────────────────────────────── */
 .topbar { position: sticky; top: 0; z-index: 1500; background: var(--dusk); color: #fff; }
 .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: var(--topbar-h); flex-wrap: wrap; }
-.topbar-brand, .foot-brand { display: inline-flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 800; font-size: 1.25rem; color: inherit; text-decoration: none; letter-spacing: -.02em; }
+.topbar-brand, .foot-brand { display: inline-flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 400; font-size: 1.5rem; color: inherit; text-decoration: none; letter-spacing: 0; }
 .mark { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(var(--peach-2), var(--peach)); position: relative; overflow: hidden; }
 .mark::after { content: ""; position: absolute; left: 0; right: 0; top: 58%; height: 3px; background: var(--dusk); box-shadow: 0 5px 0 var(--dusk); }
 .topbar-links { display: flex; gap: 2px; flex-wrap: wrap; }
@@ -69,11 +70,11 @@ h1, h2, h4 { font-family: var(--display); letter-spacing: -.02em; }
   background: repeating-linear-gradient(to bottom, transparent 0 20px, #2f2648 20px 26px);
   -webkit-mask: linear-gradient(transparent 22%, #000 22%); mask: linear-gradient(transparent 22%, #000 22%);
 }
-.hero h1 { font-size: clamp(3.4rem, 12vw, 7.5rem); font-weight: 800; line-height: .9; margin: 0; letter-spacing: -.045em; }
+.hero h1 { font-size: clamp(3.8rem, 13vw, 8.5rem); font-weight: 400; line-height: .9; margin: 0; letter-spacing: -.02em; }
 .tagline { font-size: clamp(1.05rem, 2.6vw, 1.3rem); color: rgba(255, 255, 255, .78); margin: 20px auto 32px; max-width: 34ch; }
 .cta {
   display: inline-flex; align-items: center; gap: 10px; background: var(--peach); color: #fff; text-decoration: none;
-  font-family: var(--display); font-weight: 700; font-size: 1.2rem; padding: 16px 28px; border-radius: 12px;
+  font-family: var(--sans); font-weight: 700; font-size: 1.1rem; padding: 16px 28px; border-radius: 12px;
   box-shadow: 0 10px 30px rgba(255, 106, 61, .35); transition: transform .15s ease, box-shadow .15s ease;
 }
 .cta::after { content: ""; width: 10px; height: 10px; border-right: 2.5px solid; border-bottom: 2.5px solid; transform: rotate(45deg) translateY(-3px); }
@@ -82,9 +83,9 @@ h1, h2, h4 { font-family: var(--display); letter-spacing: -.02em; }
 
 /* ── Finder ──────────────────────────────── */
 .finder { padding-top: 56px; padding-bottom: 8px; scroll-margin-top: calc(var(--topbar-h) + 8px); }
-.finder h2 { font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 800; margin: 0; line-height: 1; }
+.finder h2 { font-size: clamp(2.3rem, 5.5vw, 3.2rem); font-weight: 400; margin: 0; line-height: 1; }
 .finder-sub { color: var(--muted); margin: 8px 0 8px; }
-.finder h3 { font-family: Figtree, sans-serif; font-size: .95rem; font-weight: 700; margin: 22px 0 10px; letter-spacing: 0; }
+.finder h3 { font-family: var(--sans); font-size: .95rem; font-weight: 700; margin: 22px 0 10px; letter-spacing: 0; }
 .finder-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
 .finder-grid.more { margin-top: 18px; padding-top: 6px; border-top: 1px solid var(--line); }
 .finder-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 30px; padding-bottom: 32px; border-bottom: 1px solid var(--line); }
@@ -135,7 +136,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .toolbar-right { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .toolbar .btn { padding: 8px 14px; }
 .toolbar select { padding: 8px 10px; }
-.count { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.15rem; }
+.count { margin: 0; font-family: var(--display); font-weight: 400; font-size: 1.45rem; }
 .filters-btn .n { margin-left: 2px; }
 
 .viewbar { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 20px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 4px; gap: 4px; }
@@ -213,7 +214,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 
 /* ── Map ─────────────────────────────────── */
 .map { height: 70vh; min-height: 420px; border-radius: 12px; border: 1px solid var(--line); }
-.leaflet-popup-content { font-family: Figtree, sans-serif; }
+.leaflet-popup-content { font-family: var(--sans); }
 .leaflet-popup-content b { font-family: var(--display); font-size: 1.05rem; }
 
 /* ── Contact ─────────────────────────────── */
@@ -225,7 +226,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .contact::backdrop { background: rgba(27, 31, 59, .55); }
 .contact-close { position: absolute; top: 12px; right: 14px; background: none; border: 0; font-size: 1.8rem; line-height: 1; color: var(--muted); cursor: pointer; padding: 4px 8px; }
 .contact-close:hover { color: var(--ink); }
-.contact h2 { font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800; margin: 0; line-height: 1; }
+.contact h2 { font-size: clamp(2rem, 4.5vw, 2.7rem); font-weight: 400; margin: 0; line-height: 1; }
 .contact-sub { color: var(--muted); margin: 10px 0 22px; max-width: 52ch; }
 .contact form { display: grid; gap: 14px; }
 .contact label { display: grid; gap: 6px; font-weight: 600; font-size: .92rem; }
@@ -294,13 +295,13 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
   box-shadow: 0 10px 26px -10px rgba(17, 19, 42, .55), 0 0 0 1px var(--line);
 }
 .nameplate .kicker { margin: 0 0 3px; font-size: .72rem; letter-spacing: .02em; }
-.nameplate h4 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; letter-spacing: -.02em; font-size: clamp(1.3rem, 2.2vw, 1.7rem); line-height: 1.05; }
+.nameplate h4 { font-family: var(--display); font-weight: 400; letter-spacing: -.005em; font-size: clamp(1.7rem, 2.8vw, 2.15rem); line-height: 1; }
 
 /* Right page: the details, grouped into labeled sections */
 .page-info { padding: 22px 26px 18px 36px; display: flex; flex-direction: column; gap: 16px; container: info / inline-size; }
 .info-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .info-top .heart { width: 36px; height: 36px; }
-.sec-label { margin: 0 0 8px; font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.sec-label { margin: 0 0 8px; font-family: var(--display); font-style: italic; font-weight: 400; font-size: 1.3rem; line-height: 1.1; letter-spacing: 0; color: var(--ink); display: flex; align-items: center; gap: 10px; }
 .sec-label::before { content: ""; width: 14px; height: 2px; border-radius: 2px; background: var(--peach); }
 .info-grid { display: grid; gap: 18px; }
 .sec-side { display: grid; gap: 18px; align-content: start; }
@@ -345,7 +346,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
   .ph-split img { height: 100%; width: calc(200% + 8px); }
   .ph-split.ph-low img { top: 0; bottom: auto; left: auto; right: 0; }
   .nameplate { left: 50%; right: auto; width: min(78%, 280px); transform: translate(-50%, -50%); top: calc(50% - 2px); }
-  .nameplate h4 { font-size: 1.3rem; }
+  .nameplate h4 { font-size: 1.75rem; }
 }
 
 /* Card action buttons: tighten as the card narrows (kept last so these win). */
