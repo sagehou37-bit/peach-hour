@@ -409,9 +409,8 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
   .page-info { padding: 16px 16px 14px; }
 }
 
-/* Tags as a light text line ("Mexican / Tacos · Groups · Patio"), not pills. Still clickable filters. */
-.book .tags { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 0; }
-.book .tag { background: none !important; padding: 0; border-radius: 0; font-size: .86rem; font-weight: 600; color: var(--peach-ink) !important; }
+/* Tags as small outline pills: hairline border, no fill or icons. Still clickable filters. */
+.book .tags { gap: 6px; }
+.book .tag { background: none !important; color: var(--muted) !important; border: 1px solid var(--line); border-radius: 999px; padding: 3px 11px; font-size: .78rem; font-weight: 600; letter-spacing: .01em; transition: border-color .12s, color .12s; }
 .book .tag .i { display: none; }
-.book .tag + .tag::before { content: "·"; margin: 0 7px; color: var(--muted); font-weight: 400; }
-.book .tag:hover { filter: none; text-decoration: underline; text-underline-offset: 3px; }
+.book .tag:hover { filter: none; border-color: var(--peach); color: var(--peach-ink) !important; }
