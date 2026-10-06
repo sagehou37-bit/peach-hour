@@ -410,7 +410,8 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 }
 
 /* Tags as small outline pills: hairline border, no fill or icons. Still clickable filters. */
-.book .tags { gap: 6px; }
+.book .tags { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
 .book .tag { background: none !important; color: var(--muted) !important; border: 1px solid var(--line); border-radius: 999px; padding: 3px 11px; font-size: .78rem; font-weight: 600; letter-spacing: .01em; transition: border-color .12s, color .12s; }
 .book .tag .i { display: none; }
 .book .tag:hover { filter: none; border-color: var(--peach); color: var(--peach-ink) !important; }

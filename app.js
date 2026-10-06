@@ -436,8 +436,11 @@
     // Deal text is written as "a · b · c"; show it as a short list instead of a paragraph.
     const deals = v.dealText.split(/\s+·\s+/).map(d => `<li>${esc(d.charAt(0).toUpperCase() + d.slice(1))}</li>`).join("");
     const confirm = v.hhStatus === "reported" ? `<span class="confirm" title="Info came from older or third-party sources">Call to confirm</span>` : "";
-    const tags = TAG_GROUPS.flatMap(g => (v[g.field] || []).map(x =>
-      `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(titleCase(x))}</button>`)).slice(0, 4).join("");
+    // Tags in two rows: food on top, then vibe + outdoor seating ("about the place").
+    const tagBtns = gs => gs.flatMap(g => (v[g.field] || []).map(x =>
+      `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(titleCase(x))}</button>`)).join("");
+    const tags = [TAG_GROUPS.slice(0, 1), TAG_GROUPS.slice(1)].map(tagBtns).filter(Boolean)
+      .map(row => `<div class="tag-row">${row}</div>`).join("");
     return `<article class="card book">
       <div class="page page-photos">
         ${photoPair(v)}
