@@ -5,19 +5,20 @@
 <title>Peach Hour · Instagram grid banner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&display=swap" rel="stylesheet">
 <style>
   /* One 3240x1440 canvas = three 1080x1440 (3:4) Instagram posts side by side. */
   * { box-sizing: border-box; }
   html, body { margin: 0; background: #1b1f3b; }
   .canvas {
     width: 3240px; height: 1440px; position: relative; overflow: hidden; color: #fff;
-    font-family: Figtree, sans-serif;
+    font-family: Newsreader, Georgia, serif;
     background:
       radial-gradient(1500px 900px at 50% 118%, rgba(255, 106, 61, .38), transparent 60%),
       radial-gradient(2400px 1200px at 50% 120%, #4a2f5c 0%, #2b2a55 40%, #1b1f3b 72%);
   }
-  .display { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; letter-spacing: -.03em; }
+  .display { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; letter-spacing: -.01em; -webkit-text-stroke: .02em currentColor; }
+  .grad { font-style: italic; -webkit-text-stroke: 0; }
 
   /* Big striped sunset behind the phone, spilling into the side posts */
   .sun-wrap { position: absolute; left: 50%; bottom: 250px; width: 1500px; height: 750px; transform: translateX(-50%); overflow: hidden; }
@@ -102,6 +103,7 @@
   const f = document.getElementById("site");
   f.addEventListener("load", () => setTimeout(() => {
     const d = f.contentDocument, list = d.getElementById("list");
+    d.querySelectorAll("img[loading=lazy]").forEach(i => { i.loading = "eager"; });
     f.contentWindow.scrollTo(0, list.getBoundingClientRect().top + f.contentWindow.scrollY - 150);
   }, 1500));
 </script>

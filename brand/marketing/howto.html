@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Peach Hour · How-to carousel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&display=swap" rel="stylesheet">
+<style>
+  /* Instagram carousel: 1080x1350 (4:5) slides. Render one with ?s=N, or all of them stacked. */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #11132a; }
+  body.one { width: 1080px; height: 1350px; overflow: hidden; }
+  .slide {
+    width: 1080px; height: 1350px; position: relative; overflow: hidden; color: #fff; font-family: Newsreader, Georgia, serif;
+    background:
+      radial-gradient(1200px 700px at 50% 112%, rgba(255, 106, 61, .34), transparent 62%),
+      radial-gradient(1800px 1100px at 50% 118%, #4a2f5c 0%, #2b2a55 42%, #1b1f3b 74%);
+  }
+  body:not(.one) .slide { margin: 0 0 40px; }
+  .display { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; letter-spacing: -.01em; -webkit-text-stroke: .02em currentColor; }
+  .grad { font-style: italic; -webkit-text-stroke: 0; }
+  .grad { background: linear-gradient(90deg, #ffb347, #ff6a3d); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* header: step badge + headline + one line of help */
+  .head { position: absolute; left: 90px; right: 90px; top: 92px; }
+  .step { display: inline-flex; align-items: center; gap: 14px; font-weight: 700; font-size: 30px; color: #ffb347; letter-spacing: .04em; margin: 0 0 26px; }
+  .step b { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: #ff6a3d; color: #fff; font-size: 30px; }
+  .head h2 { margin: 0; font-size: 84px; line-height: .98; }
+  .head p { margin: 26px 0 0; font-size: 36px; line-height: 1.32; color: rgba(255, 255, 255, .8); font-weight: 600; max-width: 860px; }
+  .head p em { font-style: normal; color: #ffb347; }
+
+  /* phone bleeding off the bottom edge, showing the real site */
+  .phone { position: absolute; left: 50%; top: 480px; transform: translateX(-50%); width: 600px; height: 1000px; border-radius: 80px; background: #0b0c14; padding: 22px;
+    box-shadow: 0 40px 110px rgba(0, 0, 0, .55), 0 0 0 3px rgba(255, 255, 255, .08) inset; }
+  .screen { width: 556px; height: 960px; border-radius: 58px; overflow: hidden; position: relative; background: #f4f3f0; }
+  .statusbar { height: 70px; background: #1b1f3b; position: relative; color: #fff; font-weight: 700; font-size: 24px; }
+  .statusbar .time { position: absolute; left: 56px; top: 26px; }
+  .statusbar .bat { position: absolute; right: 52px; top: 30px; width: 30px; height: 15px; border-radius: 4px; background: #fff; }
+  .screen iframe { width: 430px; height: 690px; border: 0; transform: scale(1.293); transform-origin: 0 0; }
+  .notch { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); width: 150px; height: 42px; border-radius: 21px; background: #0b0c14; z-index: 2; }
+  .tall .phone { top: 470px; }
+
+  .swipe { position: absolute; right: 70px; bottom: 260px; font-weight: 700; font-size: 32px; color: rgba(255, 255, 255, .7); }
+  .page { position: absolute; left: 90px; bottom: 64px; font-weight: 700; font-size: 26px; color: rgba(255, 255, 255, .45); letter-spacing: .06em; }
+
+  /* cover + closing slides */
+  .sunwrap { position: absolute; left: 50%; bottom: 0; width: 620px; height: 230px; transform: translateX(-50%); overflow: hidden; }
+  .sun { position: absolute; inset: 0 0 -230px 0; border-radius: 50%; background: linear-gradient(#ffb347 6%, #ff6a3d 46%); opacity: .95;
+    -webkit-mask: linear-gradient(#000 13%, transparent 13%), repeating-linear-gradient(to bottom, #000 0 34px, transparent 34px 46px);
+    mask: linear-gradient(#000 13%, transparent 13%), repeating-linear-gradient(to bottom, #000 0 34px, transparent 34px 46px); mask-composite: add; }
+  .cover .inner, .end .inner { position: absolute; left: 90px; right: 90px; top: 120px; }
+  .kicker { font-weight: 700; font-size: 34px; color: #ffb347; letter-spacing: .04em; margin: 0 0 36px; }
+  .cover h1 { margin: 0; font-size: 140px; line-height: .9; }
+  .cover .sub { margin: 44px 0 0; font-size: 44px; line-height: 1.3; font-weight: 600; color: rgba(255, 255, 255, .82); }
+  .list { margin: 46px 0 0; padding: 0; list-style: none; display: grid; gap: 16px; }
+  .list li { font-size: 36px; font-weight: 700; display: flex; gap: 18px; align-items: center; }
+  .list li span { display: grid; place-items: center; width: 50px; height: 50px; border-radius: 50%; background: rgba(255, 255, 255, .12); font-size: 26px; color: #ffb347; }
+  .end { text-align: center; }
+  .mark { width: 260px; height: 130px; margin: 0 auto 40px; position: relative; overflow: hidden; }
+  .mark .s { position: absolute; inset: 0 0 -130px 0; border-radius: 50%; background: linear-gradient(#ffb347 10%, #ff6a3d 75%);
+    -webkit-mask: linear-gradient(#000 12%, transparent 12%), repeating-linear-gradient(to bottom, #000 0 24px, transparent 24px 32px);
+    mask: linear-gradient(#000 12%, transparent 12%), repeating-linear-gradient(to bottom, #000 0 24px, transparent 24px 32px); mask-composite: add; }
+  .end h2 { margin: 0; font-size: 116px; line-height: .95; }
+  .url { display: inline-block; margin-top: 60px; font-weight: 700; font-size: 52px; padding: 26px 48px; border-radius: 22px; background: #ff6a3d; box-shadow: 0 20px 50px rgba(255, 106, 61, .45); }
+  .end .note { margin: 34px auto 0; font-size: 36px; color: rgba(255, 255, 255, .72); font-weight: 600; line-height: 1.4; max-width: 820px; }
+  .tips { margin: 70px auto 0; display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
+  .tip { font-weight: 700; font-size: 30px; padding: 16px 26px; border-radius: 16px; background: rgba(255, 255, 255, .1); border: 2px solid rgba(255, 255, 255, .18); }
+</style>
+</head>
+<body>
+
+<section class="slide cover" data-n="1">
+  <div class="inner">
+    <p class="kicker">PEACH HOUR · HOW-TO</p>
+    <h1 class="display">Find your<br><span class="grad">happy hour</span><br>in 30 sec.</h1>
+    <p class="sub">82 Atlanta spots, real photos,<br>checked against each bar's own site.</p>
+    <ul class="list">
+      <li><span>1</span>Open the site</li>
+      <li><span>2</span>Pick when</li>
+      <li><span>3</span>Pick your deals & area</li>
+      <li><span>4</span>Or just type it</li>
+      <li><span>5</span>Go (and bring friends)</li>
+    </ul>
+  </div>
+  <div class="sunwrap"><div class="sun"></div></div>
+  <div class="swipe">Swipe →</div>
+</section>
+
+<section class="slide" data-n="2" data-scene="hero">
+  <div class="head">
+    <p class="step"><b>1</b>STEP ONE</p>
+    <h2 class="display">Open <span class="grad">peachhouratl.com</span></h2>
+    <p>Link in our bio. Tap <em>Find Your Happy Hour</em>. No app, no sign-up.</p>
+  </div>
+  <div class="phone"><div class="screen"><div class="notch"></div><div class="statusbar"><span class="time">5:30</span><span class="bat"></span></div><iframe></iframe></div></div>
+  <div class="page">1 / 5</div>
+</section>
+
+<section class="slide" data-n="3" data-scene="when">
+  <div class="head">
+    <p class="step"><b>2</b>STEP TWO</p>
+    <h2 class="display">Pick <span class="grad">when</span></h2>
+    <p><em>Happy Hour Now</em> shows what's live right this minute. Planning ahead? <em>Pick a Time</em>.</p>
+  </div>
+  <div class="phone"><div class="screen"><div class="notch"></div><div class="statusbar"><span class="time">5:30</span><span class="bat"></span></div><iframe></iframe></div></div>
+  <div class="page">2 / 5</div>
+</section>
+
+<section class="slide" data-n="4" data-scene="filters">
+  <div class="head">
+    <p class="step"><b>3</b>STEP THREE</p>
+    <h2 class="display">Pick your <span class="grad">deals & area</span></h2>
+    <p>Oysters, margs, cheap beer. Tap <em>Emory</em> or <em>Georgia Tech</em> for spots close to campus.</p>
+  </div>
+  <div class="phone"><div class="screen"><div class="notch"></div><div class="statusbar"><span class="time">5:30</span><span class="bat"></span></div><iframe></iframe></div></div>
+  <div class="page">3 / 5</div>
+</section>
+
+<section class="slide" data-n="5" data-scene="search">
+  <div class="head">
+    <p class="step"><b>4</b>OR JUST TYPE IT</p>
+    <h2 class="display">Search like you <span class="grad">talk</span></h2>
+    <p><em>"4pm happy hour in Inman Park with oysters"</em> works. So does a ZIP code.</p>
+  </div>
+  <div class="phone"><div class="screen"><div class="notch"></div><div class="statusbar"><span class="time">5:30</span><span class="bat"></span></div><iframe></iframe></div></div>
+  <div class="page">4 / 5</div>
+</section>
+
+<section class="slide" data-n="6" data-scene="card">
+  <div class="head">
+    <p class="step"><b>5</b>STEP FIVE</p>
+    <h2 class="display">Tap, save, <span class="grad">go</span></h2>
+    <p>Every bar gets a page: photos, deals, hours. <em>♡</em> to save, <em>Create Partiful</em> to bring the group.</p>
+  </div>
+  <div class="phone"><div class="screen"><div class="notch"></div><div class="statusbar"><span class="time">5:30</span><span class="bat"></span></div><iframe></iframe></div></div>
+  <div class="page">5 / 5</div>
+</section>
+
+<section class="slide end" data-n="7">
+  <div class="inner">
+    <div class="mark"><div class="s"></div></div>
+    <h2 class="display">Find your<br><span class="grad">happy hour</span><br>now.</h2>
+    <span class="url">peachhouratl.com</span>
+    <p class="note">Link in bio. Know a deal we're missing? DM us or hit "List Your Happy Hour."</p>
+    <div class="tips"><span class="tip">Buckhead</span><span class="tip">Midtown</span><span class="tip">VaHi</span><span class="tip">Inman Park</span><span class="tip">Beltline</span><span class="tip">Decatur</span></div>
+  </div>
+</section>
+
+<script>
+  // ?s=N renders just slide N at 1080x1350 (for screenshots); no param shows them all.
+  const n = new URLSearchParams(location.search).get("s");
+  if (n) {
+    document.body.classList.add("one");
+    document.querySelectorAll(".slide").forEach(s => { if (s.dataset.n !== n) s.remove(); });
+  }
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  // Drive the real site inside each phone into the state that step describes.
+  const SCENES = {
+    async hero(d, w) { w.scrollTo(0, 0); },
+    async when(d, w) {
+      d.querySelector('[data-mode="hhnow"]').click(); await wait(200);
+      w.scrollTo(0, d.getElementById("finder").getBoundingClientRect().top + w.scrollY - 110);
+    },
+    async filters(d, w) {
+      const chip = (k, re) => [...d.querySelectorAll(`.chip[data-k="${k}"]`)].find(b => re.test(b.textContent));
+      chip("deals", /oysters/i)?.click(); d.querySelector('[data-campus="emory"]').click(); await wait(200);
+      w.scrollTo(0, d.getElementById("deals").getBoundingClientRect().top + w.scrollY - 150);
+    },
+    async search(d, w) {
+      const q = d.getElementById("q"); q.value = "4pm happy hour in Inman Park with oysters";
+      q.dispatchEvent(new Event("input", { bubbles: true })); await wait(500);
+      w.scrollTo(0, d.getElementById("results").getBoundingClientRect().top + w.scrollY - 10);
+    },
+    async card(d, w) {
+      const card = [...d.querySelectorAll("#list .card")].find(c => /Fish Market|Dos Caminos|AltaToro/.test(c.textContent)) || d.querySelector("#list .card");
+      const id = card.querySelector(".heart").dataset.fav;
+      card.querySelector(".heart").click(); await wait(300);
+      const fresh = d.querySelector(`[data-fav="${id}"]`).closest(".card");
+      w.scrollTo(0, fresh.getBoundingClientRect().top + w.scrollY - 106);
+      await Promise.all([...fresh.querySelectorAll("img")].map(i => { i.loading = "eager"; return i.decode().catch(() => {}); }));
+    },
+  };
+  const FAKE_NOW = Date.parse("2026-10-09T21:30:00Z"); // Fri 5:30 PM EDT
+  const CLOCK = `<base href="/"><style>*,*::before,*::after{transition:none!important;animation:none!important}</style><script>(() => { const R = Date, T = ${FAKE_NOW};
+    class D extends R { constructor(...a) { a.length ? super(...a) : super(T); } static now() { return T; } }
+    window.Date = D; try { localStorage.removeItem("ph-favs"); } catch {} new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => n.querySelectorAll && n.querySelectorAll("img[loading=lazy]").forEach(i => { i.loading = "eager"; })))).observe(document, { subtree: true, childList: true }); })();<\/script>`;
+  const site = fetch("/").then(r => r.text()).then(h => h.replace(/<head>/i, "<head>" + CLOCK));
+  document.querySelectorAll("[data-scene] iframe").forEach(async f => {
+    const scene = f.closest("[data-scene]").dataset.scene;
+    let done = false;
+    f.addEventListener("load", async () => {
+      if (done || !f.contentDocument.getElementById("finder")) return; // skip the initial about:blank
+      done = true;
+      await wait(1200);
+      const d = f.contentDocument, w = f.contentWindow;
+      await SCENES[scene](d, w);
+    });
+    f.srcdoc = await site;
+  });
+</script>
+</body>
+</html>
