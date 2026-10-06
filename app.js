@@ -31,6 +31,7 @@
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
   };
   const favs = new Set(store.get("ph-favs", []));
+  const openCards = new Set(); // cards whose extra deals/times/tags are expanded
 
   // ── time helpers ───────────────────────────────────────────────
   const toMin = s => { const [h, m] = s.split(":").map(Number); return h * 60 + m; };
@@ -409,6 +410,7 @@
 
   function card({ v, s, mi, dm }) {
     const fav = favs.has(v.id), today = s.t.day;
+    const SHOW_DEALS = 3, SHOW_TIMES = 2; // the rest wait behind "+ More"
     const price = `<span class="price" aria-label="Price ${v.price} of 3">${"$".repeat(v.price)}<span>${"$".repeat(3 - v.price)}</span></span>`;
     const dist = [mi != null ? `${mi.toFixed(1)} mi away` : "", dm != null ? `~${dm} min drive from ${CAMPUSES[state.campus].name}` : ""].filter(Boolean).join(" · ");
     const belt = v.beltline ? `<p class="belt">${v.beltline.min} min walk to the BeltLine <span>(${esc(v.beltline.trail)})</span></p>` : "";
@@ -416,10 +418,10 @@
 
     // Happy hour rows, starting from today's day of the week.
     const offset = w => Math.min(...w.days.map(d => (d - today + 7) % 7));
-    const sched = [...v.hhDisplay].sort((a, b) => offset(a) - offset(b)).map(w => {
+    const sched = [...v.hhDisplay].sort((a, b) => offset(a) - offset(b)).map((w, i) => {
       const isToday = w.days.includes(today);
       const when = w.rain ? "Any time it rains" : w.allDay ? "All day" : `${fmt(toMin(w.start))}–${w.end === "close" ? "close" : fmt(toMin(w.end))}`;
-      return `<div class="${isToday ? "today" : ""}"><dt>${w.rain ? "Rainy days" : isToday ? "Today" : daysLabel(w.days)}</dt><dd>${when}</dd>${w.note && !w.rain ? `<span class="note">${esc(w.note)}</span>` : ""}</div>`;
+      return `<div class="${isToday ? "today" : ""}${i >= SHOW_TIMES ? " more-item" : ""}"><dt>${w.rain ? "Rainy days" : isToday ? "Today" : daysLabel(w.days)}</dt><dd>${when}</dd>${w.note && !w.rain ? `<span class="note">${esc(w.note)}</span>` : ""}</div>`;
     }).join("");
 
     // Today's regular hours in one line: "Open until 11PM" / "Closed · opens 5PM".
@@ -434,11 +436,14 @@
     }
 
     // Deal text is written as "a · b · c"; show it as a short list instead of a paragraph.
-    const deals = v.dealText.split(/\s+·\s+/).map(d => `<li>${esc(d)}</li>`).join("");
+    const dealItems = v.dealText.split(/\s+·\s+/);
+    const deals = dealItems.map((d, i) => `<li${i >= SHOW_DEALS ? ' class="more-item"' : ""}>${esc(d)}</li>`).join("");
     const confirm = v.hhStatus === "reported" ? `<span class="confirm" title="Info came from older or third-party sources">Call to confirm</span>` : "";
     const tags = TAG_GROUPS.flatMap(g => (v[g.field] || []).map(x =>
       `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(titleCase(x))}</button>`)).slice(0, 4).join("");
-    return `<article class="card book">
+    const hidden = Math.max(0, dealItems.length - SHOW_DEALS) + Math.max(0, v.hhDisplay.length - SHOW_TIMES) + (tags ? 1 : 0);
+    const open = openCards.has(v.id);
+    return `<article class="card book${open ? " open" : ""}">
       <div class="page page-photos">
         ${photoPair(v)}
         <div class="nameplate">
@@ -470,7 +475,8 @@
           </div>
         </div>
         <footer class="card-foot">
-          ${tags ? `<div class="tags">${tags}</div>` : ""}
+          ${tags ? `<div class="tags more-item">${tags}</div>` : ""}
+          ${hidden ? `<button class="book-more" data-more="${v.id}" aria-expanded="${open}">${open ? "Less" : "+ More"}</button>` : ""}
           <div class="acts">
             <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
             <button class="act act-share" data-share="${v.id}" aria-label="Share ${esc(v.name)}" title="Share">${ICON.share}<span class="share-lbl">Share</span></button>
@@ -539,7 +545,14 @@
   }
 
   $("list").onclick = async e => {
-    const f = e.target.closest("[data-fav]"), sh = e.target.closest("[data-share]"), tg = e.target.closest("[data-tag]");
+    const f = e.target.closest("[data-fav]"), sh = e.target.closest("[data-share]"), tg = e.target.closest("[data-tag]"), mo = e.target.closest("[data-more]");
+    if (mo) {
+      const id = mo.dataset.more, open = !openCards.has(id);
+      open ? openCards.add(id) : openCards.delete(id);
+      mo.closest(".card").classList.toggle("open", open);
+      mo.textContent = open ? "Less" : "+ More"; mo.setAttribute("aria-expanded", open);
+      return;
+    }
     if (tg) { state[tg.dataset.tag].add(tg.dataset.val); update(); return; }
     if (f) {
       const id = f.dataset.fav; favs.has(id) ? favs.delete(id) : favs.add(id);

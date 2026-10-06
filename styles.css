@@ -387,3 +387,34 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
    the strokes with a same-color outline instead of the browser's blurry fake bold. */
 .nameplate h4, .sec-label { font-synthesis: none; -webkit-text-stroke: .035em currentColor; }
 .nameplate h4 a { -webkit-text-stroke: inherit; }
+
+/* ── Compact books ─────────────────────────────────────────────────────────
+   Shorter photo page, tighter spacing; extra deals/times/tags wait behind "+ More". */
+.grid { gap: 32px; }
+.page-photos { min-height: 250px; gap: 6px; padding: 10px 14px 10px 10px; }
+.nameplate { padding: 8px 14px 9px; border-radius: 12px; left: 22px; right: 26px; }
+.nameplate .kicker { font-size: .68rem; margin-bottom: 1px; }
+.nameplate h4 { font-size: clamp(1.4rem, 2.2vw, 1.8rem); }
+.page-info { padding: 16px 22px 14px 30px; gap: 11px; }
+.info-top .heart { width: 32px; height: 32px; }
+.sec-label { font-size: 1.12rem; margin-bottom: 5px; }
+.deal-list { gap: 4px; font-size: .96rem; line-height: 1.35; }
+.book .sched { gap: 3px; }
+.open-line { margin-top: 5px !important; }
+.info-grid, .sec-side { gap: 12px; }
+.book .card-foot { padding-top: 10px; gap: 8px; }
+.book .more-item { display: none !important; }
+.book.open .more-item { display: revert !important; }
+.book.open .tags.more-item { display: flex !important; }
+.book.open .sched div.more-item { display: grid !important; }
+.book-more { align-self: flex-start; border: 0; background: none; padding: 2px 0; font: inherit; font-size: .86rem; font-weight: 700; color: var(--peach-ink, #c2410c); cursor: pointer; white-space: nowrap; }
+.book-more:hover { text-decoration: underline; }
+@container info (min-width: 540px) {
+  .book-more { align-self: center; margin-right: auto; }
+}
+@container list (max-width: 560px) {
+  .page-photos { min-height: 0; height: 150px; padding: 8px 8px 10px; }
+  .nameplate { left: 50%; right: auto; }
+  .nameplate h4 { font-size: 1.5rem; }
+  .page-info { padding: 16px 16px 14px; }
+}
