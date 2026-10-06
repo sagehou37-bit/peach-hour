@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://peachhouratl.com/sitemap.xml
+Sitemap: https://www.peachhouratl.com/sitemap.xml
