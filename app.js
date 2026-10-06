@@ -418,64 +418,67 @@
     const offset = w => Math.min(...w.days.map(d => (d - today + 7) % 7));
     const sched = [...v.hhDisplay].sort((a, b) => offset(a) - offset(b)).map(w => {
       const isToday = w.days.includes(today);
-      return `<div class="${isToday ? "today" : ""}"><dt>${w.rain ? "Rainy days" : isToday ? "Today" : daysLabel(w.days)}</dt><dd>${w.rain ? "Any time it's raining" : w.allDay ? "All day" : `${fmt(toMin(w.start))}–${w.end === "close" ? "close" : fmt(toMin(w.end))}`}${w.note && !w.rain ? ` <span class="note">${esc(w.note)}</span>` : ""}</dd></div>`;
+      const when = w.rain ? "Any time it rains" : w.allDay ? "All day" : `${fmt(toMin(w.start))}–${w.end === "close" ? "close" : fmt(toMin(w.end))}`;
+      return `<div class="${isToday ? "today" : ""}"><dt>${w.rain ? "Rainy days" : isToday ? "Today" : daysLabel(w.days)}</dt><dd>${when}</dd>${w.note && !w.rain ? `<span class="note">${esc(w.note)}</span>` : ""}</div>`;
     }).join("");
 
-    // Today's regular hours: "Open · until 11PM" / "Closed · opens 5PM".
+    // Today's regular hours in one line: "Open until 11PM" / "Closed · opens 5PM".
     let hoursLine = "";
     if (v.hours) {
-      const ranges = dayRanges(v.hours[today]);
-      const todayText = ranges.length ? ranges.map(rangeLabel).join(", ") : "Closed today";
-      let openText = s.open ? `Open <span>until ${fmt(s.closesAt)}</span>` : "Closed";
+      let text = s.open ? `Open <span>until ${fmt(s.closesAt)}</span>` : "Closed";
       if (!s.open) {
         const nx = nextStart(hoursAsWindows(v), today, s.t.mins);
-        if (nx) openText += ` <span>opens ${nx.offset === 0 ? "" : (nx.offset === 1 ? "tomorrow " : DAYS[nx.day] + " ")}${fmt(toMin(nx.w.start))}</span>`;
+        if (nx) text += ` <span>· opens ${nx.offset === 0 ? "" : (nx.offset === 1 ? "tomorrow " : DAYS[nx.day] + " ")}${fmt(toMin(nx.w.start))}</span>`;
       }
-      hoursLine = `<div class="hours-today"><span class="open-pill ${s.open ? "is-open" : ""}">${openText}</span><span class="today-range">${ranges.length ? "Today " : ""}${todayText}</span></div>`;
+      hoursLine = `<p class="open-line ${s.open ? "is-open" : ""}">${text}</p>`;
     }
 
+    // Deal text is written as "a · b · c"; show it as a short list instead of a paragraph.
+    const deals = v.dealText.split(/\s+·\s+/).map(d => `<li>${esc(d)}</li>`).join("");
     const confirm = v.hhStatus === "reported" ? `<span class="confirm" title="Info came from older or third-party sources">Call to confirm</span>` : "";
     const tags = TAG_GROUPS.flatMap(g => (v[g.field] || []).map(x =>
-      `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(titleCase(x))}</button>`)).join("");
+      `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(titleCase(x))}</button>`)).slice(0, 4).join("");
     return `<article class="card book">
-      ${photoPage(v)}
-      <div class="page page-info">
-      <header class="card-head">
-        <div>
-          <p class="kicker">${esc(v.neighborhood)} <span>/</span> ${esc(v.type)} <span>/</span> ${price}</p>
+      <div class="page page-photos">
+        ${photoPair(v)}
+        <div class="nameplate">
+          <p class="kicker">${esc(v.neighborhood)} <span>·</span> ${esc(v.type)} <span>·</span> ${price}</p>
           <h4>${title}</h4>
-          <p class="addr">${esc(v.address)}${v.zip && !v.address.includes(v.zip) ? ` ${v.zip}` : ""}</p>
+        </div>
+      </div>
+      <div class="page page-info">
+        <div class="info-top">
+          <div class="status-row"><span class="status ${s.cls}">${s.label}</span>${confirm}</div>
+          <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${ICON.heart}</button>
+        </div>
+        <ul class="deal-list">${deals}</ul>
+        ${sched ? `<dl class="sched">${sched}</dl>` : ""}
+        ${hoursLine}
+        <div class="where">
+          <p class="addr">${ICON.pin}${esc(v.address)}${v.zip && !v.address.includes(v.zip) ? ` ${v.zip}` : ""}</p>
           ${dist ? `<p class="dist">${dist}</p>` : ""}${belt}
         </div>
-        <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${ICON.heart}</button>
-      </header>
-      <div class="status-row"><span class="status ${s.cls}">${s.label}</span>${confirm}</div>
-      <p class="deal">${esc(v.dealText)}</p>
-      <div class="hours-block">
-        ${sched ? `<p class="hb-label">Happy hour</p><dl class="sched">${sched}</dl>` : ""}
-        ${hoursLine ? `<p class="hb-label">Hours</p>${hoursLine}` : ""}
-      </div>
-      ${tags ? `<div class="tags">${tags}</div>` : ""}
-      <footer class="card-foot">
-        <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
-        <button class="act act-share" data-share="${v.id}" aria-label="Share ${esc(v.name)}" title="Share">${ICON.share}<span class="share-lbl">Share</span></button>
-        <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create Partiful</span></a>
-      </footer>
+        ${tags ? `<div class="tags">${tags}</div>` : ""}
+        <footer class="card-foot">
+          <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
+          <button class="act act-share" data-share="${v.id}" aria-label="Share ${esc(v.name)}" title="Share">${ICON.share}<span class="share-lbl">Share</span></button>
+          <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create Partiful</span></a>
+        </footer>
       </div>
     </article>`;
   }
 
-  // The "right-hand page" of each card: a 1–3 photo collage from the bar's own site,
-  // or a sunset placeholder until we have photos.
-  function photoPage(v) {
+  // Two photos from the bar's own site, one above the other (the name plate sits across the seam).
+  // One photo is split across both frames; none gets the sunset placeholder.
+  function photoPair(v) {
     const photos = (window.PHOTOS || {})[v.id] || [];
-    if (!photos.length) {
-      return `<div class="page page-photos ph-empty" aria-hidden="true"><div class="ph-sun"></div><p class="ph-hood">${esc(v.neighborhood)}</p></div>`;
-    }
+    if (!photos.length) return `<div class="ph ph-empty"><div class="ph-sun"></div></div><div class="ph ph-empty ph-low"><p class="ph-hood">${esc(v.neighborhood)}</p></div>`;
     let host = "";
     try { host = new URL(v.website).hostname.replace(/^www\./, ""); } catch {}
-    const imgs = photos.map((src, i) => `<img src="${src}" alt="${i ? "" : `${esc(v.name)}, photo from its website`}" loading="lazy" decoding="async">`).join("");
-    return `<div class="page page-photos ph-${photos.length}">${imgs}${host ? `<span class="ph-credit">Photos: ${esc(host)}</span>` : ""}</div>`;
+    const [a, b] = photos.length > 1 ? photos : [photos[0], photos[0]];
+    const split = photos.length === 1 ? " ph-split" : "";
+    return `<div class="ph${split}"><img src="${a}" alt="${esc(v.name)}, photo from its website" loading="lazy" decoding="async"></div>`
+      + `<div class="ph ph-low${split}"><img src="${b}" alt="" loading="lazy" decoding="async">${host ? `<span class="ph-credit">Photos: ${esc(host)}</span>` : ""}</div>`;
   }
 
   let map, layer;
