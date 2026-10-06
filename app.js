@@ -437,7 +437,9 @@
     const confirm = v.hhStatus === "reported" ? `<span class="confirm" title="Info came from older or third-party sources">Call to confirm</span>` : "";
     const tags = TAG_GROUPS.flatMap(g => (v[g.field] || []).map(x =>
       `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(titleCase(x))}</button>`)).join("");
-    return `<article class="card">
+    return `<article class="card book">
+      ${photoPage(v)}
+      <div class="page page-info">
       <header class="card-head">
         <div>
           <p class="kicker">${esc(v.neighborhood)} <span>/</span> ${esc(v.type)} <span>/</span> ${price}</p>
@@ -459,7 +461,21 @@
         <button class="act act-share" data-share="${v.id}" aria-label="Share ${esc(v.name)}" title="Share">${ICON.share}<span class="share-lbl">Share</span></button>
         <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create Partiful</span></a>
       </footer>
+      </div>
     </article>`;
+  }
+
+  // The "right-hand page" of each card: a 1–3 photo collage from the bar's own site,
+  // or a sunset placeholder until we have photos.
+  function photoPage(v) {
+    const photos = (window.PHOTOS || {})[v.id] || [];
+    if (!photos.length) {
+      return `<div class="page page-photos ph-empty" aria-hidden="true"><div class="ph-sun"></div><p class="ph-hood">${esc(v.neighborhood)}</p></div>`;
+    }
+    let host = "";
+    try { host = new URL(v.website).hostname.replace(/^www\./, ""); } catch {}
+    const imgs = photos.map((src, i) => `<img src="${src}" alt="${i ? "" : `${esc(v.name)}, photo from its website`}" loading="lazy" decoding="async">`).join("");
+    return `<div class="page page-photos ph-${photos.length}">${imgs}${host ? `<span class="ph-credit">Photos: ${esc(host)}</span>` : ""}</div>`;
   }
 
   let map, layer;
