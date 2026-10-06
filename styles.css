@@ -257,15 +257,15 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 
 
 /* ── Book cards ───────────────────────────────────────────────────────────
-   An open book: a dark cover peeking out around two paper pages, page edges on the
+   An open book: a thin cover peeking out around two paper pages, page edges on the
    outer sides and a shaded spine. Left page = two photos with the name plate across
    them; right page = the details. On narrow lists (phones) the photo page sits on top. */
 .card.book {
-  --cover: #2b2a55; --paper: var(--card); --spine: rgba(27, 31, 59, .26);
-  padding: 7px; gap: 0; border: 0; border-radius: 16px; overflow: visible;
-  background: linear-gradient(90deg, #232248, var(--cover) 50%, #232248);
+  --cover: color-mix(in srgb, var(--dusk) 22%, var(--bg)); --paper: var(--card); --spine: rgba(27, 31, 59, .14);
+  padding: 3px; gap: 0; border: 0; border-radius: 13px; overflow: visible;
+  background: var(--cover);
   display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); grid-template-areas: "photos info";
-  box-shadow: 0 1px 0 rgba(255, 255, 255, .06) inset, 0 22px 34px -24px rgba(17, 19, 42, .7);
+  box-shadow: 0 14px 28px -24px rgba(17, 19, 42, .35);
 }
 .book .page { position: relative; background: var(--paper); min-width: 0; }
 /* page stacks on the outer edges */
@@ -337,7 +337,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 }
 
 @container list (max-width: 560px) {
-  .card.book { grid-template-columns: minmax(0, 1fr); grid-template-areas: "photos" "info"; padding: 6px; background: linear-gradient(180deg, #232248, var(--cover) 50%, #232248); }
+  .card.book { grid-template-columns: minmax(0, 1fr); grid-template-areas: "photos" "info"; padding: 3px; }
   .page-photos { min-height: 0; height: 210px; grid-template-rows: 1fr; grid-template-columns: 1fr 1fr; padding: 10px 10px 14px; border-radius: 9px 9px 2px 2px;
     box-shadow: 0 -2px 0 -0.5px var(--paper), 0 -3px 0 -0.5px var(--line); }
   .page-info { border-radius: 2px 2px 9px 9px; padding: 22px 18px 16px; box-shadow: 0 2px 0 -0.5px var(--paper), 0 3px 0 -0.5px var(--line); }
