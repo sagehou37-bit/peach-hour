@@ -4,7 +4,9 @@
   // that day's closing time; the original list is kept for display ("10PM–close").
   VENUES.forEach(v => {
     v.hhDisplay = v.happyHours;
-    v.happyHours = v.happyHours.flatMap(w => {
+    // Weather-only deals ("$5 margs when it's raining") are shown but never counted as live.
+    v.rainDeal = v.happyHours.find(w => w.rain);
+    v.happyHours = v.happyHours.filter(w => !w.rain).flatMap(w => {
       if (w.end !== "close") return [w];
       return w.days.map(d => {
         const r = v.hours && v.hours[d];
@@ -110,7 +112,8 @@
       cls = soon ? "soon" : "later"; rank = 1 + next.inMin / 1440;
     } else if (next) {
       label = `Next: ${next.offset === 1 ? "tomorrow" : DAYS[next.day]}${next.w.allDay ? "" : " " + fmt(toMin(next.w.start))}`; cls = "none"; rank = 3 + next.inMin / 1440;
-    } else { label = "Happy hour not confirmed — ask the bar"; cls = "none"; rank = 9; }
+    } else if (v.rainDeal) { label = `☔ ${v.rainDeal.note}`; cls = "none"; rank = 5; }
+    else { label = "Happy hour not confirmed — ask the bar"; cls = "none"; rank = 9; }
     return { hh, open, closesAt: openWin && openWin.endsAt, label, cls, rank, t };
   }
 
@@ -354,7 +357,9 @@
       const pool = scored.filter(e => passes(e, key));
       all(`.chip[data-k="${key}"]`).forEach(b => {
         const val = groups[key].values[b.dataset.i];
-        b.hidden = !state[key].has(val) && !pool.some(e => [].concat(FIELD[key](e.v)).includes(val));
+        const empty = !state[key].has(val) && !pool.some(e => [].concat(FIELD[key](e.v)).includes(val));
+        // Neighborhoods stay visible (greyed out) so the map of areas doesn't jump around.
+        if (key === "hoods") b.disabled = empty; else b.hidden = empty;
       });
     }
   }
@@ -393,7 +398,7 @@
   function partifulUrl(v) {
     const street = v.address.replace(/\s*\(.*?\)/g, "").replace(/,\s*Decatur$/, "");
     const city = /,\s*Decatur\b/.test(v.address) ? "Decatur" : "Atlanta";
-    const when = v.hhDisplay.map(w => `${daysLabel(w.days)} ${w.allDay ? "all day" : `${fmt(toMin(w.start))}–${w.end === "close" ? "close" : fmt(toMin(w.end))}`}${w.note ? ` (${w.note})` : ""}`).join("\n");
+    const when = v.hhDisplay.map(w => w.rain ? w.note : `${daysLabel(w.days)} ${w.allDay ? "all day" : `${fmt(toMin(w.start))}–${w.end === "close" ? "close" : fmt(toMin(w.end))}`}${w.note ? ` (${w.note})` : ""}`).join("\n");
     return "https://partiful.com/create?" + new URLSearchParams({
       title: `Happy hour at ${v.name}`,
       location: `${v.name}, ${street}, ${city}, GA ${v.zip || ""}`.trim(),
@@ -413,7 +418,7 @@
     const offset = w => Math.min(...w.days.map(d => (d - today + 7) % 7));
     const sched = [...v.hhDisplay].sort((a, b) => offset(a) - offset(b)).map(w => {
       const isToday = w.days.includes(today);
-      return `<div class="${isToday ? "today" : ""}"><dt>${isToday ? "Today" : daysLabel(w.days)}</dt><dd>${w.allDay ? "All day" : `${fmt(toMin(w.start))}–${w.end === "close" ? "close" : fmt(toMin(w.end))}`}${w.note ? ` <span class="note">${esc(w.note)}</span>` : ""}</dd></div>`;
+      return `<div class="${isToday ? "today" : ""}"><dt>${w.rain ? "Rainy days" : isToday ? "Today" : daysLabel(w.days)}</dt><dd>${w.rain ? "Any time it's raining" : w.allDay ? "All day" : `${fmt(toMin(w.start))}–${w.end === "close" ? "close" : fmt(toMin(w.end))}`}${w.note && !w.rain ? ` <span class="note">${esc(w.note)}</span>` : ""}</dd></div>`;
     }).join("");
 
     // Today's regular hours: "Open · until 11PM" / "Closed · opens 5PM".

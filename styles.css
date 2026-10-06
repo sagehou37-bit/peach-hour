@@ -96,6 +96,8 @@ h1, h2, h4 { font-family: var(--display); letter-spacing: -.02em; }
 }
 .chip:hover, .seg button:hover { border-color: var(--ink); }
 .chip.on, .seg button.on { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.chip:disabled { opacity: .38; cursor: default; border-style: dashed; }
+.chip:disabled:hover { border-color: var(--line, currentColor); }
 .pick { display: flex; gap: 8px; margin-top: 12px; }
 select, .search input {
   padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font: inherit;

@@ -135,6 +135,14 @@
       happyHours: [], deals: [], dealText: "Live band karaoke; no current happy hour found",
       hhStatus: "unknown", sources: [{ label: "darkhorseatlanta.com", url: "https://darkhorseatlanta.com/" }] },
 
+    { id: "dads", name: "Dad's", neighborhood: "Virginia-Highland",
+      address: "870 N Highland Ave NE", lat: 33.77832, lng: -84.35308, price: 2, type: "Bar",
+      website: "https://www.instagram.com/dadsatl/", zip: "30306",
+      cuisine: ["Bar food"], vibes: ["Late night", "Groups"], outdoor: [], hours: null,
+      happyHours: [{ days: [0, 1, 2, 3, 4, 5, 6], start: "17:00", end: "19:00" }],
+      deals: ["cocktails", "beer", "wine", "food"], dealText: "Dad's Classics: $10 daiquiris, mules, martinis & Manhattans · $4 Narragansett · $5 snaquiris · $8 pinot grigio · $8 pizza rolls & disco fries, $5 Uncrustables",
+      hhStatus: "confirmed", sources: [{ label: "@dadsatl on Instagram", url: "https://www.instagram.com/dadsatl/" }] },
+
     // ── Poncey-Highland ───────────────────────────────────────────
     { id: "tio-luchos", name: "Tio Lucho's", neighborhood: "Poncey-Highland",
       address: "675 N Highland Ave NE", lat: 33.77304, lng: -84.35239, price: 2, type: "Restaurant",
@@ -281,8 +289,9 @@
       beltline: { min: 1, trail: "Eastside Trail" },
       cuisine: ["American", "Southern"], vibes: ["Beltline access", "Dog friendly", "Groups", "Late night"], outdoor: ["Patio"],
       hours: [0, 1, 2, 3, 4, 5, 6].map(d => (d === 5 || d === 6 ? ["11:00", "02:00"] : ["11:00", "00:00"])),
-      happyHours: [], deals: [], dealText: "Known for after-work drinks; happy hour times not published",
-      hhStatus: "unknown", sources: [{ label: "ladybirdatl.com", url: "https://www.ladybirdatl.com/" }] },
+      happyHours: [{ days: [0, 1, 2, 3, 4, 5, 6], allDay: true, rain: true, note: "$5 margs when it's raining" }],
+      deals: ["cocktails"], dealText: "\"When it rains, we pour\": $5 margaritas whenever it's raining · big patio of yellow umbrellas right on the Eastside Trail",
+      hhStatus: "confirmed", sources: [{ label: "@ladybirdatlanta on Instagram", url: "https://www.instagram.com/ladybirdatlanta/" }, { label: "ladybirdatl.com", url: "https://www.ladybirdatl.com/" }] },
 
     { id: "two-urban-licks", name: "Two Urban Licks", neighborhood: "Eastside Beltline",
       address: "820 Ralph McGill Blvd NE", lat: 33.76850, lng: -84.36130, price: 3, type: "Restaurant",
