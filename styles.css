@@ -382,3 +382,8 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
   .act-party { gap: 4px; }
   .pf-logo { width: 16px; height: 16px; }
 }
+
+/* Bold bar names and section titles. Instrument Serif has a single weight, so thicken
+   the strokes with a same-color outline instead of the browser's blurry fake bold. */
+.nameplate h4, .sec-label { font-synthesis: none; -webkit-text-stroke: .035em currentColor; }
+.nameplate h4 a { -webkit-text-stroke: inherit; }
