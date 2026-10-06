@@ -388,6 +388,9 @@
   };
   const ICON_CHECK = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
+  // Phones/tablets open Partiful in the same tab: iOS only hands partiful.com/create to the
+  // Partiful app reliably from a same-tab tap (a new tab often needed a second tap).
+  const TOUCH = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
   const TAG_GROUPS = [
     { key: "cuisines", field: "cuisine", cls: "food", icon: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1-3 4-3 7h3"/></svg>' },
     { key: "vibes", field: "vibes", cls: "vibe", icon: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>' },
@@ -418,48 +421,83 @@
     const offset = w => Math.min(...w.days.map(d => (d - today + 7) % 7));
     const sched = [...v.hhDisplay].sort((a, b) => offset(a) - offset(b)).map(w => {
       const isToday = w.days.includes(today);
-      return `<div class="${isToday ? "today" : ""}"><dt>${w.rain ? "Rainy days" : isToday ? "Today" : daysLabel(w.days)}</dt><dd>${w.rain ? "Any time it's raining" : w.allDay ? "All day" : `${fmt(toMin(w.start))}–${w.end === "close" ? "close" : fmt(toMin(w.end))}`}${w.note && !w.rain ? ` <span class="note">${esc(w.note)}</span>` : ""}</dd></div>`;
+      const when = w.rain ? "Any time it rains" : w.allDay ? "All day" : `${fmt(toMin(w.start))}–${w.end === "close" ? "close" : fmt(toMin(w.end))}`;
+      return `<div class="${isToday ? "today" : ""}"><dt>${w.rain ? "Rainy days" : isToday ? "Today" : daysLabel(w.days)}</dt><dd>${when}</dd>${w.note && !w.rain ? `<span class="note">${esc(w.note)}</span>` : ""}</div>`;
     }).join("");
 
-    // Today's regular hours: "Open · until 11PM" / "Closed · opens 5PM".
+    // Today's regular hours in one line: "Open until 11PM" / "Closed · opens 5PM".
     let hoursLine = "";
     if (v.hours) {
-      const ranges = dayRanges(v.hours[today]);
-      const todayText = ranges.length ? ranges.map(rangeLabel).join(", ") : "Closed today";
-      let openText = s.open ? `Open <span>until ${fmt(s.closesAt)}</span>` : "Closed";
+      let text = s.open ? `Open <span>until ${fmt(s.closesAt)}</span>` : "Closed";
       if (!s.open) {
         const nx = nextStart(hoursAsWindows(v), today, s.t.mins);
-        if (nx) openText += ` <span>opens ${nx.offset === 0 ? "" : (nx.offset === 1 ? "tomorrow " : DAYS[nx.day] + " ")}${fmt(toMin(nx.w.start))}</span>`;
+        if (nx) text += ` <span>· opens ${nx.offset === 0 ? "" : (nx.offset === 1 ? "tomorrow " : DAYS[nx.day] + " ")}${fmt(toMin(nx.w.start))}</span>`;
       }
-      hoursLine = `<div class="hours-today"><span class="open-pill ${s.open ? "is-open" : ""}">${openText}</span><span class="today-range">${ranges.length ? "Today " : ""}${todayText}</span></div>`;
+      hoursLine = `<p class="open-line ${s.open ? "is-open" : ""}">${text}</p>`;
     }
 
+    // Deal text is written as "a · b · c"; show it as a short list instead of a paragraph.
+    const deals = v.dealText.split(/\s+·\s+/).map(d => `<li>${esc(d.charAt(0).toUpperCase() + d.slice(1))}</li>`).join("");
     const confirm = v.hhStatus === "reported" ? `<span class="confirm" title="Info came from older or third-party sources">Call to confirm</span>` : "";
-    const tags = TAG_GROUPS.flatMap(g => (v[g.field] || []).map(x =>
+    // Tags in two rows: food on top, then the place (outdoor seating first, so it survives trimming, then vibes).
+    const tagBtns = gs => gs.flatMap(g => (v[g.field] || []).map(x =>
       `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(titleCase(x))}</button>`)).join("");
-    return `<article class="card">
-      <header class="card-head">
-        <div>
-          <p class="kicker">${esc(v.neighborhood)} <span>/</span> ${esc(v.type)} <span>/</span> ${price}</p>
+    const tags = [[TAG_GROUPS[0]], [TAG_GROUPS[2], TAG_GROUPS[1]]].map(tagBtns).filter(Boolean)
+      .map(row => `<div class="tag-row">${row}</div>`).join("");
+    return `<article class="card book">
+      <div class="page page-photos">
+        ${photoPair(v)}
+        <div class="nameplate">
+          <p class="kicker">${esc(v.neighborhood)} <span>·</span> ${esc(v.type)} <span>·</span> ${price}</p>
           <h4>${title}</h4>
-          <p class="addr">${esc(v.address)}${v.zip && !v.address.includes(v.zip) ? ` ${v.zip}` : ""}</p>
-          ${dist ? `<p class="dist">${dist}</p>` : ""}${belt}
         </div>
-        <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${ICON.heart}</button>
-      </header>
-      <div class="status-row"><span class="status ${s.cls}">${s.label}</span>${confirm}</div>
-      <p class="deal">${esc(v.dealText)}</p>
-      <div class="hours-block">
-        ${sched ? `<p class="hb-label">Happy hour</p><dl class="sched">${sched}</dl>` : ""}
-        ${hoursLine ? `<p class="hb-label">Hours</p>${hoursLine}` : ""}
       </div>
-      ${tags ? `<div class="tags">${tags}</div>` : ""}
-      <footer class="card-foot">
-        <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
-        <button class="act act-share" data-share="${v.id}" aria-label="Share ${esc(v.name)}" title="Share">${ICON.share}<span class="share-lbl">Share</span></button>
-        <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create Partiful</span></a>
-      </footer>
+      <div class="page page-info">
+        <div class="info-top">
+          <div class="status-row"><span class="status ${s.cls}">${s.label}</span>${confirm}</div>
+          <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${ICON.heart}</button>
+        </div>
+        <div class="info-grid">
+          <section class="sec sec-deals">
+            <h5 class="sec-label">The Deals</h5>
+            <ul class="deal-list">${deals}</ul>
+          </section>
+          <div class="sec-side">
+            ${sched || hoursLine ? `<section class="sec sec-when">
+              <h5 class="sec-label">When</h5>
+              ${sched ? `<dl class="sched">${sched}</dl>` : ""}
+              ${hoursLine}
+            </section>` : ""}
+            <section class="sec sec-where">
+              <h5 class="sec-label">Where</h5>
+              <p class="addr">${esc(v.address)}${v.zip && !v.address.includes(v.zip) ? ` ${v.zip}` : ""}</p>
+              ${dist ? `<p class="dist">${dist}</p>` : ""}${belt}
+            </section>
+          </div>
+        </div>
+        <footer class="card-foot">
+          ${tags ? `<div class="tags">${tags}</div>` : ""}
+          <div class="acts">
+            <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
+            <button class="act act-share" data-share="${v.id}" aria-label="Share ${esc(v.name)}" title="Share">${ICON.share}<span class="share-lbl">Share</span></button>
+            <a class="act act-party" href="${partifulUrl(v)}"${TOUCH ? "" : ' target="_blank" rel="noopener"'} title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create Partiful</span></a>
+          </div>
+        </footer>
+      </div>
     </article>`;
+  }
+
+  // Two photos from the bar's own site, one above the other (the name plate sits across the seam).
+  // One photo is split across both frames; none gets the sunset placeholder.
+  function photoPair(v) {
+    const photos = (window.PHOTOS || {})[v.id] || [];
+    if (!photos.length) return `<div class="ph ph-empty"><div class="ph-sun"></div></div><div class="ph ph-empty ph-low"><p class="ph-hood">${esc(v.neighborhood)}</p></div>`;
+    let host = "";
+    try { host = new URL(v.website).hostname.replace(/^www\./, ""); } catch {}
+    const [a, b] = photos.length > 1 ? photos : [photos[0], photos[0]];
+    const split = photos.length === 1 ? " ph-split" : "";
+    return `<div class="ph${split}"><img src="${a}" alt="${esc(v.name)}, photo from its website" loading="lazy" decoding="async"></div>`
+      + `<div class="ph ph-low${split}"><img src="${b}" alt="" loading="lazy" decoding="async">${host ? `<span class="ph-credit">Photos: ${esc(host)}</span>` : ""}</div>`;
   }
 
   let map, layer;
@@ -503,8 +541,29 @@
     if (state.view === "list") {
       $("list").innerHTML = items.length ? items.map(card).join("")
         : `<p class="empty">Nothing matches those filters. Try loosening a few.</p>`;
+      fitTags();
     } else renderMap(items);
   }
+
+  // Tags: one line when everything fits; otherwise two lines (food, then the place),
+  // each kept to a single line by hiding the tags that would wrap. Never more than two lines.
+  function fitTags() {
+    const wraps = els => els.some(t => t.offsetTop > els[0].offsetTop);
+    for (const box of document.querySelectorAll("#list .tags")) {
+      const all = [...box.querySelectorAll(".tag")];
+      all.forEach(t => { t.hidden = false; });
+      box.classList.add("one-line");
+      if (!all.length || !wraps(all)) continue;
+      box.classList.remove("one-line");
+      for (const row of box.querySelectorAll(".tag-row")) {
+        const tags = [...row.children], top = tags[0].offsetTop;
+        tags.forEach(t => { if (t.offsetTop > top) t.hidden = true; });
+      }
+    }
+  }
+  let fitTimer;
+  window.addEventListener("resize", () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitTags, 120); });
+  document.fonts?.ready.then(fitTags);
 
   $("list").onclick = async e => {
     const f = e.target.closest("[data-fav]"), sh = e.target.closest("[data-share]"), tg = e.target.closest("[data-tag]");
