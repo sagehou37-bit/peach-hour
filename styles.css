@@ -142,7 +142,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .viewbar button { border: 0; background: none; font: inherit; font-weight: 700; padding: 10px; border-radius: 7px; cursor: pointer; color: var(--muted); }
 .viewbar button.on { background: var(--dusk); color: #fff; }
 
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(520px, 1fr)); gap: 22px 20px; container: list / inline-size; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; container: list / inline-size; }
 .empty { grid-column: 1 / -1; text-align: center; padding: 56px 16px; color: var(--muted); }
 
 /* ── Card ────────────────────────────────── */
@@ -263,7 +263,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
   --cover: #2b2a55; --paper: var(--card); --spine: rgba(27, 31, 59, .26);
   padding: 7px; gap: 0; border: 0; border-radius: 16px; overflow: visible;
   background: linear-gradient(90deg, #232248, var(--cover) 50%, #232248);
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); grid-template-areas: "photos info";
+  display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); grid-template-areas: "photos info";
   box-shadow: 0 1px 0 rgba(255, 255, 255, .06) inset, 0 22px 34px -24px rgba(17, 19, 42, .7);
 }
 .book .page { position: relative; background: var(--paper); min-width: 0; }
@@ -276,7 +276,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .page-info::before { left: 0; background: linear-gradient(to right, var(--spine), rgba(27, 31, 59, .06) 40%, transparent); }
 
 /* Left page: two photos, name plate across the seam */
-.page-photos { display: grid; grid-template-rows: 1fr 1fr; gap: 8px; padding: 12px 16px 12px 12px; min-height: 360px; }
+.page-photos { display: grid; grid-template-rows: 1fr 1fr; gap: 8px; padding: 14px 18px 14px 14px; min-height: 380px; }
 .ph { position: relative; overflow: hidden; border-radius: 7px; background: var(--line); }
 .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .ph-split img { height: calc(200% + 8px); }              /* one photo spread across both frames */
@@ -294,16 +294,21 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
   box-shadow: 0 10px 26px -10px rgba(17, 19, 42, .55), 0 0 0 1px var(--line);
 }
 .nameplate .kicker { margin: 0 0 3px; font-size: .72rem; letter-spacing: .02em; }
-.nameplate h4 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; letter-spacing: -.02em; font-size: 1.42rem; line-height: 1.05; }
+.nameplate h4 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; letter-spacing: -.02em; font-size: clamp(1.3rem, 2.2vw, 1.7rem); line-height: 1.05; }
 
-/* Right page: the details, with room to breathe */
-.page-info { padding: 20px 22px 18px 30px; display: flex; flex-direction: column; gap: 14px; container-type: inline-size; }
-.info-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+/* Right page: the details, grouped into labeled sections */
+.page-info { padding: 22px 26px 18px 36px; display: flex; flex-direction: column; gap: 16px; container: info / inline-size; }
+.info-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .info-top .heart { width: 36px; height: 36px; }
-.deal-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: .98rem; line-height: 1.4; font-weight: 500; }
+.sec-label { margin: 0 0 8px; font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.sec-label::before { content: ""; width: 14px; height: 2px; border-radius: 2px; background: var(--peach); }
+.info-grid { display: grid; gap: 18px; }
+.sec-side { display: grid; gap: 18px; align-content: start; }
+.sec p { margin: 0; }
+.deal-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 1rem; line-height: 1.4; font-weight: 500; }
 .deal-list li { position: relative; padding-left: 16px; }
 .deal-list li::before { content: ""; position: absolute; left: 2px; top: .58em; width: 6px; height: 6px; border-radius: 50%; background: var(--peach); }
-.book .sched { gap: 6px; font-size: .88rem; }
+.book .sched { gap: 6px; font-size: .9rem; }
 .book .sched div { display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: 0 8px; }
 .book .sched div::after { content: ""; grid-column: 2; grid-row: 1; border-bottom: 1px dotted var(--line); transform: translateY(-3px); }
 .book .sched dt { min-width: 0; grid-column: 1; }
@@ -311,17 +316,24 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .book .sched .note { grid-column: 1 / -1; font-size: .8rem; margin-top: -1px; }
 .book .sched div.today dt, .book .sched div.today dd { color: var(--ink); }
 .book .sched div:not(.today) dd { font-weight: 500; color: var(--muted); }
-.open-line { margin: -4px 0 0; font-size: .85rem; font-weight: 700; color: var(--muted); }
+.open-line { margin: 8px 0 0 !important; font-size: .86rem; font-weight: 700; color: var(--muted); }
 .open-line.is-open { color: var(--live); }
 .open-line span { font-weight: 500; color: var(--muted); }
-.where { display: grid; gap: 2px; }
-.where p { margin: 0; }
-.book .addr { display: flex; align-items: center; gap: 5px; font-size: .84rem; }
-.book .addr .i { width: 13px; height: 13px; flex: none; opacity: .7; }
-.book .dist, .book .belt { font-size: .82rem; padding-left: 18px; }
+.book .addr { margin: 0; font-size: .92rem; color: var(--ink); font-weight: 500; }
+.book .dist, .book .belt { font-size: .84rem; margin-top: 3px; }
+.book .card-foot { margin-top: auto; padding-top: 14px; display: flex; flex-direction: column; align-items: stretch; gap: 12px; }
 .book .tags { gap: 5px; }
 .book .tag { font-size: .76rem; padding: 3px 8px; }
-.book .card-foot { padding-top: 12px; }
+.acts { display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; min-width: 0; }
+/* Wide right page: deals on the left, when/where on the right, tags and buttons share the bottom row */
+@container info (min-width: 540px) {
+  .info-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 0 28px; }
+  .sec-side { border-left: 1px solid var(--line); padding-left: 26px; }
+  .book .card-foot { flex-direction: row; align-items: center; justify-content: space-between; }
+  .book .tags { flex: 1 1 auto; min-width: 0; }
+  .acts { flex: 0 0 auto; }
+  .acts .act { flex: 0 0 auto; }
+}
 
 @container list (max-width: 560px) {
   .card.book { grid-template-columns: minmax(0, 1fr); grid-template-areas: "photos" "info"; padding: 6px; background: linear-gradient(180deg, #232248, var(--cover) 50%, #232248); }

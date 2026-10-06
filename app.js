@@ -451,18 +451,31 @@
           <div class="status-row"><span class="status ${s.cls}">${s.label}</span>${confirm}</div>
           <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${ICON.heart}</button>
         </div>
-        <ul class="deal-list">${deals}</ul>
-        ${sched ? `<dl class="sched">${sched}</dl>` : ""}
-        ${hoursLine}
-        <div class="where">
-          <p class="addr">${ICON.pin}${esc(v.address)}${v.zip && !v.address.includes(v.zip) ? ` ${v.zip}` : ""}</p>
-          ${dist ? `<p class="dist">${dist}</p>` : ""}${belt}
+        <div class="info-grid">
+          <section class="sec sec-deals">
+            <h5 class="sec-label">The Deals</h5>
+            <ul class="deal-list">${deals}</ul>
+          </section>
+          <div class="sec-side">
+            ${sched || hoursLine ? `<section class="sec sec-when">
+              <h5 class="sec-label">When</h5>
+              ${sched ? `<dl class="sched">${sched}</dl>` : ""}
+              ${hoursLine}
+            </section>` : ""}
+            <section class="sec sec-where">
+              <h5 class="sec-label">Where</h5>
+              <p class="addr">${esc(v.address)}${v.zip && !v.address.includes(v.zip) ? ` ${v.zip}` : ""}</p>
+              ${dist ? `<p class="dist">${dist}</p>` : ""}${belt}
+            </section>
+          </div>
         </div>
-        ${tags ? `<div class="tags">${tags}</div>` : ""}
         <footer class="card-foot">
-          <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
-          <button class="act act-share" data-share="${v.id}" aria-label="Share ${esc(v.name)}" title="Share">${ICON.share}<span class="share-lbl">Share</span></button>
-          <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create Partiful</span></a>
+          ${tags ? `<div class="tags">${tags}</div>` : ""}
+          <div class="acts">
+            <a class="act" href="${mapsUrl(v)}" target="_blank" rel="noopener">${ICON.pin}<span>Directions</span></a>
+            <button class="act act-share" data-share="${v.id}" aria-label="Share ${esc(v.name)}" title="Share">${ICON.share}<span class="share-lbl">Share</span></button>
+            <a class="act act-party" href="${partifulUrl(v)}" target="_blank" rel="noopener" title="Plan a hangout here on Partiful"><img class="pf-logo" src="assets/partiful.png" alt="" width="20" height="20"><span>Create Partiful</span></a>
+          </div>
         </footer>
       </div>
     </article>`;
