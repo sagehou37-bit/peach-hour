@@ -1,4 +1,4 @@
-/* Peach Hour: dusk navy + peach, Instrument Serif / DM Sans */
+/* Peach Hour: dusk navy + peach, Instrument Serif / Newsreader */
 :root {
   --dusk: #1b1f3b;
   --dusk-2: #2a2f55;
@@ -16,7 +16,7 @@
   --later-bg: #ffe6dc;
   --topbar-h: 60px;
   --display: "Instrument Serif", Georgia, serif;
-  --sans: "DM Sans", system-ui, sans-serif;
+  --text: "Newsreader", Georgia, serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .tag-food, :root[data-theme="dark"] .tag-food { background: #3d2017; color: #ffb59a; }
@@ -35,7 +35,7 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { scroll-padding-top: calc(var(--topbar-h) + 8px); }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.5 var(--text); -webkit-font-smoothing: antialiased; }
 .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 a { color: var(--peach-ink); }
@@ -74,7 +74,7 @@ h1, h2, h4 { font-family: var(--display); font-weight: 400; letter-spacing: -.01
 .tagline { font-size: clamp(1.05rem, 2.6vw, 1.3rem); color: rgba(255, 255, 255, .78); margin: 20px auto 32px; max-width: 34ch; }
 .cta {
   display: inline-flex; align-items: center; gap: 10px; background: var(--peach); color: #fff; text-decoration: none;
-  font-family: var(--sans); font-weight: 700; font-size: 1.1rem; padding: 16px 28px; border-radius: 12px;
+  font-family: var(--text); font-weight: 700; font-size: 1.1rem; padding: 16px 28px; border-radius: 12px;
   box-shadow: 0 10px 30px rgba(255, 106, 61, .35); transition: transform .15s ease, box-shadow .15s ease;
 }
 .cta::after { content: ""; width: 10px; height: 10px; border-right: 2.5px solid; border-bottom: 2.5px solid; transform: rotate(45deg) translateY(-3px); }
@@ -85,7 +85,7 @@ h1, h2, h4 { font-family: var(--display); font-weight: 400; letter-spacing: -.01
 .finder { padding-top: 56px; padding-bottom: 8px; scroll-margin-top: calc(var(--topbar-h) + 8px); }
 .finder h2 { font-size: clamp(2.3rem, 5.5vw, 3.2rem); font-weight: 400; margin: 0; line-height: 1; }
 .finder-sub { color: var(--muted); margin: 8px 0 8px; }
-.finder h3 { font-family: var(--sans); font-size: .95rem; font-weight: 700; margin: 22px 0 10px; letter-spacing: 0; }
+.finder h3 { font-family: var(--text); font-size: .95rem; font-weight: 700; margin: 22px 0 10px; letter-spacing: 0; }
 .finder-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
 .finder-grid.more { margin-top: 18px; padding-top: 6px; border-top: 1px solid var(--line); }
 .finder-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 30px; padding-bottom: 32px; border-bottom: 1px solid var(--line); }
@@ -214,7 +214,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 
 /* ── Map ─────────────────────────────────── */
 .map { height: 70vh; min-height: 420px; border-radius: 12px; border: 1px solid var(--line); }
-.leaflet-popup-content { font-family: var(--sans); }
+.leaflet-popup-content { font-family: var(--text); }
 .leaflet-popup-content b { font-family: var(--display); font-size: 1.05rem; }
 
 /* ── Contact ─────────────────────────────── */
@@ -363,15 +363,15 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
   .act-share { flex: 0 0 auto; width: 40px; padding: 8px 0; }
 }
 @container (max-width: 300px) { /* narrow phones (~360px screens) */
-  .card-foot { gap: 5px; }
-  .act { padding: 8px 7px; gap: 5px; font-size: .82rem; }
+  .card-foot, .acts { gap: 4px; }
+  .act { padding: 8px 5px; gap: 4px; font-size: .78rem; letter-spacing: -.01em; }
   .act .i { width: 15px; height: 15px; }
   .pf-logo { width: 18px; height: 18px; }
 }
 @container (max-width: 270px) { /* smallest phones (~320px screens): drop the Directions icon */
-  .card-foot { gap: 4px; }
+  .card-foot, .acts { gap: 4px; }
   .act:not(.act-party):not(.act-share) .i { display: none; }
-  .act { padding: 8px 5px; font-size: .78rem; }
+  .act { padding: 8px 4px; font-size: .76rem; letter-spacing: -.01em; }
   .act-party { gap: 4px; }
   .pf-logo { width: 16px; height: 16px; }
 }
