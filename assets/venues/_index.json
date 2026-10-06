@@ -232,5 +232,61 @@
  ],
  "ghee": [
   "assets/venues/ghee-1.jpg"
+ ],
+ "ela": [
+  "assets/venues/ela-1.jpg"
+ ],
+ "murphys": [
+  "assets/venues/murphys-1.jpg",
+  "assets/venues/murphys-2.jpg"
+ ],
+ "atkins-park": [
+  "assets/venues/atkins-park-1.jpg"
+ ],
+ "little-spirit": [
+  "assets/venues/little-spirit-1.jpg"
+ ],
+ "mccrays-beltline": [
+  "assets/venues/mccrays-beltline-1.jpg",
+  "assets/venues/mccrays-beltline-2.jpg",
+  "assets/venues/mccrays-beltline-3.jpg"
+ ],
+ "el-super-pan": [
+  "assets/venues/el-super-pan-1.jpg",
+  "assets/venues/el-super-pan-2.jpg"
+ ],
+ "serena": [
+  "assets/venues/serena-1.jpg",
+  "assets/venues/serena-2.jpg"
+ ],
+ "sebastian-pintxos": [
+  "assets/venues/sebastian-pintxos-1.jpg"
+ ],
+ "ecco-midtown": [
+  "assets/venues/ecco-midtown-1.jpg"
+ ],
+ "south-city-midtown": [
+  "assets/venues/south-city-midtown-1.jpg",
+  "assets/venues/south-city-midtown-2.jpg",
+  "assets/venues/south-city-midtown-3.jpg"
+ ],
+ "south-city-buckhead": [
+  "assets/venues/south-city-buckhead-1.jpg",
+  "assets/venues/south-city-buckhead-2.jpg",
+  "assets/venues/south-city-buckhead-3.jpg"
+ ],
+ "poboy-shop": [
+  "assets/venues/poboy-shop-1.jpg"
+ ],
+ "parkers-on-ponce": [
+  "assets/venues/parkers-on-ponce-1.jpg",
+  "assets/venues/parkers-on-ponce-2.jpg",
+  "assets/venues/parkers-on-ponce-3.jpg"
+ ],
+ "fogo-buckhead": [
+  "assets/venues/fogo-buckhead-1.jpg"
+ ],
+ "truva": [
+  "assets/venues/truva-1.jpg"
  ]
 }
