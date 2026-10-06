@@ -63,6 +63,7 @@
 
     { id: "bar-bacoa", name: "Bar.bacoa", neighborhood: "Virginia-Highland",
       address: "1000 Virginia Ave NE", lat: 33.78251, lng: -84.35468, price: 2, type: "Restaurant",
+      website: "https://barbacoaatl.com/",
       zip: "30306",
       cuisine: ["Mexican / Tacos", "Spanish / Tapas"], vibes: ["Groups"], outdoor: ["Patio"],
       hours: days({ 0: ["12:00", "21:00"], 1: ["16:00", "22:00"], 2: ["16:00", "22:00"], 3: ["16:00", "22:00"], 4: ["16:00", "22:00"], 5: ["16:00", "22:00"], 6: ["12:00", "22:00"] }),
@@ -106,6 +107,7 @@
 
     { id: "truva", name: "Truva Turkish Kitchen", neighborhood: "Virginia-Highland",
       address: "842 N Highland Ave NE", lat: 33.77747, lng: -84.35274, price: 2, type: "Restaurant",
+      website: "https://www.truvahighland.com/",
       zip: "30306",
       cuisine: ["Mediterranean"], vibes: [], outdoor: ["Patio"], hours: days({ 0: ["10:00", "22:00"], 1: ["11:00", "22:00"], 2: ["11:00", "22:00"], 3: ["11:00", "22:00"], 4: ["11:00", "22:00"], 5: ["11:00", "23:00"], 6: ["10:00", "23:00"] }),
       happyHours: [{ days: WEEKDAYS, start: "15:00", end: "18:00" }],
@@ -476,6 +478,7 @@
 
     { id: "serena", name: "Serena Pastificio", neighborhood: "Midtown",
       address: "Colony Square, 1197 Peachtree St NE", lat: 33.78738, lng: -84.38285, price: 2, type: "Restaurant",
+      website: "https://www.serena-pastificio.com/",
       zip: "30361",
       cuisine: ["Italian"], vibes: ["Date night"], outdoor: [], hours: null,
       happyHours: [{ days: [0, 1, 2, 3, 4, 5, 6], start: "15:00", end: "18:00" }],
@@ -657,6 +660,7 @@
 
     { id: "ghee", name: "Ghee Indian Kitchen", neighborhood: "West Midtown",
       address: "1050 Howell Mill Rd", lat: 33.78345, lng: -84.41189, price: 2, type: "Restaurant",
+      website: "https://www.gheeindiankitchen.com/location/ghee-westmidtown/",
       zip: "30318",
       cuisine: ["Indian"], vibes: ["Groups"], outdoor: [], hours: null,
       happyHours: [{ days: [0, 1, 2, 3, 4, 5, 6], start: "17:00", end: "19:00" }],
@@ -766,14 +770,6 @@
       deals: ["beer", "cocktails"], dealText: "$2.50 PBRs · $4 well drinks · $5 Paddy's Irish whiskey · $2 Koji sakes",
       hhStatus: "confirmed", sources: [{ label: "thinkingmantavern.com (happy hour flyer)", url: "https://www.thinkingmantavern.com/" }] },
 
-    { id: "pinewood", name: "The Pinewood", neighborhood: "Decatur",
-      address: "254 W Ponce de Leon Ave, Decatur", lat: 33.77542, lng: -84.29989, price: 2, type: "Cocktail bar",
-      zip: "30030",
-      cuisine: ["Southern"], vibes: ["Cozy"], outdoor: [], hours: null,
-      happyHours: [{ days: [3], allDay: true, note: "Whiskey Wednesday: half-price whiskey cocktails" }],
-      deals: ["cocktails"], dealText: "Whiskey Wednesdays: half-priced whiskey cocktails",
-      hhStatus: "reported", sources: [{ label: "AJC (2018)", url: "https://www.ajc.com/events/food--wine/dekalb-spots-with-food-and-drink-specials-you-won-want-miss/9jVhuGwrLixr969EjGibVP/" }] },
-
     { id: "parkers-on-ponce", name: "Parker's on Ponce", neighborhood: "Decatur",
       address: "116 E Ponce de Leon Ave, Decatur", lat: 33.77573, lng: -84.29588, price: 3, type: "Restaurant",
       website: "https://parkersonponce.com/", zip: "30030",
@@ -814,6 +810,7 @@
 
     { id: "miss-conduck", name: "Miss Conduck", neighborhood: "Edgewood",
       address: "357 Edgewood Ave SE", lat: 33.75431, lng: -84.37626, price: 2, type: "Restaurant",
+      website: "https://missconduck.com/",
       zip: "30312",
       cuisine: ["Caribbean"], vibes: ["Groups", "Late night"], outdoor: [], hours: null,
       happyHours: [{ days: [0, 1, 2, 3, 4, 5, 6], start: "16:00", end: "19:00" }],
@@ -853,6 +850,7 @@
 
     { id: "fado", name: "Fadó Irish Pub", neighborhood: "Buckhead",
       address: "273 Buckhead Ave NE", lat: 33.83802, lng: -84.37862, price: 2, type: "Pub",
+      website: "https://www.fadoirishpub.com/atlanta/",
       zip: "30305",
       cuisine: ["British", "Bar food"], vibes: ["Sports", "Groups"], outdoor: ["Rooftop"], hours: days({ 0: ["10:00", "21:00"], 1: ["11:30", "23:00"], 2: ["11:30", "23:00"], 3: ["11:30", "23:00"], 4: ["11:30", "23:00"], 5: ["11:30", "24:00"], 6: ["10:00", "01:00"] }),
       happyHours: [{ days: WEEKDAYS, start: "16:00", end: "19:00" }],
@@ -932,6 +930,7 @@
     // ── Emory Point / Druid Hills (Clifton Rd area) ───────────────
     { id: "srithai-emory", name: "SriThai Emory Point", neighborhood: "Emory / Druid Hills",
       address: "1540 Avenue Pl (Emory Point)", lat: 33.80124, lng: -84.32709, price: 2, type: "Restaurant",
+      website: "https://srithaikitchen.com/",
       zip: "30329",
       cuisine: ["Thai", "Sushi"], vibes: ["Groups"], outdoor: [], hours: null,
       happyHours: [{ days: WEEKDAYS, start: "15:00", end: "18:00" }],
