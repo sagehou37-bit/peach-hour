@@ -388,8 +388,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .nameplate h4, .sec-label { font-synthesis: none; -webkit-text-stroke: .035em currentColor; }
 .nameplate h4 a { -webkit-text-stroke: inherit; }
 
-/* ── Compact books ─────────────────────────────────────────────────────────
-   Shorter photo page, tighter spacing; extra deals/times/tags wait behind "+ More". */
+/* ── Compact books: shorter photo page, tighter spacing ──────────────────── */
 .grid { gap: 32px; }
 .page-photos { min-height: 250px; gap: 6px; padding: 10px 14px 10px 10px; }
 .nameplate { padding: 8px 14px 9px; border-radius: 12px; left: 22px; right: 26px; }
@@ -403,15 +402,6 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .open-line { margin-top: 5px !important; }
 .info-grid, .sec-side { gap: 12px; }
 .book .card-foot { padding-top: 10px; gap: 8px; }
-.book .more-item { display: none !important; }
-.book.open .more-item { display: revert !important; }
-.book.open .tags.more-item { display: flex !important; }
-.book.open .sched div.more-item { display: grid !important; }
-.book-more { align-self: flex-start; border: 0; background: none; padding: 2px 0; font: inherit; font-size: .86rem; font-weight: 700; color: var(--peach-ink, #c2410c); cursor: pointer; white-space: nowrap; }
-.book-more:hover { text-decoration: underline; }
-@container info (min-width: 540px) {
-  .book-more { align-self: center; margin-right: auto; }
-}
 @container list (max-width: 560px) {
   .page-photos { min-height: 0; height: 150px; padding: 8px 8px 10px; }
   .nameplate { left: 50%; right: auto; }
