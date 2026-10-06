@@ -947,14 +947,6 @@
       deals: ["cocktails", "food"], dealText: "Cocktail specials & small plates at the bar · NY-style Jewish deli with a full bar · walkable from Emory's campus",
       hhStatus: "confirmed", sources: [{ label: "thegeneralmuir.com", url: "https://www.thegeneralmuir.com/" }] },
 
-    { id: "hopdoddy-druid-hills", name: "Hopdoddy Burger Bar", neighborhood: "Emory / Druid Hills",
-      address: "2470 Briarcliff Rd NE, Ste 47", lat: 33.82681, lng: -84.33269, price: 1, type: "Restaurant",
-      website: "https://www.hopdoddy.com/locations/druidhills", zip: "30329",
-      cuisine: ["American"], vibes: ["Groups"], outdoor: ["Patio"],
-      hours: [0, 1, 2, 3, 4, 5, 6].map(d => (d === 5 || d === 6 ? ["11:00", "23:00"] : ["11:00", "22:00"])),
-      happyHours: [{ days: [1, 2, 3, 4], start: "15:00", end: "18:00", note: "Half off daily features (dine-in)" }],
-      deals: ["food"], dealText: "Half off daily features, Mon–Thu (dine-in only)",
-      hhStatus: "confirmed", sources: [{ label: "hopdoddy.com", url: "https://www.hopdoddy.com/locations/druidhills" }] },
   ];
   window.VENUES.forEach(v => { v.checked = CHECKED; });
 
