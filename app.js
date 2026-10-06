@@ -406,6 +406,7 @@
     const fav = favs.has(v.id), today = s.t.day;
     const price = `<span class="price" aria-label="Price ${v.price} of 3">${"$".repeat(v.price)}<span>${"$".repeat(3 - v.price)}</span></span>`;
     const dist = [mi != null ? `${mi.toFixed(1)} mi away` : "", dm != null ? `~${dm} min drive from ${CAMPUSES[state.campus].name}` : ""].filter(Boolean).join(" · ");
+    const belt = v.beltline ? `<p class="belt">${v.beltline.min} min walk to the BeltLine <span>(${esc(v.beltline.trail)})</span></p>` : "";
     const title = v.website ? `<a href="${v.website}" target="_blank" rel="noopener">${esc(v.name)}</a>` : esc(v.name);
 
     // Happy hour rows, starting from today's day of the week.
@@ -437,7 +438,7 @@
           <p class="kicker">${esc(v.neighborhood)} <span>/</span> ${esc(v.type)} <span>/</span> ${price}</p>
           <h4>${title}</h4>
           <p class="addr">${esc(v.address)}${v.zip && !v.address.includes(v.zip) ? ` ${v.zip}` : ""}</p>
-          ${dist ? `<p class="dist">${dist}</p>` : ""}
+          ${dist ? `<p class="dist">${dist}</p>` : ""}${belt}
         </div>
         <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${ICON.heart}</button>
       </header>
