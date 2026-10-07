@@ -285,7 +285,8 @@ window.PHOTOS = {
   "assets/venues/parkers-on-ponce-3.jpg"
  ],
  "fogo-buckhead": [
-  "assets/venues/fogo-buckhead-1.jpg"
+  "assets/venues/fogo-buckhead-1.jpg",
+  "assets/venues/fogo-buckhead-2.jpg"
  ],
  "truva": [
   "assets/venues/truva-1.jpg"
