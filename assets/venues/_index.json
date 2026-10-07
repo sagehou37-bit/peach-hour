@@ -317,7 +317,8 @@
   "assets/venues/moes-joes-3.jpg"
  ],
  "srithai-atlantic": [
-  "assets/venues/srithai-atlantic-1.jpg"
+  "assets/venues/srithai-atlantic-1.jpg",
+  "assets/venues/srithai-atlantic-2.jpg"
  ],
  "srithai-emory": [
   "assets/venues/srithai-emory-1.jpg"
@@ -355,5 +356,20 @@
   "assets/venues/roshambo-1.jpg",
   "assets/venues/roshambo-2.jpg",
   "assets/venues/roshambo-3.jpg"
+ ],
+ "dads": [
+  "assets/venues/dads-1.jpg"
+ ],
+ "fontaines": [
+  "assets/venues/fontaines-1.jpg"
+ ],
+ "boho-taco": [
+  "assets/venues/boho-taco-1.jpg",
+  "assets/venues/boho-taco-2.jpg",
+  "assets/venues/boho-taco-3.jpg"
+ ],
+ "leilas": [
+  "assets/venues/leilas-1.jpg",
+  "assets/venues/leilas-2.jpg"
  ]
 }
