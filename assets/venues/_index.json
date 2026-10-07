@@ -188,7 +188,9 @@
   "assets/venues/double-zero-3.jpg"
  ],
  "iberian-pig": [
-  "assets/venues/iberian-pig-2.jpg"
+  "assets/venues/iberian-pig-1.jpg",
+  "assets/venues/iberian-pig-2.jpg",
+  "assets/venues/iberian-pig-3.jpg"
  ],
  "marcus": [
   "assets/venues/marcus-1.jpg",
@@ -289,7 +291,9 @@
   "assets/venues/south-city-buckhead-3.jpg"
  ],
  "poboy-shop": [
-  "assets/venues/poboy-shop-1.jpg"
+  "assets/venues/poboy-shop-1.jpg",
+  "assets/venues/poboy-shop-2.jpg",
+  "assets/venues/poboy-shop-3.jpg"
  ],
  "parkers-on-ponce": [
   "assets/venues/parkers-on-ponce-3.jpg",
@@ -320,5 +324,20 @@
   "assets/venues/hudson-grille-midtown-1.jpg",
   "assets/venues/hudson-grille-midtown-2.jpg",
   "assets/venues/hudson-grille-midtown-3.jpg"
+ ],
+ "kimball-house": [
+  "assets/venues/kimball-house-1.jpg",
+  "assets/venues/kimball-house-2.jpg",
+  "assets/venues/kimball-house-3.jpg"
+ ],
+ "la-chiquiada": [
+  "assets/venues/la-chiquiada-1.jpg",
+  "assets/venues/la-chiquiada-2.jpg",
+  "assets/venues/la-chiquiada-3.jpg"
+ ],
+ "thinking-man": [
+  "assets/venues/thinking-man-1.jpg",
+  "assets/venues/thinking-man-2.jpg",
+  "assets/venues/thinking-man-3.jpg"
  ]
 }
