@@ -238,7 +238,9 @@
   "assets/venues/bar-bacoa-3.jpg"
  ],
  "ghee": [
-  "assets/venues/ghee-1.jpg"
+  "assets/venues/ghee-1.jpg",
+  "assets/venues/ghee-2.jpg",
+  "assets/venues/ghee-3.jpg"
  ],
  "ela": [
   "assets/venues/ela-1.jpg",
@@ -339,5 +341,19 @@
   "assets/venues/thinking-man-1.jpg",
   "assets/venues/thinking-man-2.jpg",
   "assets/venues/thinking-man-3.jpg"
+ ],
+ "miss-conduck": [
+  "assets/venues/miss-conduck-1.jpg",
+  "assets/venues/miss-conduck-2.jpg"
+ ],
+ "fado": [
+  "assets/venues/fado-1.jpg",
+  "assets/venues/fado-2.jpg",
+  "assets/venues/fado-3.jpg"
+ ],
+ "roshambo": [
+  "assets/venues/roshambo-1.jpg",
+  "assets/venues/roshambo-2.jpg",
+  "assets/venues/roshambo-3.jpg"
  ]
 }
