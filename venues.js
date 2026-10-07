@@ -933,9 +933,9 @@
       website: "https://srithaikitchen.com/",
       zip: "30329",
       cuisine: ["Thai", "Sushi"], vibes: ["Groups"], outdoor: [], hours: null,
-      happyHours: [{ days: WEEKDAYS, start: "15:00", end: "18:00" }],
-      deals: ["food"], dealText: "Weekday happy hour specials · walkable from Emory's campus",
-      hhStatus: "reported", sources: [{ label: "OpenTable listing", url: "https://www.opentable.com/r/srithai-thai-kitchen-and-sushi-bar-emory-point-atlanta" }] },
+      happyHours: [{ days: [3], start: "18:00", end: "21:00", note: "Wine Night" }, { days: [5], start: "17:00", end: "21:00", note: "Beer Night" }],
+      deals: ["wine", "beer"], dealText: "Wine Night Wednesdays: $5 glasses of white or red (Sauvignon Blanc, Pinot Grigio, Cabernet, Pinot Noir, red blend) · Beer Night Fridays: $4 Asahi, Corona & Heineken bottles · walkable from Emory's campus",
+      hhStatus: "confirmed", sources: [{ label: "srithaikitchen.com (Events at Emory)", url: "https://srithaikitchen.com/" }] },
 
     { id: "general-muir", name: "The General Muir", neighborhood: "Emory / Druid Hills",
       address: "1540 Avenue Pl, Ste B-230 (Emory Point)", lat: 33.80140, lng: -84.32690, price: 2, type: "Restaurant",
