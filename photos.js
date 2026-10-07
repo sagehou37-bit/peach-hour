@@ -7,7 +7,6 @@ window.PHOTOS = {
  ],
  "family-dog": [
   "assets/venues/family-dog-1.jpg",
-  "assets/venues/family-dog-2.jpg",
   "assets/venues/family-dog-3.jpg"
  ],
  "tio-luchos": [
@@ -105,12 +104,10 @@ window.PHOTOS = {
   "assets/venues/establishment-3.jpg"
  ],
  "park-tavern": [
-  "assets/venues/park-tavern-1.jpg",
   "assets/venues/park-tavern-3.jpg"
  ],
  "altatoro": [
-  "assets/venues/altatoro-1.jpg",
-  "assets/venues/altatoro-2.jpg"
+  "assets/venues/altatoro-1.jpg"
  ],
  "casa-almenara": [
   "assets/venues/casa-almenara-1.jpg",
@@ -143,7 +140,6 @@ window.PHOTOS = {
  ],
  "brasserie-lundi": [
   "assets/venues/brasserie-lundi-1.jpg",
-  "assets/venues/brasserie-lundi-2.jpg",
   "assets/venues/brasserie-lundi-3.jpg"
  ],
  "gyu-kaku-atlantic": [
@@ -165,8 +161,8 @@ window.PHOTOS = {
   "assets/venues/wild-heaven-toco-3.jpg"
  ],
  "maggies": [
-  "assets/venues/maggies-1.jpg",
   "assets/venues/maggies-2.jpg",
+  "assets/venues/maggies-1.jpg",
   "assets/venues/maggies-3.jpg"
  ],
  "salaryman-toco": [
@@ -187,9 +183,6 @@ window.PHOTOS = {
   "assets/venues/marcus-2.jpg",
   "assets/venues/marcus-3.jpg"
  ],
- "roshambo": [
-  "assets/venues/roshambo-2.jpg"
- ],
  "snap-thai": [
   "assets/venues/snap-thai-1.jpg",
   "assets/venues/snap-thai-2.jpg",
@@ -209,7 +202,6 @@ window.PHOTOS = {
  ],
  "5church-buckhead": [
   "assets/venues/5church-buckhead-1.jpg",
-  "assets/venues/5church-buckhead-2.jpg",
   "assets/venues/5church-buckhead-3.jpg"
  ],
  "atlanta-fish-market": [
@@ -280,9 +272,9 @@ window.PHOTOS = {
   "assets/venues/poboy-shop-1.jpg"
  ],
  "parkers-on-ponce": [
+  "assets/venues/parkers-on-ponce-3.jpg",
   "assets/venues/parkers-on-ponce-1.jpg",
-  "assets/venues/parkers-on-ponce-2.jpg",
-  "assets/venues/parkers-on-ponce-3.jpg"
+  "assets/venues/parkers-on-ponce-2.jpg"
  ],
  "fogo-buckhead": [
   "assets/venues/fogo-buckhead-1.jpg",
