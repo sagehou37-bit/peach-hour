@@ -53,7 +53,9 @@ window.PHOTOS = {
   "assets/venues/new-realm-2.jpg"
  ],
  "nine-mile": [
-  "assets/venues/nine-mile-1.jpg"
+  "assets/venues/nine-mile-1.jpg",
+  "assets/venues/nine-mile-2.jpg",
+  "assets/venues/nine-mile-3.jpg"
  ],
  "ladybird": [
   "assets/venues/ladybird-1.jpg",
@@ -61,7 +63,9 @@ window.PHOTOS = {
   "assets/venues/ladybird-3.jpg"
  ],
  "lloyds": [
-  "assets/venues/lloyds-1.jpg"
+  "assets/venues/lloyds-1.jpg",
+  "assets/venues/lloyds-2.jpg",
+  "assets/venues/lloyds-3.jpg"
  ],
  "buena-vida": [
   "assets/venues/buena-vida-1.jpg",
@@ -74,7 +78,9 @@ window.PHOTOS = {
   "assets/venues/one-flew-south-3.jpg"
  ],
  "hawkers-beltline": [
-  "assets/venues/hawkers-beltline-1.jpg"
+  "assets/venues/hawkers-beltline-1.jpg",
+  "assets/venues/hawkers-beltline-2.jpg",
+  "assets/venues/hawkers-beltline-3.jpg"
  ],
  "wylie-rum": [
   "assets/venues/wylie-rum-1.jpg",
@@ -97,17 +103,23 @@ window.PHOTOS = {
   "assets/venues/holeman-finch-3.jpg"
  ],
  "5church": [
-  "assets/venues/5church-1.jpg"
+  "assets/venues/5church-1.jpg",
+  "assets/venues/5church-2.jpg",
+  "assets/venues/5church-3.jpg"
  ],
  "establishment": [
   "assets/venues/establishment-1.jpg",
   "assets/venues/establishment-3.jpg"
  ],
  "park-tavern": [
+  "assets/venues/park-tavern-1.jpg",
+  "assets/venues/park-tavern-2.jpg",
   "assets/venues/park-tavern-3.jpg"
  ],
  "altatoro": [
-  "assets/venues/altatoro-1.jpg"
+  "assets/venues/altatoro-1.jpg",
+  "assets/venues/altatoro-2.jpg",
+  "assets/venues/altatoro-3.jpg"
  ],
  "casa-almenara": [
   "assets/venues/casa-almenara-1.jpg",
@@ -143,7 +155,8 @@ window.PHOTOS = {
   "assets/venues/brasserie-lundi-3.jpg"
  ],
  "gyu-kaku-atlantic": [
-  "assets/venues/gyu-kaku-atlantic-1.jpg"
+  "assets/venues/gyu-kaku-atlantic-1.jpg",
+  "assets/venues/gyu-kaku-atlantic-2.jpg"
  ],
  "rocky-mountain": [
   "assets/venues/rocky-mountain-1.jpg",
@@ -227,14 +240,18 @@ window.PHOTOS = {
   "assets/venues/ghee-1.jpg"
  ],
  "ela": [
-  "assets/venues/ela-1.jpg"
+  "assets/venues/ela-1.jpg",
+  "assets/venues/ela-2.jpg",
+  "assets/venues/ela-3.jpg"
  ],
  "murphys": [
   "assets/venues/murphys-1.jpg",
   "assets/venues/murphys-2.jpg"
  ],
  "atkins-park": [
-  "assets/venues/atkins-park-1.jpg"
+  "assets/venues/atkins-park-1.jpg",
+  "assets/venues/atkins-park-2.jpg",
+  "assets/venues/atkins-park-3.jpg"
  ],
  "little-spirit": [
   "assets/venues/little-spirit-1.jpg"
@@ -253,10 +270,14 @@ window.PHOTOS = {
   "assets/venues/serena-2.jpg"
  ],
  "sebastian-pintxos": [
-  "assets/venues/sebastian-pintxos-1.jpg"
+  "assets/venues/sebastian-pintxos-1.jpg",
+  "assets/venues/sebastian-pintxos-2.jpg",
+  "assets/venues/sebastian-pintxos-3.jpg"
  ],
  "ecco-midtown": [
-  "assets/venues/ecco-midtown-1.jpg"
+  "assets/venues/ecco-midtown-1.jpg",
+  "assets/venues/ecco-midtown-2.jpg",
+  "assets/venues/ecco-midtown-3.jpg"
  ],
  "south-city-midtown": [
   "assets/venues/south-city-midtown-1.jpg",
@@ -281,6 +302,24 @@ window.PHOTOS = {
   "assets/venues/fogo-buckhead-2.jpg"
  ],
  "truva": [
-  "assets/venues/truva-1.jpg"
+  "assets/venues/truva-1.jpg",
+  "assets/venues/truva-2.jpg",
+  "assets/venues/truva-3.jpg"
+ ],
+ "moes-joes": [
+  "assets/venues/moes-joes-1.jpg",
+  "assets/venues/moes-joes-2.jpg",
+  "assets/venues/moes-joes-3.jpg"
+ ],
+ "srithai-atlantic": [
+  "assets/venues/srithai-atlantic-1.jpg"
+ ],
+ "srithai-emory": [
+  "assets/venues/srithai-emory-1.jpg"
+ ],
+ "hudson-grille-midtown": [
+  "assets/venues/hudson-grille-midtown-1.jpg",
+  "assets/venues/hudson-grille-midtown-2.jpg",
+  "assets/venues/hudson-grille-midtown-3.jpg"
  ]
 };
