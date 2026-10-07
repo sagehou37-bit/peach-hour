@@ -443,6 +443,7 @@
       `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(titleCase(x))}</button>`)).join("");
     const tags = [[TAG_GROUPS[0]], [TAG_GROUPS[2], TAG_GROUPS[1]]].map(tagBtns).filter(Boolean)
       .map(row => `<div class="tag-row">${row}</div>`).join("");
+    const confirm = v.hhStatus === "reported" ? `<span class="confirm" title="Info came from older or third-party sources">Call to confirm</span>` : "";
     return `<article class="card book">
       <div class="page page-photos">
         ${photoPair(v)}
@@ -453,7 +454,7 @@
       </div>
       <div class="page page-info">
         <div class="info-top">
-          <div class="status-row"><span class="status ${s.cls}">${s.label}</span></div>
+          <div class="status-row"><span class="status ${s.cls}">${s.label}</span>${confirm}</div>
           <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${ICON.heart}</button>
         </div>
         <div class="info-grid">
