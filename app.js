@@ -438,7 +438,6 @@
 
     // Deal text is written as "a · b · c"; show it as a short list instead of a paragraph.
     const deals = v.dealText.split(/\s+·\s+/).map(d => `<li>${esc(d.charAt(0).toUpperCase() + d.slice(1))}</li>`).join("");
-    const confirm = v.hhStatus === "reported" ? `<span class="confirm" title="Info came from older or third-party sources">Call to confirm</span>` : "";
     // Tags in two rows: food on top, then the place (outdoor seating first, so it survives trimming, then vibes).
     const tagBtns = gs => gs.flatMap(g => (v[g.field] || []).map(x =>
       `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(titleCase(x))}</button>`)).join("");
@@ -454,7 +453,7 @@
       </div>
       <div class="page page-info">
         <div class="info-top">
-          <div class="status-row"><span class="status ${s.cls}">${s.label}</span>${confirm}</div>
+          <div class="status-row"><span class="status ${s.cls}">${s.label}</span></div>
           <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${ICON.heart}</button>
         </div>
         <div class="info-grid">

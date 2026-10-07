@@ -933,9 +933,14 @@
       website: "https://srithaikitchen.com/",
       zip: "30329",
       cuisine: ["Thai", "Sushi"], vibes: ["Groups"], outdoor: [], hours: null,
-      happyHours: [{ days: [3], start: "18:00", end: "21:00", note: "Wine Night" }, { days: [5], start: "17:00", end: "21:00", note: "Beer Night" }],
-      deals: ["wine", "beer"], dealText: "Wine Night Wednesdays: $5 glasses of white or red (Sauvignon Blanc, Pinot Grigio, Cabernet, Pinot Noir, red blend) · Beer Night Fridays: $4 Asahi, Corona & Heineken bottles · walkable from Emory's campus",
-      hhStatus: "confirmed", sources: [{ label: "srithaikitchen.com (Events at Emory)", url: "https://srithaikitchen.com/" }] },
+      happyHours: [
+        { days: [1, 3], start: "15:00", end: "18:00", note: "$7 apps & cocktails" },
+        { days: [1, 3], start: "18:00", end: "21:00", note: "Wine Night" },
+        { days: [0, 1, 2], start: "16:00", end: "21:00", note: "$3 Sushi Night" },
+        { days: [5], start: "18:00", end: "21:00", note: "Beer Night" },
+      ],
+      deals: ["cocktails", "wine", "beer", "food"], dealText: "Happy hour Mon & Wed 3–6: $7 apps & cocktails (gyoza, spring rolls, calamari, edamame, Thai shrimp rolls) · $3 Sushi Nights Sun–Tue 4–9: $3 select nigiri, rolls & apps · Wine Night Mon & Wed 6–9: $5 glasses · Beer Night Fri 6–9: $4 beers · dine-in only · walkable from Emory's campus",
+      hhStatus: "confirmed", sources: [{ label: "In-store specials flyer (photo, Sept 2026)", url: "https://srithaikitchen.com/" }, { label: "srithaikitchen.com (Events at Emory)", url: "https://srithaikitchen.com/" }] },
 
     { id: "general-muir", name: "The General Muir", neighborhood: "Emory / Druid Hills",
       address: "1540 Avenue Pl, Ste B-230 (Emory Point)", lat: 33.80140, lng: -84.32690, price: 2, type: "Restaurant",
