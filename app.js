@@ -419,10 +419,11 @@
 
     // Happy hour rows, starting from today's day of the week.
     const offset = w => Math.min(...w.days.map(d => (d - today + 7) % 7));
-    const sched = [...v.hhDisplay].sort((a, b) => offset(a) - offset(b)).map(w => {
+    const SHOW_DEALS = 3, SHOW_TIMES = 2; // the rest sit in the "More" dropdown so every card is the same size
+    const sched = [...v.hhDisplay].sort((a, b) => offset(a) - offset(b)).map((w, i) => {
       const isToday = w.days.includes(today);
       const when = w.rain ? "Any time it rains" : w.allDay ? "All day" : `${fmt(toMin(w.start))}–${w.end === "close" ? "close" : fmt(toMin(w.end))}`;
-      return `<div class="${isToday ? "today" : ""}"><dt>${w.rain ? "Rainy days" : isToday ? "Today" : daysLabel(w.days)}</dt><dd>${when}</dd>${w.note && !w.rain ? `<span class="note">${esc(w.note)}</span>` : ""}</div>`;
+      return `<div class="${isToday ? "today" : ""}${i >= SHOW_TIMES ? " extra" : ""}"><dt>${w.rain ? "Rainy days" : isToday ? "Today" : daysLabel(w.days)}</dt><dd>${when}</dd>${w.note && !w.rain ? `<span class="note">${esc(w.note)}</span>` : ""}</div>`;
     }).join("");
 
     // Today's regular hours in one line: "Open until 11PM" / "Closed · opens 5PM".
@@ -437,7 +438,10 @@
     }
 
     // Deal text is written as "a · b · c"; show it as a short list instead of a paragraph.
-    const deals = v.dealText.split(/\s+·\s+/).map(d => `<li>${esc(d.charAt(0).toUpperCase() + d.slice(1))}</li>`).join("");
+    const dealItems = v.dealText.split(/\s+·\s+/);
+    const deals = dealItems.map((d, i) => `<li${i >= SHOW_DEALS ? ' class="extra"' : ""}>${esc(d.charAt(0).toUpperCase() + d.slice(1))}</li>`).join("");
+    const hidden = Math.max(0, dealItems.length - SHOW_DEALS) + Math.max(0, v.hhDisplay.length - SHOW_TIMES);
+    const longText = dealItems.slice(0, SHOW_DEALS).some(d => d.length > 70) || v.hhDisplay.some(w => w.note && !w.rain);
     // Tags in two rows: food on top, then the place (outdoor seating first, so it survives trimming, then vibes).
     const tagBtns = gs => gs.flatMap(g => (v[g.field] || []).map(x =>
       `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(titleCase(x))}</button>`)).join("");
@@ -461,6 +465,7 @@
           <section class="sec sec-deals">
             <h5 class="sec-label">The Deals</h5>
             <ul class="deal-list">${deals}</ul>
+              ${hidden || longText ? `<button class="book-more" data-more data-label="${hidden ? `${hidden} more deal${hidden === 1 ? "" : "s"} & times` : "Full details"}" aria-expanded="false"><span>${hidden ? `${hidden} more deal${hidden === 1 ? "" : "s"} & times` : "Full details"}</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>` : ""}
           </section>
           <div class="sec-side">
             ${sched || hoursLine ? `<section class="sec sec-when">
@@ -547,13 +552,40 @@
 
   // Tags: one line when everything fits; otherwise two lines (food, then the place),
   // each kept to a single line by hiding the tags that would wrap. Never more than two lines.
+  // Collapsed cards: if long deal lines make the Deals column taller than When/Where,
+  // tuck the last visible deals into the dropdown too, so every card stays the same size.
+  function fitDeals() {
+    for (const card of document.querySelectorAll("#list .card.book:not(.open)")) {
+      const deals = card.querySelector(".sec-deals"), side = card.querySelector(".sec-side");
+      if (!deals || !side) continue;
+      const items = [...deals.querySelectorAll(".deal-list li")];
+      items.forEach(li => li.classList.remove("fit-extra"));
+      const stacked = side.getBoundingClientRect().top >= deals.getBoundingClientRect().bottom - 1; // phones
+      const limit = stacked ? 150 : Math.max(side.offsetHeight, 155);
+      let visible = items.filter(li => !li.classList.contains("extra"));
+      const info = card.querySelector(".page-info"), PHONE_H = 470;
+      const tooTall = () => stacked ? info.scrollHeight > PHONE_H + 1 : deals.offsetHeight > limit + 1;
+      while (tooTall() && visible.length > 1) {
+        visible.pop().classList.add("fit-extra");
+        let btn = deals.querySelector(".book-more");
+        if (!btn) {
+          deals.insertAdjacentHTML("beforeend", `<button class="book-more" data-more data-label="Full details" aria-expanded="false"><span>Full details</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`);
+        }
+      }
+    }
+  }
   function fitTags() {
+    fitDeals();
     const wraps = els => els.some(t => t.offsetTop > els[0].offsetTop);
     for (const box of document.querySelectorAll("#list .tags")) {
       const all = [...box.querySelectorAll(".tag")];
       all.forEach(t => { t.hidden = false; });
       box.classList.add("one-line");
       if (!all.length || !wraps(all)) continue;
+      if (!box.closest(".card").classList.contains("open")) {
+        all.forEach(t => { if (t.offsetTop > all[0].offsetTop) t.hidden = true; });
+        continue;
+      }
       box.classList.remove("one-line");
       for (const row of box.querySelectorAll(".tag-row")) {
         const tags = [...row.children], top = tags[0].offsetTop;
@@ -566,7 +598,14 @@
   document.fonts?.ready.then(fitTags);
 
   $("list").onclick = async e => {
-    const f = e.target.closest("[data-fav]"), sh = e.target.closest("[data-share]"), tg = e.target.closest("[data-tag]");
+    const f = e.target.closest("[data-fav]"), sh = e.target.closest("[data-share]"), tg = e.target.closest("[data-tag]"), mo = e.target.closest("[data-more]");
+    if (mo) {
+      const open = mo.closest(".card").classList.toggle("open");
+      mo.setAttribute("aria-expanded", open);
+      mo.querySelector("span").textContent = open ? "Show less" : mo.dataset.label;
+      fitTags();
+      return;
+    }
     if (tg) { state[tg.dataset.tag].add(tg.dataset.val); update(); return; }
     if (f) {
       const id = f.dataset.fav; favs.has(id) ? favs.delete(id) : favs.add(id);

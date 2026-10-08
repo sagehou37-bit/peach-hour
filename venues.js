@@ -507,7 +507,7 @@
       website: "https://www.parktavern.com/", zip: "30309",
       beltline: { min: 1, trail: "Northeast Trail" },
       cuisine: ["American", "Bar food"], vibes: ["Sports", "Groups", "Dog friendly", "Beltline access"], outdoor: ["Patio"], hours: [0, 1, 2, 3, 4, 5, 6].map(d => (d === 0 || d === 6 ? ["11:00", "24:00"] : ["16:30", "24:00"])),
-      happyHours: [{ days: WEEKDAYS, start: "16:30", end: "18:00", note: "Posted as 3–6PM; doors open 4:30" }, { days: [0, 1, 2, 3, 4], start: "20:00", end: "24:00", note: "Late happy hour (8PM–close)" }],
+      happyHours: [{ days: WEEKDAYS, start: "16:30", end: "18:00" }, { days: [0, 1, 2, 3, 4], start: "20:00", end: "24:00", note: "Late happy hour (8PM–close)" }],
       deals: ["beer", "wine", "cocktails", "food"], dealText: "$1 off all drinks · food $6–10",
       hhStatus: "confirmed", sources: [{ label: "parktavern.net", url: "https://www.parktavern.net/menu/happy-hour-menu/" }, S.ramb] },
 
