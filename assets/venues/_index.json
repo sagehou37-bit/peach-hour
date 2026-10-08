@@ -376,5 +376,15 @@
   "assets/venues/north-highland-pub-1.jpg",
   "assets/venues/north-highland-pub-2.jpg",
   "assets/venues/north-highland-pub-3.jpg"
+ ],
+ "la-bistreaux-buckhead": [
+  "assets/venues/la-bistreaux-buckhead-1.jpg",
+  "assets/venues/la-bistreaux-buckhead-2.jpg",
+  "assets/venues/la-bistreaux-buckhead-3.jpg"
+ ],
+ "la-bistreaux-decatur": [
+  "assets/venues/la-bistreaux-decatur-1.jpg",
+  "assets/venues/la-bistreaux-decatur-2.jpg",
+  "assets/venues/la-bistreaux-decatur-3.jpg"
  ]
 }

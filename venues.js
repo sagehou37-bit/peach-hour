@@ -746,6 +746,13 @@
       hhStatus: "confirmed", sources: [{ label: "thepoboyshopatl.com", url: "https://www.thepoboyshopatl.com/basementbar" }] },
 
     // ── Decatur ───────────────────────────────────────────────────
+    { id: "la-bistreaux-decatur", name: "Louisiana Bistreaux Decatur", neighborhood: "North Decatur",
+      address: "1496 Church St, Decatur", lat: 33.79138, lng: -84.28581, price: 2, type: "Restaurant",
+      website: "https://www.louisianabistreaux.com/", zip: "30030",
+      cuisine: ["Cajun", "Seafood"], vibes: ["Groups"], outdoor: [], hours: null,
+      happyHours: [{ days: [1, 2, 3, 4, 5], start: "15:00", end: "17:00" }],
+      deals: ["oysters", "food"], dealText: "$1 oysters on the half shell (min. 10) · $1 jumbo peel & eat shrimp (min. 10) · $2 chargrilled Bistreaux oysters (min. 6)",
+      hhStatus: "confirmed", sources: [{ label: "louisianabistreaux.com (3-2-1 Happy Hour)", url: "https://www.louisianabistreaux.com/" }] },
     { id: "kimball-house", name: "Kimball House", neighborhood: "Decatur",
       address: "303 E Howard Ave, Decatur", lat: 33.77154, lng: -84.29236, price: 3, type: "Cocktail bar",
       website: "http://kimball-house.com/", zip: "30030",
@@ -883,6 +890,13 @@
       hhStatus: "confirmed", sources: [{ label: "iberianpig.com", url: "https://www.iberianpig.com/buckhead" }] },
 
     // ── Buckhead sweep (2026-10-05) ──
+    { id: "la-bistreaux-buckhead", name: "Louisiana Bistreaux Buckhead", neighborhood: "Buckhead",
+      address: "3312 Piedmont Rd NE", lat: 33.8455, lng: -84.3724, price: 2, type: "Restaurant",
+      website: "https://www.louisianabistreaux.com/", zip: "30305",
+      cuisine: ["Cajun", "Seafood"], vibes: ["Groups"], outdoor: [], hours: null,
+      happyHours: [{ days: [1, 2, 3, 4, 5], start: "15:00", end: "17:00" }],
+      deals: ["oysters", "food"], dealText: "$1 oysters on the half shell (min. 10) · $1 jumbo peel & eat shrimp (min. 10) · $2 chargrilled Bistreaux oysters (min. 6)",
+      hhStatus: "confirmed", sources: [{ label: "louisianabistreaux.com (3-2-1 Happy Hour)", url: "https://www.louisianabistreaux.com/" }] },
     { id: "south-city-buckhead", name: "South City Kitchen Buckhead", neighborhood: "Buckhead",
       address: "3350 Peachtree Rd NE, Suite 175", lat: 33.84904, lng: -84.36562, price: 2, type: "Restaurant",
       website: "https://www.southcitykitchen.com/", zip: "30326",
