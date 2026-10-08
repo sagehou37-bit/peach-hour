@@ -317,8 +317,24 @@
     p.words.forEach(w => p.chips.push(`"${w}"`));
     return p;
   }
-  const haystack = v => [v.name, v.address, v.zip, v.neighborhood, v.type, ...v.cuisine, ...v.vibes, ...v.outdoor, v.dealText,
-    ...v.happyHours.map(w => w.note || "")].join(" ").toLowerCase();
+  // Forgiving text match: ignore case, accents, apostrophes, punctuation and spaces,
+  // so "poboys", "po boy", "moes and joes" and "sebastian" all find their bars.
+  const fold = t => String(t).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, " and ").replace(/['’`.]/g, "").replace(/[^a-z0-9$]+/g, " ").trim();
+  const squash = t => fold(t).replace(/\s+/g, "").replace(/and/g, "");
+  // Every run of text that starts at a word boundary, with spaces removed ("po boy shop" -> "poboyshop", "boyshop", "shop").
+  const starts = t => { const w = fold(t).replace(/\band\b/g, " ").split(/\s+/).filter(Boolean); return w.map((_, i) => w.slice(i).join("")); };
+  const hayCache = new Map();
+  const haystack = v => {
+    if (!hayCache.has(v.id)) {
+      const raw = [v.name, v.address, v.zip, v.neighborhood, v.type, ...v.cuisine, ...v.vibes, ...v.outdoor, v.dealText,
+        ...v.happyHours.map(w => w.note || "")].join(" ");
+      hayCache.set(v.id, { all: starts(raw), name: starts(v.name) });
+    }
+    return hayCache.get(v.id);
+  };
+  const forms = w => { const sq = squash(w), f = [sq]; if (sq.length > 3 && sq.endsWith("s")) f.push(sq.slice(0, -1)); if (sq.length > 4 && sq.endsWith("es")) f.push(sq.slice(0, -2)); return f.filter(Boolean); };
+  const hits = (list, w) => forms(w).some(x => list.some(st => st.startsWith(x)));
   function matchesQuery(v, p) {
     if (p.hoods.length && !p.hoods.includes(v.neighborhood)) return false;
     if (!p.deals.every(d => v.deals.includes(d))) return false;
@@ -332,8 +348,10 @@
       const hit = days.some(d => (!v.hours || activeWindow(hoursAsWindows(v), d, mins)) && activeWindow(v.happyHours, d, mins));
       if (!hit) return false;
     } else if (p.day != null && !v.happyHours.some(w => w.days.includes(p.day))) return false;
+    if (!p.words.length) return true;
     const hay = haystack(v);
-    return p.words.every(w => hay.includes(w));
+    // Typed a bar name ("poboys", "po boy", "moes and joes")? That bar counts even if a word is split differently.
+    return hits(hay.name, p.words.join(" ")) || p.words.every(w => hits(hay.all, w));
   }
 
   // ── filtering + rendering ─────────────────────────────────────
@@ -369,7 +387,9 @@
     const t = parsed && !parsed.now && parsed.day != null
       ? { day: parsed.day, mins: parsed.mins ?? 17 * 60, live: false } : refTime();
     scored = VENUES.map(v => ({ v, s: statusFor(v, t), mi: milesTo(v), dm: driveMin(v) }));
+    const nameFirst = e => (parsed && parsed.words.length && hits(haystack(e.v).name, parsed.words.join(" ")) ? 0 : 1);
     return scored.filter(e => passes(e, null)).sort((a, b) => {
+      if (nameFirst(a) !== nameFirst(b)) return nameFirst(a) - nameFirst(b);
       if (state.sort === "near" && a.mi != null) return a.mi - b.mi;
       if (state.sort === "near" && a.dm != null) return a.dm - b.dm;
       if (state.sort === "price") return a.v.price - b.v.price || a.s.rank - b.s.rank;
