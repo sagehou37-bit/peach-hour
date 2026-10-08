@@ -432,3 +432,15 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 /* Status pill and "Call to confirm" share one height. */
 .status-row .status, .status-row .confirm { min-height: 32px; box-sizing: border-box; }
 .status-row .confirm { display: inline-flex; align-items: center; padding: 0 10px; }
+
+/* Buttons: center the visible letters (not the font's line box) on the icons. */
+.act { gap: 7px; }
+.act span { text-box: trim-both cap alphabetic; line-height: 1; }
+@supports not (text-box: trim-both cap alphabetic) {
+  .act span { position: relative; top: 1px; }
+}
+.act .i, .act .pf-logo { flex: none; display: block; }
+.act-party { padding-left: 10px; }
+
+/* Section titles without the peach dash. */
+.sec-label::before { content: none; }

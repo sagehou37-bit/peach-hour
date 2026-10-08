@@ -163,6 +163,23 @@
       hhStatus: "unknown", sources: [{ label: "manuelstavern.com", url: "https://manuelstavern.com/" }] },
 
     // ── Inman Park ────────────────────────────────────────────────
+    { id: "north-highland-pub", name: "The North Highland Pub", neighborhood: "Inman Park",
+      address: "469 N Highland Ave NE", lat: 33.76678, lng: -84.35296, price: 1, type: "Pub",
+      website: "https://northhighlandpub.com/", zip: "30307",
+      cuisine: ["Bar food", "American"], vibes: ["Sports", "Groups", "Late night"], outdoor: [],
+      hours: days({ 0: ["11:00", "00:00"], 1: ["11:00", "02:00"], 2: ["11:00", "02:00"], 3: ["11:00", "02:00"], 4: ["11:00", "02:00"], 5: ["11:00", "02:00"], 6: ["11:00", "02:00"] }),
+      happyHours: [
+        { days: [1], allDay: true, note: "$7 mules" },
+        { days: [2], start: "16:00", end: "23:00", note: "$3 tacos & $4.50 margaritas" },
+        { days: [3], allDay: true, note: "Half-price select wine bottles" },
+        { days: [4], allDay: true, note: "$10 Printer's Ale pitchers" },
+        { days: [5], allDay: true, note: "$6 featured draft cocktails" },
+        { days: [6], allDay: true, note: "$13.95 domestic buckets" },
+        { days: [0], allDay: true, note: "$4 Bloody Marys & mimosas" },
+      ],
+      deals: ["cocktails", "beer", "wine", "food"], dealText: "Mon: $7 mules · Tue 4–11PM: $3 tacos & $4.50 El Jimador margaritas (dine-in only) · Wed: half-price bottles of select wines · Thu: $10 pitchers of Printer's Ale Dylux · Fri: $6 featured draft cocktails · Sat: $13.95 buckets of Bud Light, Miller Lite or Coors Light · Sun: $4 Bloody Marys & mimosas",
+      hhStatus: "confirmed", sources: [{ label: "In-store menu (photo, Oct 2026)", url: "https://northhighlandpub.com/" }, { label: "northhighlandpub.com (Pitcher Thursdays)", url: "https://northhighlandpub.com/" }] },
+
     { id: "barcelona", name: "Barcelona Wine Bar", neighborhood: "Inman Park",
       address: "240 N Highland Ave NE", lat: 33.76254, lng: -84.35945, price: 2, type: "Wine bar",
       website: "https://barcelonawinebar.com/location/inmanpark/", zip: "30307",

@@ -372,5 +372,10 @@ window.PHOTOS = {
  "leilas": [
   "assets/venues/leilas-1.jpg",
   "assets/venues/leilas-2.jpg"
+ ],
+ "north-highland-pub": [
+  "assets/venues/north-highland-pub-1.jpg",
+  "assets/venues/north-highland-pub-2.jpg",
+  "assets/venues/north-highland-pub-3.jpg"
  ]
 };
