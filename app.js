@@ -461,14 +461,14 @@
     const dealItems = v.dealText.split(/\s+·\s+/);
     const deals = dealItems.map((d, i) => `<li${i >= SHOW_DEALS ? ' class="extra"' : ""}>${esc(d.charAt(0).toUpperCase() + d.slice(1))}</li>`).join("");
     const hidden = Math.max(0, dealItems.length - SHOW_DEALS) + Math.max(0, v.hhDisplay.length - SHOW_TIMES);
-    const longText = dealItems.slice(0, SHOW_DEALS).some(d => d.length > 70) || v.hhDisplay.some(w => w.note && !w.rain);
+
     // Tags in two rows: food on top, then the place (outdoor seating first, so it survives trimming, then vibes).
     const tagBtns = gs => gs.flatMap(g => (v[g.field] || []).map(x =>
       `<button class="tag tag-${g.cls}" data-tag="${g.key}" data-val="${esc(x)}" title="Show only ${esc(x)}">${g.icon}${esc(titleCase(x))}</button>`)).join("");
     const tags = [[TAG_GROUPS[0]], [TAG_GROUPS[2], TAG_GROUPS[1]]].map(tagBtns).filter(Boolean)
       .map(row => `<div class="tag-row">${row}</div>`).join("");
     const confirm = v.hhStatus === "reported" ? `<span class="confirm" title="Info came from older or third-party sources">Call to confirm</span>` : "";
-    return `<article class="card book">
+    return `<article class="card book${hidden ? " has-more" : ""}">
       <div class="page page-photos">
         ${photoPair(v)}
         <div class="nameplate">
@@ -485,7 +485,7 @@
           <section class="sec sec-deals">
             <h5 class="sec-label">The Deals</h5>
             <ul class="deal-list">${deals}</ul>
-              ${hidden || longText ? `<button class="book-more" data-more data-label="${hidden ? `${hidden} more deal${hidden === 1 ? "" : "s"} & times` : "Full details"}" aria-expanded="false"><span>${hidden ? `${hidden} more deal${hidden === 1 ? "" : "s"} & times` : "Full details"}</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>` : ""}
+              ${hidden ? `<button class="book-more" data-more data-base="${hidden}" data-label="${hidden} more deal${hidden === 1 ? "" : "s"} & times" aria-expanded="false"><span>${hidden} more deal${hidden === 1 ? "" : "s"} & times</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>` : ""}
           </section>
           <div class="sec-side">
             ${sched || hoursLine ? `<section class="sec sec-when">
@@ -587,10 +587,15 @@
       const tooTall = () => stacked ? info.scrollHeight > PHONE_H + 1 : deals.offsetHeight > limit + 1;
       while (tooTall() && visible.length > 2) {
         visible.pop().classList.add("fit-extra");
-        let btn = deals.querySelector(".book-more");
-        if (!btn) {
-          deals.insertAdjacentHTML("beforeend", `<button class="book-more" data-more data-label="Full details" aria-expanded="false"><span>Full details</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`);
-        }
+      }
+      const tucked = deals.querySelectorAll(".fit-extra").length;
+      if (tucked) {
+        const btn = deals.querySelector(".book-more");
+        const n = tucked + Number(btn?.dataset.base || 0);
+        const label = `${n} more deal${n === 1 ? "" : "s"} & times`;
+        if (btn) { btn.dataset.label = label; btn.querySelector("span").textContent = label; }
+        else deals.insertAdjacentHTML("beforeend", `<button class="book-more" data-more data-base="0" data-label="${label}" aria-expanded="false"><span>${label}</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`);
+        card.classList.add("has-more");
       }
     }
   }

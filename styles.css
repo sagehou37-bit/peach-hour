@@ -454,19 +454,19 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .book-more .i { width: 15px; height: 15px; transition: transform .2s; }
 .book-more:hover { border-color: var(--ink); }
 .book.open .book-more .i { transform: rotate(180deg); }
-.book .card-foot { margin-top: 0; }
+.book .card-foot { margin-top: auto; }
 @container list (min-width: 561px) {
   .card.book:not(.open) .page-info { min-height: 330px; }
   .card.book:not(.open) .page-photos { min-height: 330px; }
 }
 /* Collapsed: long deal lines cap at 2 lines and time notes at 1 line; the dropdown shows them in full. */
-.card.book:not(.open) .deal-list li { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-.card.book:not(.open) .sched .note { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card.book.has-more:not(.open) .deal-list li { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.card.book.has-more:not(.open) .sched .note { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sec-deals { display: flex; flex-direction: column; }
 .sec-deals .book-more { margin-top: 10px; }
 .card.book:not(.open) .deal-list li.fit-extra { display: none !important; }
 /* Collapsed: time notes (e.g. "Wine Night") live in the dropdown; the deal list already names them. */
-.card.book:not(.open) .sched .note { display: none; }
+.card.book.has-more:not(.open) .sched .note { display: none; }
 @container list (max-width: 560px) {
   .card.book:not(.open) .page-info { min-height: 470px; }
   .card.book:not(.open) .card-foot { margin-top: auto; }
