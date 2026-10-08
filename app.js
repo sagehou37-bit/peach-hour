@@ -565,7 +565,7 @@
       let visible = items.filter(li => !li.classList.contains("extra"));
       const info = card.querySelector(".page-info"), PHONE_H = 470;
       const tooTall = () => stacked ? info.scrollHeight > PHONE_H + 1 : deals.offsetHeight > limit + 1;
-      while (tooTall() && visible.length > 1) {
+      while (tooTall() && visible.length > 2) {
         visible.pop().classList.add("fit-extra");
         let btn = deals.querySelector(".book-more");
         if (!btn) {

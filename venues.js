@@ -80,7 +80,7 @@
       website: "https://www.murphysatlanta.com/", zip: "30306",
       cuisine: ["American", "Brunch"], vibes: ["Date night"], outdoor: [], hours: days({ 0: ["09:00", "21:00"], 1: ["11:00", "21:00"], 2: ["11:00", "21:00"], 3: ["11:00", "21:00"], 4: ["11:00", "21:00"], 5: ["11:00", "22:00"], 6: ["09:00", "22:00"] }),
       happyHours: [{ days: [4], start: "16:00", end: "20:00", note: "Wine Shop happy hour" }],
-      deals: ["wine", "food"], dealText: "Wine Shop: four-wine tasting + seasonal charcuterie for $20; extra pours $8",
+      deals: ["wine", "food"], dealText: "Wine Shop flight: four wines + seasonal charcuterie for $20 · Extra wine pours $8",
       hhStatus: "confirmed", sources: [S.vhd, { label: "murphysatlanta.com", url: "https://www.murphysatlanta.com/events/wine-shop-happy-hour" }] },
 
     { id: "moes-joes", name: "Moe's & Joe's", neighborhood: "Virginia-Highland",
@@ -206,7 +206,7 @@
       cuisine: [], vibes: ["Late night", "Date night", "Beltline access"], outdoor: [],
       hours: days({ 1: ["17:30", "02:00"], 2: ["17:30", "02:00"], 3: ["17:30", "02:00"], 4: ["17:30", "02:00"], 5: ["17:30", "02:00"], 6: ["17:30", "02:00"] }),
       happyHours: [{ days: WEEKDAYS, start: "17:30", end: "20:00" }, { days: [1, 2, 3, 4, 5, 6], start: "24:00", end: "02:00", note: "Late-night happy hour" }],
-      deals: ["cocktails", "beer", "food"], dealText: "Till 8PM: $10 hot dogs, $10 espresso martinis, 50/50s, vespers & dirty martinis, $8 prosecco, $4 Bibo pilsner · Midnight–last call: $9 amaro & 50/50 shots, $10 hot dogs",
+      deals: ["cocktails", "beer", "food"], dealText: "$10 hot dogs till 8PM · $10 espresso martinis, 50/50s, vespers & dirty martinis till 8PM · $8 prosecco & $4 Bibo pilsner till 8PM · Midnight–last call: $9 amaro & 50/50 shots, $10 hot dogs",
       hhStatus: "confirmed", sources: [{ label: "littlespiritatl.com", url: "https://littlespiritatl.com/" }, S.inf] },
 
     { id: "bartaco-ip", name: "bartaco Inman Park", neighborhood: "Inman Park",
@@ -271,7 +271,7 @@
       cuisine: ["American", "Bar food"], vibes: ["Beltline access", "Groups"], outdoor: ["Rooftop", "Patio"],
       hours: [0, 1, 2, 3, 4, 5, 6].map(d => (d === 5 || d === 6 ? ["11:00", "00:00"] : ["11:00", "22:00"])),
       happyHours: [{ days: WEEKDAYS, start: "16:00", end: "19:00" }],
-      deals: ["beer", "food"], dealText: "$5.50 craft beers · discounted loaded fries, sliders & apps",
+      deals: ["beer", "food"], dealText: "$5.50 craft beers · Discounted loaded fries · Discounted sliders & apps",
       hhStatus: "confirmed", sources: [{ label: "newrealmbrewing.com", url: "https://newrealmbrewing.com/atlanta/" }] },
 
     { id: "nine-mile", name: "9 Mile Station", neighborhood: "Eastside Beltline",
@@ -281,7 +281,7 @@
       cuisine: ["American"], vibes: ["Beltline access", "Date night"], outdoor: ["Rooftop"],
       hours: days({ 0: ["11:00", "21:00"], 1: ["17:00", "22:00"], 2: ["17:00", "22:00"], 3: ["17:00", "22:00"], 4: ["17:00", "22:00"], 5: ["17:00", "00:00"], 6: ["11:00", "00:00"] }),
       happyHours: [{ days: WEEKDAYS, start: "17:00", end: "19:00" }],
-      deals: ["cocktails", "beer", "food"], dealText: "Discounted drinks & appetizers with a skyline view",
+      deals: ["cocktails", "beer", "food"], dealText: "$10 cocktails: gimlet, nitro old fashioned, margarita of the day, Moscow mule · $4 Monday Night 404 lager · $35 bottles of house red, white, sparkling or rosé · $9 truffle rosemary fries · $10 spinach-artichoke dip, crispy Brussels or Nashville hot sliders · $12 mussels",
       hhStatus: "confirmed", sources: [{ label: "9milestation.com", url: "https://9milestation.com/" }] },
 
     { id: "superica-krog", name: "Superica Krog St", neighborhood: "Eastside Beltline",
@@ -358,7 +358,7 @@
       cuisine: ["Southern"], vibes: ["Beltline access", "Date night"], outdoor: ["Patio"],
       hours: days({ 0: ["10:00", "22:00"], 3: ["15:00", "22:00"], 4: ["15:00", "22:00"], 5: ["15:00", "23:00"], 6: ["10:00", "22:00"] }),
       happyHours: [{ days: [3, 4, 5], start: "15:00", end: "17:00" }],
-      deals: [], dealText: "Wed–Fri happy hour (specific deals not listed)",
+      deals: [], dealText: "Happy-hour cocktails: margarita, cosmo, mojito, Manhattan, gin gimlet · Beers: Sapporo, Gate City, Eventide, Allagash White, Hartsfield IPA · Wines: sparkling, merlot, albariño, pinot noir, rosé, cabernet · Bites: deviled eggs, poké tacos, smash burger, pork belly bun",
       hhStatus: "confirmed", sources: [{ label: "oneflewsouthatl.com", url: "https://oneflewsouthatl.com/beltline/" }] },
 
     { id: "ranger-station", name: "Ranger Station", neighborhood: "Eastside Beltline",
@@ -422,7 +422,7 @@
         { days: [4], allDay: true, note: "Margarita Thursday" },
         { days: [5], allDay: true, note: "Moscow Mule Friday" },
       ],
-      deals: ["cocktails"], dealText: "A rum-bar drink special every weekday (half-price Mai Tais on Tuesdays) · bottomless mimosas at weekend brunch",
+      deals: ["cocktails"], dealText: "Mon: Mojito Monday · Tue: half-price Mai Tais · Wed: Rum Punch Wednesday · Thu: Margarita Thursday · Fri: Moscow Mule Friday · Bottomless mimosas at weekend brunch",
       hhStatus: "confirmed", sources: [{ label: "wylieandrum.com (specials)", url: "https://wylieandrum.com/atlanta-reynoldstown-wylie-and-rum-happy-hours-specials" }] },
     { id: "lingering-shade", name: "Lingering Shade Social Club", neighborhood: "Eastside Beltline",
       address: "660 Irwin St NE", lat: 33.75778, lng: -84.36504, price: 2, type: "Cocktail bar",
@@ -474,7 +474,7 @@
       website: "https://www.holeman-finch.com/", zip: "30361",
       cuisine: ["American", "Seafood"], vibes: ["Date night"], outdoor: ["Patio"], hours: days({ 0: ["11:00", "21:00"], 1: ["11:00", "22:00"], 2: ["11:00", "22:00"], 3: ["11:00", "22:00"], 4: ["11:00", "23:00"], 5: ["11:00", "23:00"], 6: ["11:00", "23:00"] }),
       happyHours: [{ days: [0, 1, 2, 3, 4, 5, 6], start: "16:00", end: "18:00" }],
-      deals: ["oysters", "food", "cocktails"], dealText: "Half-off oysters, bites & specialty cocktails",
+      deals: ["oysters", "food", "cocktails"], dealText: "Half-off oysters on the half shell · $12 fried oyster babies · $10–12 cocktails: Teeny Tini, Half Fashioned, Hemingway Jr., Barely Famous · $12 house bubbly, white & red · Snacks $7–12: mini cheeseburger, The Parisian, pork cracklin', cheese straws",
       hhStatus: "confirmed", sources: [S.cs, S.inf] },
 
     { id: "5church", name: "5Church Midtown", neighborhood: "Midtown",
@@ -482,7 +482,7 @@
       website: "https://midtown.5church-atlanta.com/", zip: "30361",
       cuisine: ["American", "Seafood"], vibes: ["Date night", "Live music"], outdoor: ["Patio", "Rooftop"], hours: days({ 0: [["11:00", "16:00"], ["18:00", "21:30"]], 1: ["11:00", "22:00"], 2: ["11:00", "22:00"], 3: ["11:00", "22:00"], 4: ["11:00", "22:00"], 5: ["11:00", "23:00"], 6: [["11:00", "15:00"], ["17:00", "23:00"]] }),
       happyHours: [{ days: WEEKDAYS, start: "15:00", end: "19:00" }],
-      deals: ["oysters"], dealText: "$1 oysters at the bar & patio (dine-in)",
+      deals: ["oysters"], dealText: "$1 oysters · Bar & front lounge only, dine-in",
       hhStatus: "confirmed", sources: [S.cs] },
 
     { id: "establishment", name: "Establishment", neighborhood: "Midtown",
@@ -508,7 +508,7 @@
       beltline: { min: 1, trail: "Northeast Trail" },
       cuisine: ["American", "Bar food"], vibes: ["Sports", "Groups", "Dog friendly", "Beltline access"], outdoor: ["Patio"], hours: [0, 1, 2, 3, 4, 5, 6].map(d => (d === 0 || d === 6 ? ["11:00", "24:00"] : ["16:30", "24:00"])),
       happyHours: [{ days: WEEKDAYS, start: "16:30", end: "18:00" }, { days: [0, 1, 2, 3, 4], start: "20:00", end: "24:00", note: "Late happy hour (8PM–close)" }],
-      deals: ["beer", "wine", "cocktails", "food"], dealText: "$1 off all drinks · food $6–10",
+      deals: ["beer", "wine", "cocktails", "food"], dealText: "$1 off all drinks · Food $6–10",
       hhStatus: "confirmed", sources: [{ label: "parktavern.net", url: "https://www.parktavern.net/menu/happy-hour-menu/" }, S.ramb] },
 
     { id: "cypress-street", name: "Cypress Street Pint & Plate", neighborhood: "Midtown",
@@ -545,7 +545,7 @@
         { days: [0, 1, 2, 3, 4, 5, 6], start: "16:00", end: "19:00" },
         { days: [2], allDay: true, note: "Taco & Tequila Tuesday" },
       ],
-      deals: ["cocktails", "beer", "food"], dealText: "Happy hour 4–7 every day (even weekends) · Taco & Tequila Tuesday all day: $5 margaritas, $3 Tecate, $3 tacos, half-price nachos",
+      deals: ["cocktails", "beer", "food"], dealText: "Daily 4–7 happy hour, weekends included · Taco & Tequila Tuesday: $5 margaritas · $3 Tecate & $3 tacos on Tuesdays · Half-price nachos on Tuesdays",
       hhStatus: "confirmed", sources: [{ label: "casa-almenara.com", url: "https://casa-almenara.com/" }] },
     { id: "livingston", name: "Livingston Restaurant + Bar", neighborhood: "Midtown",
       address: "659 Peachtree St NE (Georgian Terrace)", lat: 33.77241, lng: -84.38469, price: 3, type: "Restaurant",
@@ -574,7 +574,7 @@
         { days: [0, 6], start: "14:30", end: "17:30" },
         { days: [0, 1, 2, 3, 4], start: "21:00", end: "close", note: "Late-night social hour" },
       ],
-      deals: ["cocktails", "food"], dealText: "Social Hour: $3 / $6 / $9 bites and cocktails · also late-night Sun–Thu from 9 PM",
+      deals: ["cocktails", "food"], dealText: "$3 bites · $6 bites & cocktails · $9 cocktails · Late-night Social Hour Sun–Thu from 9PM",
       hhStatus: "confirmed", sources: [{ label: "stksteakhouse.com", url: "https://stksteakhouse.com/venues/atlanta/" }] },
     { id: "boqueria-atl", name: "Boqueria", neighborhood: "Midtown",
       address: "1221 Peachtree St NE (Colony Square)", lat: 33.788, lng: -84.38333, price: 2, type: "Restaurant",
@@ -584,7 +584,7 @@
         { days: [1, 2, 3, 4, 5], start: "15:00", end: "18:00" },
         { days: [0, 6], start: "16:00", end: "18:00" },
       ],
-      deals: ["food", "cocktails"], dealText: "Social Hour: $7 tapas (jamón croquetas, patatas bravas, PX wings) plus drink specials",
+      deals: ["food", "cocktails"], dealText: "$7 tapas: jamón croquetas, patatas bravas, PX wings · Social Hour drink specials",
       hhStatus: "confirmed", sources: [{ label: "boqueriarestaurant.com", url: "https://boqueriarestaurant.com/location/atl-colony-square/" }] },
     { id: "sebastian-pintxos", name: "Sebastián Pintxos Bar", neighborhood: "Midtown",
       address: "818 Juniper St NE", lat: 33.77688, lng: -84.38308, price: 2, type: "Restaurant",
@@ -605,7 +605,7 @@
       happyHours: [
         { days: [1, 2, 3, 4, 5], start: "16:00", end: "18:00" },
       ],
-      deals: ["cocktails", "wine", "beer", "food"], dealText: "$7 cocktails (limoncello spritz, margarita, old fashioned), $7 wine & beer · small plates $6–17",
+      deals: ["cocktails", "wine", "beer", "food"], dealText: "$7 cocktails: limoncello spritz, margarita, old fashioned · $7 wine & beer · Small plates $6–17",
       hhStatus: "confirmed", sources: [{ label: "ecco-atlanta.com happy hour menu", url: "https://www.ecco-atlanta.com/menu-midtown#menu=midtown-happy-hour" }] },
     { id: "south-city-midtown", name: "South City Kitchen Midtown", neighborhood: "Midtown",
       address: "1144 Crescent Ave NE", lat: 33.786, lng: -84.38446, price: 2, type: "Restaurant",
@@ -614,7 +614,7 @@
       happyHours: [
         { days: [1, 2, 3, 4, 5], start: "16:00", end: "18:00" },
       ],
-      deals: ["cocktails", "wine", "beer", "food"], dealText: "$7 cocktails & wine · $5 SweetWater · fried green tomatoes $8, pimento cheese & deviled eggs $7",
+      deals: ["cocktails", "wine", "beer", "food"], dealText: "$7 cocktails & wine · $5 SweetWater · Fried green tomatoes $8 · Pimento cheese & deviled eggs $7",
       hhStatus: "confirmed", sources: [{ label: "southcitykitchen.com", url: "https://www.southcitykitchen.com/events/happy-hour-2" }] },
     { id: "dos-caminos-atl", name: "Dos Caminos", neighborhood: "Midtown",
       address: "1100 Peachtree St NE", lat: 33.78452, lng: -84.38326, price: 2, type: "Restaurant",
@@ -652,7 +652,7 @@
         { days: [1, 2, 3, 4], start: "20:30", end: "22:00", note: "Late happy hour" },
         { days: [0, 5, 6], start: "11:30", end: "17:00" },
       ],
-      deals: ["food", "beer", "cocktails"], dealText: "Happy-hour pricing on grill meats, apps and drinks · also late 8:30–10 PM Mon–Thu",
+      deals: ["food", "beer", "cocktails"], dealText: "Happy-hour prices on grill meats · Discounted apps · Drink specials · Late happy hour 8:30–10PM Mon–Thu",
       hhStatus: "confirmed", sources: [{ label: "gyu-kaku.com/atlanta", url: "https://www.gyu-kaku.com/atlanta/" }] },
     { id: "srithai-atlantic", name: "SriThai Kitchen & Bar", neighborhood: "Atlantic Station",
       address: "1380 Atlantic Dr NW", lat: 33.79344, lng: -84.39774, price: 2, type: "Restaurant",
@@ -723,7 +723,7 @@
       website: "https://www.salarymanatl.com/", zip: "30329",
       cuisine: ["Asian"], vibes: ["Groups"], outdoor: [], hours: [0, 1, 2, 3, 4, 5, 6].map(d => (d === 5 || d === 6 ? ["11:30", "22:30"] : ["11:30", "21:30"])),
       happyHours: [{ days: [1, 2, 3, 4], start: "15:00", end: "18:00" }],
-      deals: ["food"], dealText: "Deals on lettuce wraps & Brussels sprouts starters · EmoryCard: free drink or appetizer with a dine-in entrée",
+      deals: ["food"], dealText: "Deals on lettuce wraps & Brussels sprouts · EmoryCard: free drink or appetizer with a dine-in entrée",
       hhStatus: "reported", sources: [{ label: "Yelp listing", url: "https://www.yelp.com/biz/salaryman-toco-hills-atlanta" }, { label: "EmoryCard discounts", url: "https://www.onecard.emory.edu/emorycard/use-card/eagle-discounts.html" }] },
 
     // ── Emory Village / North Decatur ─────────────────────────────
@@ -759,7 +759,7 @@
       website: "https://www.iberianpig.com/decatur", zip: "30030",
       cuisine: ["Spanish / Tapas"], vibes: ["Date night"], outdoor: ["Patio"], hours: days({ 0: ["16:00", "22:00"], 1: ["17:00", "22:00"], 2: ["17:00", "22:00"], 3: ["17:00", "22:00"], 4: ["17:00", "22:00"], 5: ["17:00", "23:00"], 6: ["16:00", "23:00"] }),
       happyHours: [{ days: WEEKDAYS, start: "17:00", end: "18:00", note: "Jamón Happy Hour" }],
-      deals: ["food", "wine"], dealText: "Charcuterie & tapas specials · $5 sangria, red & white wine",
+      deals: ["food", "wine"], dealText: "$5 sangria · $5 red & white wine · Charcuterie & tapas specials",
       hhStatus: "confirmed", sources: [{ label: "iberianpig.com", url: "https://www.iberianpig.com/decatur" }] },
 
     { id: "la-chiquiada", name: "La Chiquiada", neighborhood: "Decatur",
@@ -822,7 +822,7 @@
       cuisine: ["Southern"], vibes: ["Date night", "Groups"], outdoor: ["Patio"],
       hours: days({ 0: ["10:30", "22:00"], 2: ["17:00", "22:00"], 3: ["17:00", "22:00"], 4: ["17:00", "22:00"], 5: ["17:00", "23:00"], 6: ["10:30", "23:00"] }),
       happyHours: [{ days: [2, 3, 4, 5], start: "16:00", end: "18:00", note: "At the bar, high-tops & patio" }],
-      deals: ["cocktails", "food"], dealText: "$10 cocktails · bites like brisket sliders, wings & jollof arancini $8–14",
+      deals: ["cocktails", "food"], dealText: "$10 cocktails · Brisket sliders, wings & jollof arancini $8–14",
       hhStatus: "confirmed", sources: [{ label: "marcusbarandgrille.com", url: "https://www.marcusbarandgrille.com/location/marcus-bar-and-grille/" }] },
 
     { id: "miss-conduck", name: "Miss Conduck", neighborhood: "Edgewood",
@@ -871,7 +871,7 @@
       zip: "30305",
       cuisine: ["British", "Bar food"], vibes: ["Sports", "Groups"], outdoor: ["Rooftop"], hours: days({ 0: ["10:00", "21:00"], 1: ["11:30", "23:00"], 2: ["11:30", "23:00"], 3: ["11:30", "23:00"], 4: ["11:30", "23:00"], 5: ["11:30", "24:00"], 6: ["10:00", "01:00"] }),
       happyHours: [{ days: WEEKDAYS, start: "16:00", end: "19:00" }],
-      deals: ["food", "wine", "cocktails"], dealText: "$5 fish & chip cup, corned beef rolls & more · $7.50–8 wine, old fashioneds & spritzes",
+      deals: ["food", "wine", "cocktails"], dealText: "$5 fish & chip cup · $5 corned beef rolls & more bites · $7.50–8 wine, old fashioneds & spritzes",
       hhStatus: "reported", sources: [{ label: "Georgia on My Dime", url: "https://georgiaonmydime.com/atlanta-happy-hour/fado-irish-pub-buckhead/" }, { label: "Atly (Sep 2026)", url: "https://www.atly.com/united-states/georgia/atlanta/buckhead/best-happy-hour" }] },
 
     { id: "iberian-pig-buckhead", name: "The Iberian Pig Buckhead", neighborhood: "Buckhead",
@@ -879,7 +879,7 @@
       website: "https://www.iberianpig.com/buckhead", zip: "30305",
       cuisine: ["Spanish / Tapas"], vibes: ["Date night"], outdoor: [], hours: [0, 1, 2, 3, 4, 5, 6].map(d => (d === 5 || d === 6 ? ["16:00", "23:00"] : ["17:00", "22:00"])),
       happyHours: [{ days: [1, 2, 3, 4], start: "17:00", end: "18:00", note: "Jamón Happy Hour" }, { days: [5], start: "16:00", end: "18:00", note: "Jamón Happy Hour" }],
-      deals: ["food", "wine", "cocktails"], dealText: "Charcuterie & tapas specials · $5 sangria, red & white wine",
+      deals: ["food", "wine", "cocktails"], dealText: "$5 sangria · $5 red & white wine · Charcuterie & tapas specials",
       hhStatus: "confirmed", sources: [{ label: "iberianpig.com", url: "https://www.iberianpig.com/buckhead" }] },
 
     // ── Buckhead sweep (2026-10-05) ──
@@ -890,7 +890,7 @@
       happyHours: [
         { days: [1, 2, 3, 4, 5], start: "16:00", end: "18:00" },
       ],
-      deals: ["cocktails", "wine", "beer", "food"], dealText: "Weekday happy hour with Southern bites plus cocktail, wine & beer specials (same happy-hour lineup as the Midtown location)",
+      deals: ["cocktails", "wine", "beer", "food"], dealText: "$7 cocktails & wine · $5 SweetWater · Fried green tomatoes $8 · Pimento cheese & deviled eggs $7",
       hhStatus: "confirmed", sources: [{ label: "southcitykitchen.com", url: "https://www.southcitykitchen.com/happy-hour-atlanta" }] },
     { id: "gypsy-kitchen", name: "Gypsy Kitchen", neighborhood: "Buckhead",
       address: "3035 Peachtree Rd NE, Suite A209 (Buckhead Village)", lat: 33.83784, lng: -84.38067, price: 3, type: "Restaurant",
@@ -899,7 +899,7 @@
       happyHours: [
         { days: [0, 1, 2, 3, 4], start: "16:00", end: "18:00", note: "Rooftop" },
       ],
-      deals: ["cocktails", "food"], dealText: "Bites from $6 (jamón & feta doughnuts, halloumi fries, Basque nachos) · $8 cocktails",
+      deals: ["cocktails", "food"], dealText: "Bites from $6: jamón & feta doughnuts, halloumi fries, Basque nachos · $8 cocktails",
       hhStatus: "confirmed", sources: [{ label: "gk-atl.com", url: "https://gk-atl.com/" }] },
     { id: "north-italia-buckhead", name: "North Italia", neighborhood: "Buckhead",
       address: "3393 Peachtree Rd NE (Lenox Square)", lat: 33.84786, lng: -84.36373, price: 2, type: "Restaurant",
@@ -908,7 +908,7 @@
       happyHours: [
         { days: [1, 2, 3, 4, 5], start: "15:00", end: "18:00", note: "In the bar" },
       ],
-      deals: ["wine", "cocktails", "food"], dealText: "Bar happy hour: $8 wine (bottles $30), pizzas, arancini, meatballs & garlic-knot sliders",
+      deals: ["wine", "cocktails", "food"], dealText: "$8 glasses of wine · $30 wine bottles · Pizzas, arancini & meatballs · Garlic-knot sliders",
       hhStatus: "confirmed", sources: [{ label: "northitalia.com", url: "https://www.northitalia.com/locations/atlanta-ga-buckhead/menus/happy-hour-menu/" }] },
     { id: "5church-buckhead", name: "5Church Buckhead", neighborhood: "Buckhead",
       address: "3379 Peachtree Rd NE", lat: 33.84786, lng: -84.36582, price: 3, type: "Restaurant",
@@ -926,7 +926,7 @@
       happyHours: [
         { days: [1, 2, 3, 4], allDay: true, note: "Bar Fogo" },
       ],
-      deals: ["beer", "wine", "cocktails"], dealText: "All-day happy hour Mon–Thu at Bar Fogo: $6 beers, $8 South American wines, $10 Brazilian cocktails",
+      deals: ["beer", "wine", "cocktails"], dealText: "$6 beers · $8 South American wines · $10 Brazilian cocktails · All day Mon–Thu at Bar Fogo",
       hhStatus: "confirmed", sources: [{ label: "fogodechao.com", url: "https://fogodechao.com/location/atlanta/" }] },
 
     { id: "atlanta-fish-market", name: "Atlanta Fish Market", neighborhood: "Buckhead",
