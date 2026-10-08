@@ -521,8 +521,10 @@
     try { host = new URL(v.website).hostname.replace(/^www\./, ""); } catch {}
     const [a, b] = photos.length > 1 ? photos : [photos[0], photos[0]];
     const split = photos.length === 1 ? " ph-split" : "";
-    return `<div class="ph${split}"><img src="${a}" alt="${esc(v.name)}, photo from its website" loading="lazy" decoding="async"></div>`
-      + `<div class="ph ph-low${split}"><img src="${b}" alt="" loading="lazy" decoding="async">${host ? `<span class="ph-credit">Photos: ${esc(host)}</span>` : ""}</div>`;
+    // Optional framing per photo (window.PHOTO_FOCUS, e.g. "50% 10%") keeps faces clear of the name plate.
+    const focus = src => { const f = (window.PHOTO_FOCUS || {})[src]; return f && !split ? ` style="object-position:${f}"` : ""; };
+    return `<div class="ph${split}"><img src="${a}"${focus(a)} alt="${esc(v.name)}, photo from its website" loading="lazy" decoding="async"></div>`
+      + `<div class="ph ph-low${split}"><img src="${b}"${focus(b)} alt="" loading="lazy" decoding="async">${host ? `<span class="ph-credit">Photos: ${esc(host)}</span>` : ""}</div>`;
   }
 
   let map, layer;

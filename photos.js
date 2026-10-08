@@ -1,4 +1,4 @@
-// Photos from each bar's own website (assets/venues/). Generated; edit assets/venues/_index.json.
+// Photos from each bar's own website (assets/venues/). Generated; edit assets/venues/_index.json and _focus.json.
 window.PHOTOS = {
  "whiskey-bird": [
   "assets/venues/whiskey-bird-1.jpg",
@@ -6,8 +6,8 @@ window.PHOTOS = {
   "assets/venues/whiskey-bird-3.jpg"
  ],
  "family-dog": [
-  "assets/venues/family-dog-1.jpg",
-  "assets/venues/family-dog-3.jpg"
+  "assets/venues/family-dog-3.jpg",
+  "assets/venues/family-dog-1.jpg"
  ],
  "tio-luchos": [
   "assets/venues/tio-luchos-1.jpg",
@@ -378,4 +378,8 @@ window.PHOTOS = {
   "assets/venues/north-highland-pub-2.jpg",
   "assets/venues/north-highland-pub-3.jpg"
  ]
+};
+window.PHOTO_FOCUS = {
+ "assets/venues/family-dog-3.jpg": "50% 2%",
+ "assets/venues/family-dog-1.jpg": "50% 0%"
 };
