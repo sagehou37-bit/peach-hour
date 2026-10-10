@@ -51,7 +51,18 @@
 
   <section class="wrap finder" id="finder" aria-label="Find a happy hour">
     <h2>Where to?</h2>
-    <p class="finder-sub">Pick what matters. Results update as you go.</p>
+    <div class="search-wrap" id="searchWrap">
+      <label class="search big">
+        <span class="sr">Search</span>
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Try a bar, a deal, a neighborhood or a ZIP" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="qSuggest">
+        <button class="q-clear" id="qClear" type="button" aria-label="Clear search" hidden>×</button>
+        <button class="q-go" id="qGo" type="button">Search</button>
+      </label>
+      <ul class="q-suggest" id="qSuggest" role="listbox" hidden></ul>
+    </div>
+    <p class="try-row">Try <button class="try" type="button">oysters in Inman Park</button><button class="try" type="button">margaritas near Emory tonight</button><button class="try" type="button">cheap beer in VaHi</button><button class="try" type="button">happy hour now</button></p>
+    <p class="finder-sub">Or narrow it down:</p>
     <div class="finder-grid">
       <div class="finder-col">
         <h3>When</h3>
@@ -106,12 +117,6 @@
 
   <main class="wrap layout">
     <section class="results" id="results">
-      <label class="search">
-        <span class="sr">Search</span>
-        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="q" type="search" placeholder="Search bars, food, neighborhoods or ZIP" autocomplete="off">
-      </label>
-      <p class="try-row">Try <button class="try" type="button">4pm happy hour in Inman Park with oysters</button><button class="try" type="button">margaritas near Emory tonight</button><button class="try" type="button">cheap beer in VaHi</button><button class="try" type="button">30307</button></p>
       <p class="q-chips" id="qChips" hidden></p>
       <div class="toolbar">
         <button class="btn ghost filters-btn" id="toggleFilters">Filters</button>

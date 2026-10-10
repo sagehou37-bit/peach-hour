@@ -203,8 +203,50 @@
     $("list").hidden = state.view !== "list"; $("map").hidden = state.view !== "map";
     render();
   };
-  $("q").oninput = e => { state.q = e.target.value.trim(); render(); };
-  all(".try").forEach(b => { b.onclick = () => { $("q").value = b.textContent; state.q = b.textContent; render(); }; });
+  // ── search: live results + suggestions ────────────────────────
+  const qIn = $("q"), qList = $("qSuggest");
+  let sugItems = [], sugActive = -1;
+  const setQuery = (text, go) => {
+    qIn.value = text; state.q = text.trim(); $("qClear").hidden = !text; render();
+    closeSuggest(); if (go) scrollToResults();
+  };
+  function suggestions(text) {
+    const t = text.trim(); if (!t) return [];
+    const out = [], seen = new Set(), add = (kind, label, sub, query) => { if (!seen.has(label) && out.length < 7) { seen.add(label); out.push({ kind, label, sub, query }); } };
+    const words = t.split(/\s+/);
+    // Bars whose name matches what's typed
+    VENUES.filter(v => hits(haystack(v).name, t)).slice(0, 4).forEach(v => add("Bar", v.name, v.neighborhood, v.name));
+    // Neighborhoods, food, vibes and deal types that start with the last word typed
+    const last = words[words.length - 1], lead = words.slice(0, -1).join(" ");
+    const pool = [...uniq("neighborhood").map(n => ["Area", n]), ...Object.values(DEAL_LABELS).map(d => ["Deal", d]),
+      ...uniq("cuisine").map(c => ["Food", c]), ...uniq("vibes").map(v => ["Vibe", titleCase(v)])];
+    pool.filter(([, n]) => hits(starts(n), last)).forEach(([k, n]) => add(k, n, "", `${lead ? lead + " " : ""}${n}`));
+    return out;
+  }
+  function openSuggest() {
+    sugItems = suggestions(qIn.value); sugActive = -1;
+    qList.innerHTML = sugItems.map((x, i) => `<li role="option" id="sg${i}" data-i="${i}"><span class="sg-kind">${x.kind}</span><span class="sg-label">${esc(x.label)}</span>${x.sub ? `<span class="sg-sub">${esc(x.sub)}</span>` : ""}</li>`).join("");
+    qList.hidden = !sugItems.length; qIn.setAttribute("aria-expanded", !!sugItems.length);
+  }
+  function closeSuggest() { qList.hidden = true; sugItems = []; sugActive = -1; qIn.setAttribute("aria-expanded", false); }
+  function highlight(i) {
+    sugActive = i; [...qList.children].forEach((li, j) => li.classList.toggle("on", j === i));
+    qIn.setAttribute("aria-activedescendant", i >= 0 ? `sg${i}` : "");
+  }
+  qIn.oninput = () => { state.q = qIn.value.trim(); $("qClear").hidden = !qIn.value; render(); openSuggest(); };
+  qIn.onkeydown = e => {
+    if (e.key === "ArrowDown" && sugItems.length) { e.preventDefault(); highlight((sugActive + 1) % sugItems.length); }
+    else if (e.key === "ArrowUp" && sugItems.length) { e.preventDefault(); highlight((sugActive - 1 + sugItems.length) % sugItems.length); }
+    else if (e.key === "Enter") { e.preventDefault(); setQuery(sugActive >= 0 ? sugItems[sugActive].query : qIn.value, true); qIn.blur(); }
+    else if (e.key === "Escape") closeSuggest();
+  };
+  qIn.onfocus = () => { if (qIn.value) openSuggest(); };
+  qIn.onblur = () => setTimeout(closeSuggest, 150);
+  qList.onmousedown = e => { const li = e.target.closest("li"); if (li) { e.preventDefault(); setQuery(sugItems[li.dataset.i].query, true); } };
+  $("qClear").onclick = () => { setQuery(""); qIn.focus(); };
+  $("qGo").onclick = () => setQuery(qIn.value, true);
+  all(".try").forEach(b => { b.onclick = () => setQuery(b.textContent, true); });
+  $("qChips").onclick = e => { if (e.target.closest("[data-clearq]")) { setQuery(""); return; } if (e.target.closest("[data-edit]")) { $("finder").scrollIntoView({ behavior: "smooth" }); setTimeout(() => qIn.focus(), 400); } };
   $("sort").onchange = e => {
     state.sort = e.target.value;
     if (state.sort === "near" && !state.userLoc && !state.campus) locate(); else render();
@@ -552,7 +594,7 @@
     const items = filtered();
     $("qChips").hidden = !(parsed && parsed.chips.length);
     $("qChips").innerHTML = parsed && parsed.chips.length
-      ? `<span>Searching for</span>${parsed.chips.map(c => `<b>${esc(c)}</b>`).join("")}` : "";
+      ? `<span>Searching for</span>${parsed.chips.map(c => `<b>${esc(c)}</b>`).join("")}<button class="link" data-edit type="button">Edit</button><button class="link" data-clearq type="button">Clear</button>` : "";
     renderItems(items);
   }
   function renderItems(items) {
@@ -656,7 +698,7 @@
   }
 
   const qp = new URLSearchParams(location.search).get("q");
-  if (qp) { $("q").value = qp; state.q = qp.toLowerCase(); }
+  if (qp) { $("q").value = qp; state.q = qp.toLowerCase(); $("qClear").hidden = false; }
   tick(); update();
   setInterval(() => { tick(); if (state.mode !== "hhat") render(); }, 60_000);
 })();
