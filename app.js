@@ -319,6 +319,9 @@
     "o4w": "Eastside Beltline", "old fourth ward": "Eastside Beltline", "beltline": "Eastside Beltline", "ponce city market": "Eastside Beltline",
     "krog": "Eastside Beltline", "poncey": "Poncey-Highland", "emory village": "Emory / Druid Hills", "druid hills": "Emory / Druid Hills",
     "emory point": "Emory / Druid Hills", "westside": "West Midtown", "l5p": "Little Five Points", "toco": "Toco Hills",
+    "inman": "Inman Park", "little five": "Little Five Points", "little 5": "Little Five Points", "little 5 points": "Little Five Points", "l5": "Little Five Points",
+    "decatur square": "Decatur", "the square": "Decatur", "poncey highland": "Poncey-Highland", "home park": "Home Park",
+    "atlantic station": "Atlantic Station", "buckhead village": "Buckhead", "edgewood ave": "Edgewood", "reynolds town": "Reynoldstown", "tech square": "Midtown",
   };
   const DEAL_WORDS = {
     oyster: "oysters", oysters: "oysters", beer: "beer", beers: "beer", pint: "beer", pints: "beer", draft: "beer", drafts: "beer",
@@ -326,12 +329,20 @@
     marg: "cocktails", margs: "cocktails", martini: "cocktails", martinis: "cocktails", drinks: "cocktails", food: "food", apps: "food", bites: "food",
   };
   const DAY_NAMES = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-  const FILLER = new Set("a an the in at on near by with for and or around happy hour hours hh deal deals special specials spot spots bars bar place places me some any good to find show get open".split(" "));
+  const FILLER = new Set(("a an the in at on near by with for and or around happy hour hours hh deal deals special specials spot spots bars bar place places me some any good to find show get open " +
+    "vibe vibes vibey great nice fun best cool solid decent i want wanna looking somewhere something where whats what's go grab drink grabbing get").split(" "));
+  // Plain-English vibe & seating words -> the site's tags.
+  const VIBE_WORDS = { chill: "Cozy", cozy: "Cozy", cosy: "Cozy", quiet: "Cozy", date: "Date night", romantic: "Date night", sports: "Sports", game: "Sports",
+    football: "Sports", games: "Games", arcade: "Games", dog: "Dog friendly", dogs: "Dog friendly", pup: "Dog friendly", late: "Late night", latenight: "Late night",
+    group: "Groups", groups: "Groups", birthday: "Groups", music: "Live music", live: "Live music", trail: "Beltline access" };
+  const OUT_WORDS = { patio: "Patio", outside: "", outdoor: "", outdoors: "", rooftop: "Rooftop", roof: "Rooftop" };
   const escRe = x => x.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
 
   function parseQuery(raw) {
-    let q = ` ${raw.toLowerCase().replace(/[’]/g, "'").replace(/[,!?]/g, " ")} `;
-    const p = { hoods: [], deals: [], day: null, mins: null, now: false, campus: null, zip: null, cheap: false, words: [], chips: [] };
+    let q = ` ${raw.toLowerCase().replace(/[’]/g, "'").replace(/[,!?]/g, " ")} `
+      .replace(/\s(date night|first date)\s/g, " date ").replace(/\slate night\s/g, " late ").replace(/\sdog[- ]friendly\s/g, " dog ")
+      .replace(/\slive music\s/g, " music ").replace(/\s(watch|catch) the (game|match)\s/g, " game ").replace(/\s(outdoor seating|sit outside)\s/g, " outside ");
+    const p = { hoods: [], deals: [], vibes: [], outdoor: [], day: null, mins: null, now: false, campus: null, zip: null, cheap: false, words: [], chips: [] };
     const take = re => { const m = q.match(re); if (m) q = q.replace(re, " "); return m; };
     const hoodKeys = [...uniq("neighborhood").map(n => [n.toLowerCase(), n]), ...Object.entries(HOOD_ALIASES)].sort((a, b) => b[0].length - a[0].length);
     // "near Inman Park" sorts by distance from that area instead of limiting to it.
@@ -347,8 +358,27 @@
     if (take(/\s(georgia tech|gatech|tech|gt)(?=\s)/)) p.campus = "gt";
     if (take(/\semory(?=\s)/)) p.campus = "emory";
     if (take(/\s(cheap|budget)(?=\s)/)) p.cheap = true;
+    // Neighborhoods typed loosely: "virginia highlands", "highalnds", "inman", "little 5 points".
+    const toks = q.split(/\s+/).filter(Boolean);
+    const fuzzyKeys = [...hoodKeys, ...uniq("neighborhood").map(n => [fold(n), n])].map(([k, n]) => [fold(k).split(" ").filter(x => x && x !== "and"), n]).filter(([k]) => k.length).sort((a, b) => b[0].length - a[0].length);
+    const near1 = w => ["near", "by", "around", "close"].includes(w);
+    for (const [kt, n] of fuzzyKeys) {
+      for (let i = 0; i + kt.length <= toks.length; i++) {
+        const cand = toks.slice(i, i + kt.length).map(x => fold(x).replace(/s$/, "")).join(""), key = kt.map(x => x.replace(/s$/, "")).join("");
+        if (key.length < 4) continue;
+        if (cand === key || editDist(cand, key) <= (key.length >= 8 ? 2 : key.length >= 5 ? 1 : 0)) {
+          if (i > 0 && near1(toks[i - 1])) { if (!p.nearHood) p.nearHood = n; } else if (!p.hoods.includes(n)) p.hoods.push(n);
+          toks.splice(i, kt.length); break;
+        }
+      }
+    }
+    q = ` ${toks.join(" ")} `;
     for (const w of q.split(/\s+/).filter(Boolean)) {
-      const dw = DEAL_WORDS[w] || (w.length >= 5 && Object.keys(DEAL_WORDS).find(k => k.length >= 5 && editDist(k, w) <= 1) && DEAL_WORDS[Object.keys(DEAL_WORDS).find(k => k.length >= 5 && editDist(k, w) <= 1)]);
+      if (VIBE_WORDS[w]) { if (!p.vibes.includes(VIBE_WORDS[w])) p.vibes.push(VIBE_WORDS[w]); continue; }
+      if (w in OUT_WORDS) { if (!p.outdoor.includes(OUT_WORDS[w])) p.outdoor.push(OUT_WORDS[w]); continue; }
+      const realWord = VENUES.some(v => haystack(v).all.some(st => st.startsWith(w)));
+      const near = !realWord && w.length >= 5 && Object.keys(DEAL_WORDS).find(k => k.length >= 5 && editDist(k, w) <= 1);
+      const dw = DEAL_WORDS[w] || (near && DEAL_WORDS[near]);
       if (dw) { if (!p.deals.includes(dw)) p.deals.push(dw); }
       else if (!FILLER.has(w)) p.words.push(w);
     }
@@ -356,6 +386,8 @@
     else if (p.mins != null || p.day != null) p.chips.push([p.day != null ? p.dayLabel || DAY_NAMES[p.day][0].toUpperCase() + DAY_NAMES[p.day].slice(1) : "", p.mins != null ? fmt(p.mins) : ""].filter(Boolean).join(" "));
     p.hoods.forEach(h => p.chips.push(h));
     p.deals.forEach(d => p.chips.push(DEAL_LABELS[d]));
+    p.vibes.forEach(v => p.chips.push(titleCase(v)));
+    p.outdoor.forEach(o => p.chips.push(o || "Outdoor seating"));
     if (p.campus) p.chips.push(`Near ${CAMPUSES[p.campus].name}`);
     if (p.nearHood) p.chips.push(`Near ${p.nearHood}`);
     if (p.zip) p.chips.push(p.zip);
@@ -399,6 +431,8 @@
   function matchesQuery(v, p) {
     if (p.hoods.length && !p.hoods.some(h => v.neighborhood === h || v.neighborhood.endsWith(" " + h))) return false; // "Decatur" also covers North Decatur
     if (!p.deals.every(d => v.deals.includes(d))) return false;
+    if (!p.vibes.every(x => v.vibes.includes(x))) return false;
+    if (!p.outdoor.every(o => o ? v.outdoor.includes(o) : v.outdoor.length)) return false;
     if (p.zip && v.zip !== p.zip) return false;
     if (p.cheap && v.price !== 1) return false;
     if (p.now || p.mins != null) {
@@ -448,25 +482,35 @@
     // A time typed in the search box ("4pm", "tuesday") drives the card statuses too.
     const t = parsed && !parsed.now && parsed.day != null
       ? { day: parsed.day, mins: parsed.mins ?? 17 * 60, live: false } : refTime();
-    // "near Emory" / "near Inman Park": an anchor point to sort by (closest first), not a cutoff.
-    const anchor = parsed?.campus ? CAMPUSES[parsed.campus] : parsed?.nearHood ? hoodCenter(parsed.nearHood) : null;
-    scored = VENUES.map(v => {
-      const near = anchor ? Math.round(haversine(anchor, v) * 1.35 / 20 * 60 + 2) : null;
-      return { v, s: statusFor(v, t), mi: milesTo(v), dm: driveMin(v), near, far: near != null && near > 12 };
-    });
+    scored = VENUES.map(v => ({ v, s: statusFor(v, t), mi: milesTo(v), dm: driveMin(v) }));
     searchNote = "";
     let out = scored.filter(e => passes(e, null));
     // Never a dead end: loosen the search step by step and say what we loosened.
     if (!out.length && parsed) {
-      const orig = parsed;
-      const steps = [["words", "your keywords"], ["day", "the time"], ["hoods", "the neighborhood"], ["deals", "the deal type"]];
+      const unknown = parsed.words.filter(w => !VENUES.some(v => hits(haystack(v).all, w)));
+      if (unknown.length) {
+        parsed = { ...parsed, words: parsed.words.filter(w => !unknown.includes(w)), nameHits: undefined };
+        out = scored.filter(e => passes(e, null));
+        if (out.length) searchNote = `No spots mention ${unknown.map(w => `"${w}"`).join(" or ")}, so we skipped ${unknown.length > 1 ? "those words" : "that word"}.`;
+      }
+      // Nothing in that neighborhood? Show the closest matches around it instead.
+      if (!out.length && parsed.hoods.length) {
+        const h = parsed.hoods[0];
+        const tryNear = { ...parsed, hoods: [], nearHood: parsed.nearHood || h, nameHits: undefined };
+        const prev = parsed; parsed = tryNear;
+        out = scored.filter(e => passes(e, null));
+        if (out.length) searchNote = `Nothing like that in ${h}, so here are the closest spots.`; else parsed = prev;
+      }
+      const steps = out.length ? [] : [["words", "your keywords"], ["vibes", "the vibe"], ["outdoor", "outdoor seating"], ["day", "the time"], ["deals", "the deal type"]];
       for (const [k, label] of steps) {
         parsed = { ...parsed, [k]: Array.isArray(parsed[k]) ? [] : null, ...(k === "day" ? { mins: null, now: false } : {}), nameHits: undefined };
         out = scored.filter(e => passes(e, null));
         if (out.length) { searchNote = `Nothing matched everything, so this ignores ${label}.`; break; }
       }
-      parsed = orig;
     }
+    // "near Emory" / "near Inman Park": sort by distance from there (closest first), never a cutoff.
+    const anchor = parsed?.campus ? CAMPUSES[parsed.campus] : parsed?.nearHood ? hoodCenter(parsed.nearHood) : null;
+    out.forEach(e => { e.near = anchor ? Math.round(haversine(anchor, e.v) * 1.35 / 20 * 60 + 2) : null; e.far = e.near != null && e.near > 12; });
     const nameFirst = e => (parsed && parsed.words.length && hits(haystack(e.v).name, parsed.words.join(" ")) ? 0 : 1);
     return out.sort((a, b) => {
       if (nameFirst(a) !== nameFirst(b)) return nameFirst(a) - nameFirst(b);
