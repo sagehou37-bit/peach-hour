@@ -334,6 +334,8 @@
     const p = { hoods: [], deals: [], day: null, mins: null, now: false, campus: null, zip: null, cheap: false, words: [], chips: [] };
     const take = re => { const m = q.match(re); if (m) q = q.replace(re, " "); return m; };
     const hoodKeys = [...uniq("neighborhood").map(n => [n.toLowerCase(), n]), ...Object.entries(HOOD_ALIASES)].sort((a, b) => b[0].length - a[0].length);
+    // "near Inman Park" sorts by distance from that area instead of limiting to it.
+    for (const [k, n] of hoodKeys) if (!p.nearHood && take(new RegExp(`\\s(near|by|around|close to)\\s+(the\\s+)?${escRe(k)}(?=\\s)`))) p.nearHood = n;
     for (const [k, n] of hoodKeys) if (take(new RegExp(`\\s${escRe(k)}(?=\\s)`)) && !p.hoods.includes(n)) p.hoods.push(n);
     let m;
     if ((m = take(/\s(\d{1,2})(?::(\d{2}))?\s*(am|pm)(?=\s)/))) p.mins = ((+m[1] % 12) + (m[3] === "pm" ? 12 : 0)) * 60 + (+m[2] || 0);
@@ -346,7 +348,8 @@
     if (take(/\semory(?=\s)/)) p.campus = "emory";
     if (take(/\s(cheap|budget)(?=\s)/)) p.cheap = true;
     for (const w of q.split(/\s+/).filter(Boolean)) {
-      if (DEAL_WORDS[w]) { if (!p.deals.includes(DEAL_WORDS[w])) p.deals.push(DEAL_WORDS[w]); }
+      const dw = DEAL_WORDS[w] || (w.length >= 5 && Object.keys(DEAL_WORDS).find(k => k.length >= 5 && editDist(k, w) <= 1) && DEAL_WORDS[Object.keys(DEAL_WORDS).find(k => k.length >= 5 && editDist(k, w) <= 1)]);
+      if (dw) { if (!p.deals.includes(dw)) p.deals.push(dw); }
       else if (!FILLER.has(w)) p.words.push(w);
     }
     if (p.now) p.chips.push("Right now");
@@ -354,6 +357,7 @@
     p.hoods.forEach(h => p.chips.push(h));
     p.deals.forEach(d => p.chips.push(DEAL_LABELS[d]));
     if (p.campus) p.chips.push(`Near ${CAMPUSES[p.campus].name}`);
+    if (p.nearHood) p.chips.push(`Near ${p.nearHood}`);
     if (p.zip) p.chips.push(p.zip);
     if (p.cheap) p.chips.push("$");
     p.words.forEach(w => p.chips.push(`"${w}"`));
@@ -376,13 +380,27 @@
     return hayCache.get(v.id);
   };
   const forms = w => { const sq = squash(w), f = [sq]; if (sq.length > 3 && sq.endsWith("s")) f.push(sq.slice(0, -1)); if (sq.length > 4 && sq.endsWith("es")) f.push(sq.slice(0, -2)); return f.filter(Boolean); };
-  const hits = (list, w) => forms(w).some(x => list.some(st => st.startsWith(x)));
+  // Edit distance (with swapped letters) for typo tolerance: "oysers", "inmann", "beetel".
+  function editDist(a, b) {
+    if (Math.abs(a.length - b.length) > 2) return 9;
+    const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
+    for (let j = 1; j <= b.length; j++) d[0][j] = j;
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) {
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+    }
+    return d[a.length][b.length];
+  }
+  // A word of 5+ letters may be off by one letter (8+ letters: two) from the start of a word in the listing.
+  const typoOK = (x, st) => { const lim = x.length >= 8 ? 2 : x.length >= 5 ? 1 : 0;
+    return lim > 0 && [x.length - 1, x.length, x.length + 1].some(L => L > 0 && st.length >= L && editDist(x, st.slice(0, L)) <= lim); };
+  const hits = (list, w) => forms(w).some(x => list.some(st => st.startsWith(x)))
+    || forms(w).some(x => list.some(st => typoOK(x, st)));
   function matchesQuery(v, p) {
-    if (p.hoods.length && !p.hoods.includes(v.neighborhood)) return false;
+    if (p.hoods.length && !p.hoods.some(h => v.neighborhood === h || v.neighborhood.endsWith(" " + h))) return false; // "Decatur" also covers North Decatur
     if (!p.deals.every(d => v.deals.includes(d))) return false;
     if (p.zip && v.zip !== p.zip) return false;
     if (p.cheap && v.price !== 1) return false;
-    if (p.campus && haversine(CAMPUSES[p.campus], v) * 1.35 / 20 * 60 + 2 > 12) return false;
     if (p.now || p.mins != null) {
       // A time with no day ("4pm") matches that time on any day of the week.
       const days = p.now ? [atlNow().day] : p.day != null ? [p.day] : [0, 1, 2, 3, 4, 5, 6];
@@ -423,15 +441,36 @@
       });
     }
   }
+  let searchNote = "";
+  const hoodCenter = n => { const vs = VENUES.filter(v => v.neighborhood === n); return { lat: vs.reduce((a, v) => a + v.lat, 0) / vs.length, lng: vs.reduce((a, v) => a + v.lng, 0) / vs.length }; };
   function filtered() {
     parsed = state.q ? parseQuery(state.q) : null;
     // A time typed in the search box ("4pm", "tuesday") drives the card statuses too.
     const t = parsed && !parsed.now && parsed.day != null
       ? { day: parsed.day, mins: parsed.mins ?? 17 * 60, live: false } : refTime();
-    scored = VENUES.map(v => ({ v, s: statusFor(v, t), mi: milesTo(v), dm: driveMin(v) }));
+    // "near Emory" / "near Inman Park": an anchor point to sort by (closest first), not a cutoff.
+    const anchor = parsed?.campus ? CAMPUSES[parsed.campus] : parsed?.nearHood ? hoodCenter(parsed.nearHood) : null;
+    scored = VENUES.map(v => {
+      const near = anchor ? Math.round(haversine(anchor, v) * 1.35 / 20 * 60 + 2) : null;
+      return { v, s: statusFor(v, t), mi: milesTo(v), dm: driveMin(v), near, far: near != null && near > 12 };
+    });
+    searchNote = "";
+    let out = scored.filter(e => passes(e, null));
+    // Never a dead end: loosen the search step by step and say what we loosened.
+    if (!out.length && parsed) {
+      const orig = parsed;
+      const steps = [["words", "your keywords"], ["day", "the time"], ["hoods", "the neighborhood"], ["deals", "the deal type"]];
+      for (const [k, label] of steps) {
+        parsed = { ...parsed, [k]: Array.isArray(parsed[k]) ? [] : null, ...(k === "day" ? { mins: null, now: false } : {}), nameHits: undefined };
+        out = scored.filter(e => passes(e, null));
+        if (out.length) { searchNote = `Nothing matched everything, so this ignores ${label}.`; break; }
+      }
+      parsed = orig;
+    }
     const nameFirst = e => (parsed && parsed.words.length && hits(haystack(e.v).name, parsed.words.join(" ")) ? 0 : 1);
-    return scored.filter(e => passes(e, null)).sort((a, b) => {
+    return out.sort((a, b) => {
       if (nameFirst(a) !== nameFirst(b)) return nameFirst(a) - nameFirst(b);
+      if (anchor && state.sort === "smart") return a.near - b.near || a.s.rank - b.s.rank;
       if (state.sort === "near" && a.mi != null) return a.mi - b.mi;
       if (state.sort === "near" && a.dm != null) return a.dm - b.dm;
       if (state.sort === "price") return a.v.price - b.v.price || a.s.rank - b.s.rank;
@@ -593,8 +632,9 @@
   function render() {
     const items = filtered();
     $("qChips").hidden = !(parsed && parsed.chips.length);
+    const sortNote = parsed && (parsed.campus || parsed.nearHood) && state.sort === "smart" ? " · closest first" : "";
     $("qChips").innerHTML = parsed && parsed.chips.length
-      ? `<span>Searching for</span>${parsed.chips.map(c => `<b>${esc(c)}</b>`).join("")}<button class="link" data-edit type="button">Edit</button><button class="link" data-clearq type="button">Clear</button>` : "";
+      ? `<span>Searching for</span>${parsed.chips.map(c => `<b>${esc(c)}</b>`).join("")}<span class="q-count">${items.length} spot${items.length === 1 ? "" : "s"}${sortNote}</span><button class="link" data-edit type="button">Edit</button><button class="link" data-clearq type="button">Clear</button>${searchNote ? `<span class="q-note">${searchNote}</span>` : ""}` : "";
     renderItems(items);
   }
   function renderItems(items) {
@@ -608,7 +648,8 @@
     const active = Object.keys(groups).reduce((n, k) => n + state[k].size, (state.mode === "any" ? 0 : 1) + (state.campus ? 1 : 0));
     $("toggleFilters").innerHTML = active ? `Filters <span class="n">${active}</span>` : "Filters";
     if (state.view === "list") {
-      $("list").innerHTML = items.length ? items.map(card).join("")
+      const firstFar = items.findIndex(e => e.far), anyNear = firstFar > 0;
+      $("list").innerHTML = items.length ? items.map((e, i) => (anyNear && i === firstFar ? `<p class="far-divider">A bit farther: 13+ min drive</p>` : "") + card(e)).join("")
         : `<p class="empty">Nothing matches those filters. Try loosening a few.</p>`;
       fitTags();
     } else renderMap(items);

@@ -502,3 +502,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
   .q-go { padding: 10px 14px; }
   .sg-sub { display: none; }
 }
+.q-count { color: var(--ink); font-weight: 600; margin-left: 4px; }
+.q-note { flex-basis: 100%; color: var(--peach-ink); font-weight: 600; }
+.far-divider { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; margin: 4px 0 -8px; color: var(--muted); font-weight: 600; font-size: .9rem; }
+.far-divider::before, .far-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
