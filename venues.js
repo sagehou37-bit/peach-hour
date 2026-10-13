@@ -197,7 +197,7 @@
       cuisine: ["Seafood"], vibes: ["Date night", "Beltline access"], outdoor: ["Patio"], hours: days({ 0: ["10:00", "21:00"], 1: ["16:00", "22:00"], 2: ["16:00", "22:00"], 3: ["16:00", "22:00"], 4: ["16:00", "22:00"], 5: ["16:00", "23:00"], 6: ["10:00", "23:00"] }),
       happyHours: [{ days: WEEKDAYS, start: "16:00", end: "18:00" }],
       deals: ["oysters", "food", "beer", "cocktails"], dealText: "$2 select oysters · Half off beer · $10 oyster martini",
-      hhStatus: "confirmed", sources: [{ label: "Confirmed in person (Oct 2026)", url: "https://www.beetlecatatl.com/" }, S.inf] },
+      hhStatus: "confirmed", sources: [{ label: "Confirmed by Peach Hour (Oct 2026)", url: "https://www.beetlecatatl.com/" }, S.inf] },
 
     { id: "little-spirit", name: "Little Spirit", neighborhood: "Inman Park",
       address: "299 N Highland Ave NE, Ste R3", lat: 33.76255, lng: -84.35865, price: 2, type: "Cocktail bar",
