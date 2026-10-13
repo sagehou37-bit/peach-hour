@@ -210,22 +210,55 @@
     qIn.value = text; state.q = text.trim(); $("qClear").hidden = !text; render();
     closeSuggest(); if (go) scrollToResults();
   };
+  // Suggestions finish the thought: "beer" -> "beer happy hour now", "beer at 5pm", "beer in Virginia-Highland",
+  // "beer for $5 or less"... Only ideas that actually return spots are shown, with how many.
+  function countFor(query) {
+    const saved = parsed; parsed = parseQuery(query);
+    const t = parsed.day != null && !parsed.now ? { day: parsed.day, mins: parsed.mins ?? 17 * 60, live: false } : refTime();
+    const n = VENUES.filter(v => passes({ v, s: statusFor(v, t), dm: driveMin(v) }, null)).length;
+    parsed = saved; return n;
+  }
   function suggestions(text) {
-    const t = text.trim(); if (!t) return [];
-    const out = [], seen = new Set(), add = (kind, label, sub, query) => { if (!seen.has(label) && out.length < 7) { seen.add(label); out.push({ kind, label, sub, query }); } };
-    const words = t.split(/\s+/);
-    // Bars whose name matches what's typed
-    VENUES.filter(v => hits(haystack(v).name, t)).slice(0, 4).forEach(v => add("Bar", v.name, v.neighborhood, v.name));
-    // Neighborhoods, food, vibes and deal types that start with the last word typed
-    const last = words[words.length - 1], lead = words.slice(0, -1).join(" ");
-    const pool = [...uniq("neighborhood").map(n => ["Area", n]), ...Object.values(DEAL_LABELS).map(d => ["Deal", d]),
-      ...uniq("cuisine").map(c => ["Food", c]), ...uniq("vibes").map(v => ["Vibe", titleCase(v)])];
-    pool.filter(([, n]) => hits(starts(n), last)).forEach(([k, n]) => add(k, n, "", `${lead ? lead + " " : ""}${n}`));
+    const t = text.trim().replace(/\s+/g, " "); if (!t) return [];
+    const out = [], seen = new Set();
+    const add = (label, kind, query = label) => {
+      if (out.length >= 6 || seen.has(query.toLowerCase())) return;
+      const n = countFor(query); if (!n) return;
+      seen.add(query.toLowerCase()); out.push({ kind, label, sub: `${n} spot${n === 1 ? "" : "s"}`, query });
+    };
+    // Finish a half-typed last word first ("bee" -> "beer", "inm" -> "Inman Park").
+    const words = t.split(" "), last = words[words.length - 1], lead = words.slice(0, -1).join(" ");
+    let base = t;
+    if (last.length >= 2 && !DEAL_WORDS[last.toLowerCase()]) {
+      const vocab = [...Object.keys(DEAL_WORDS), ...uniq("neighborhood"), ...uniq("cuisine"), ...Object.keys(VIBE_WORDS), "patio", "rooftop", "tonight", "now"];
+      const done = vocab.find(w => fold(w).startsWith(fold(last)) && fold(w) !== fold(last));
+      if (done) base = `${lead ? lead + " " : ""}${done.toLowerCase().includes(" ") || /[A-Z]/.test(done) ? done : done}`;
+    }
+    const p = parseQuery(base), baseCount = countFor(base);
+    const bars = VENUES.filter(v => hits(haystack(v).name, t));
+    // Typed a bar's name? Just offer the bar.
+    if (bars.length && baseCount <= bars.length) { bars.slice(0, 3).forEach(v => add(v.name, "Bar", v.name)); return out; }
+    bars.slice(0, 1).forEach(v => add(v.name, "Bar", v.name));
+    if (base !== t) add(base, "");
+    // Ideas that narrow things down — one of each kind first: when, price, where, time, vibe.
+    const narrow = (label, kind) => { if (countFor(label) < baseCount) add(label, kind); };
+    const now = atlNow(), hr = Math.min(Math.max(now.mins < 15 * 60 ? 16 : Math.floor(now.mins / 60) + 1, 15), 19);
+    const hoods = !p.hoods.length && !p.nearHood && !p.campus
+      ? uniq("neighborhood").map(h => [h, countFor(`${base} in ${h}`)]).filter(([, n]) => n).sort((a, b) => b[1] - a[1]).map(([h]) => h) : [];
+    const timeFree = !p.now && p.day == null && p.mins == null;
+    if (timeFree) narrow(`${base} happy hour now`, "When");
+    if (p.maxPrice == null) [3, 5, 7].some(n => { const k = out.length; narrow(`${base} under $${n}`, "Price"); return out.length > k; });
+    if (hoods[0]) narrow(`${base} in ${hoods[0]}`, "Where");
+    if (timeFree) narrow(`${base} at ${hr > 12 ? hr - 12 : hr}pm`, "When");
+    if (!p.outdoor.length) narrow(`${base} with a patio`, "Vibe");
+    if (hoods[1]) narrow(`${base} in ${hoods[1]}`, "Where");
+    if (!p.vibes.length) narrow(`${base} for a date night`, "Vibe");
+    if (!p.campus && !p.nearHood) narrow(`${base} near Georgia Tech`, "Where");
     return out;
   }
   function openSuggest() {
     sugItems = suggestions(qIn.value); sugActive = -1;
-    qList.innerHTML = sugItems.map((x, i) => `<li role="option" id="sg${i}" data-i="${i}"><span class="sg-kind">${x.kind}</span><span class="sg-label">${esc(x.label)}</span>${x.sub ? `<span class="sg-sub">${esc(x.sub)}</span>` : ""}</li>`).join("");
+    qList.innerHTML = sugItems.map((x, i) => `<li role="option" id="sg${i}" data-i="${i}"><svg class="i sg-ic" viewBox="0 0 24 24" aria-hidden="true">${x.kind === "Bar" ? '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>' : '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'}</svg><span class="sg-label">${esc(x.label)}</span><span class="sg-sub">${esc(x.sub)}</span></li>`).join("");
     qList.hidden = !sugItems.length; qIn.setAttribute("aria-expanded", !!sugItems.length);
   }
   function closeSuggest() { qList.hidden = true; sugItems = []; sugActive = -1; qIn.setAttribute("aria-expanded", false); }
@@ -358,6 +391,7 @@
     if (take(/\s(georgia tech|gatech|tech|gt)(?=\s)/)) p.campus = "gt";
     if (take(/\semory(?=\s)/)) p.campus = "emory";
     if (take(/\s(cheap|budget)(?=\s)/)) p.cheap = true;
+    if ((m = take(/\s(?:under|less than|below|cheaper than|max|<)\s*\$?\s*(\d+(?:\.\d+)?)(?:\s*(?:dollars?|bucks?))?(?=\s)/)) || (m = take(/\s\$(\d+(?:\.\d+)?)(?=\s)/))) p.maxPrice = +m[1];
     // Neighborhoods typed loosely: "virginia highlands", "highalnds", "inman", "little 5 points".
     const toks = q.split(/\s+/).filter(Boolean);
     const fuzzyKeys = [...hoodKeys, ...uniq("neighborhood").map(n => [fold(n), n])].map(([k, n]) => [fold(k).split(" ").filter(x => x && x !== "and"), n]).filter(([k]) => k.length).sort((a, b) => b[0].length - a[0].length);
@@ -392,6 +426,7 @@
     if (p.nearHood) p.chips.push(`Near ${p.nearHood}`);
     if (p.zip) p.chips.push(p.zip);
     if (p.cheap) p.chips.push("$");
+    if (p.maxPrice != null) p.chips.push(`$${p.maxPrice} or less`);
     p.words.forEach(w => p.chips.push(`"${w}"`));
     return p;
   }
@@ -435,6 +470,7 @@
     if (!p.outdoor.every(o => o ? v.outdoor.includes(o) : v.outdoor.length)) return false;
     if (p.zip && v.zip !== p.zip) return false;
     if (p.cheap && v.price !== 1) return false;
+    if (p.maxPrice != null && !priceOK(v, p)) return false;
     if (p.now || p.mins != null) {
       // A time with no day ("4pm") matches that time on any day of the week.
       const days = p.now ? [atlNow().day] : p.day != null ? [p.day] : [0, 1, 2, 3, 4, 5, 6];
@@ -475,6 +511,17 @@
       });
     }
   }
+  // Words that tell us a deal line is about beer / wine / cocktails / oysters / food.
+  const DEAL_TERMS = {
+    beer: /beer|pint|draft|lager|ipa|\bale\b|pbr|busch|miller|coors|tecate|montucky|narragansett|sapporo|peroni|sweetwater|high life|dos equis|estrella|stella|asahi|corona|heineken|bud\b|bucket|pitcher|404|bibo|can(ned)?\b/i,
+    wine: /wine|glass|rosé|rose\b|prosecco|cava|bubbly|sangria|pinot|cabernet|chardonnay|mimosa/i,
+    cocktails: /cocktail|margarita|marg|martini|mule|spritz|negroni|fashioned|daiquiri|paloma|mojito|well|shot|manhattan|gimlet|vesper|whisk|tequila|mai tai|punch|bloody|french 75|espresso/i,
+    oysters: /oyster/i, food: /./,
+  };
+  const dollars = line => [...line.matchAll(/\$(\d+(?:\.\d+)?)/g)].map(m => +m[1]);
+  // Has a deal at or under the price — on the kind of drink asked for, if one was named.
+  const priceOK = (v, p) => v.dealText.split(/\s+·\s+/).some(line =>
+    (!p.deals.length || p.deals.some(d => DEAL_TERMS[d].test(line))) && dollars(line).some(n => n <= p.maxPrice));
   let searchNote = "";
   const hoodCenter = n => { const vs = VENUES.filter(v => v.neighborhood === n); return { lat: vs.reduce((a, v) => a + v.lat, 0) / vs.length, lng: vs.reduce((a, v) => a + v.lng, 0) / vs.length }; };
   function filtered() {
