@@ -71,14 +71,20 @@
     }
     return best;
   }
+  // Day ranges read Monday-first and wrap around the weekend: "Mon–Fri", "Sat, Sun", "Sun–Fri".
   function daysLabel(days) {
-    const s = [...days].sort((a, b) => a - b);
-    if (s.length === 7) return "Daily";
-    const runs = []; let start = s[0], prev = s[0];
-    for (let i = 1; i <= s.length; i++) {
-      if (s[i] === prev + 1) { prev = s[i]; continue; }
-      runs.push(start === prev ? DAYS[start] : prev === start + 1 ? `${DAYS[start]}, ${DAYS[prev]}` : `${DAYS[start]}–${DAYS[prev]}`);
-      start = prev = s[i];
+    const has = new Set(days);
+    if (has.size === 7) return "Daily";
+    // Start at the first day (Monday-first) whose previous day is off, so runs never split across Sun/Mon.
+    const order = [1, 2, 3, 4, 5, 6, 0];
+    const first = order.find(d => has.has(d) && !has.has((d + 6) % 7));
+    const seq = Array.from({ length: 7 }, (_, i) => (first + i) % 7).filter(d => has.has(d));
+    const runs = []; let start = seq[0], prev = seq[0];
+    for (let i = 1; i <= seq.length; i++) {
+      if (seq[i] === (prev + 1) % 7) { prev = seq[i]; continue; }
+      const len = (prev - start + 7) % 7;
+      runs.push(len === 0 ? DAYS[start] : len === 1 ? `${DAYS[start]}, ${DAYS[prev]}` : `${DAYS[start]}–${DAYS[prev]}`);
+      start = prev = seq[i];
     }
     return runs.join(", ");
   }
@@ -678,7 +684,7 @@
     const sched = [...v.hhDisplay].sort((a, b) => offset(a) - offset(b)).map((w, i) => {
       const isToday = w.days.includes(today);
       const when = w.rain ? "Any time it rains" : w.allDay ? "All day" : `${fmt(toMin(w.start))}–${w.end === "close" ? "close" : fmt(toMin(w.end))}`;
-      return `<div class="${isToday ? "today" : ""}${i >= SHOW_TIMES ? " extra" : ""}"><dt>${w.rain ? "Rainy days" : isToday ? "Today" : daysLabel(w.days)}</dt><dd>${when}</dd>${w.note && !w.rain ? `<span class="note">${esc(w.note)}</span>` : ""}</div>`;
+      return `<div class="${isToday ? "today" : ""}${i >= SHOW_TIMES ? " extra" : ""}"><dt>${w.rain ? "Rainy days" : `${daysLabel(w.days)}${isToday ? ` <span class="today-tag">Today</span>` : ""}`}</dt><dd>${when}</dd>${w.note && !w.rain ? `<span class="note">${esc(w.note)}</span>` : ""}</div>`;
     }).join("");
 
     // Today's regular hours in one line: "Open until 11PM" / "Closed · opens 5PM".
