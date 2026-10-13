@@ -429,6 +429,12 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 /* Status pill and "Call to confirm" share one height. */
 .status-row .status, .status-row .confirm { min-height: 32px; box-sizing: border-box; }
 .status-row .confirm { display: inline-flex; align-items: center; padding: 0 10px; }
+/* Center the visible letters in the status and "Call to confirm" pills (same trick as the buttons).
+   Equal padding above and below keeps descenders visible when a long status is cut off with "…". */
+.status-row .st-text { display: block; text-box: trim-both cap alphabetic; line-height: 1; padding: .22em 0; }
+@supports not (text-box: trim-both cap alphabetic) {
+  .status-row .st-text { position: relative; top: 1px; padding: 0; }
+}
 
 /* Buttons: center the visible letters (not the font's line box) on the icons. */
 .act { gap: 7px; }
