@@ -93,7 +93,7 @@
         { days: [3], allDay: true, note: "$2 PBR tallboys + trivia" },
         { days: [4], allDay: true, note: "$5 rotating pitcher" },
       ],
-      deals: ["beer"], dealText: "Daily PBR specials, not a fixed happy-hour window",
+      deals: ["beer"], dealText: "Sunday: $5 PBR pitchers · Tuesday: $3.50 PBR pitchers · Wednesday: $2 PBR tallboys · Thursday: $5 rotating pitcher",
       hhStatus: "confirmed", sources: [S.vhd] },
 
     { id: "fontaines", name: "Fontaine's Oyster House", neighborhood: "Virginia-Highland",
@@ -111,7 +111,7 @@
       zip: "30306",
       cuisine: ["Mediterranean"], vibes: [], outdoor: ["Patio"], hours: days({ 0: ["10:00", "22:00"], 1: ["11:00", "22:00"], 2: ["11:00", "22:00"], 3: ["11:00", "22:00"], 4: ["11:00", "22:00"], 5: ["11:00", "23:00"], 6: ["10:00", "23:00"] }),
       happyHours: [{ days: WEEKDAYS, start: "15:00", end: "18:00" }],
-      deals: [], dealText: "Weekday happy hour (specific deals not listed)",
+      deals: ["cocktails", "food"], dealText: "Happy hour craft cocktails · Bar bites: spreads, meze & appetizers",
       hhStatus: "confirmed", sources: [S.vhd] },
 
     { id: "atkins-park", name: "Atkins Park", neighborhood: "Virginia-Highland",
@@ -214,9 +214,9 @@
       website: "https://bartaco.com/location/atlanta-inman/", zip: "30307",
       beltline: { min: 2, trail: "Eastside Trail" },
       cuisine: ["Mexican / Tacos"], vibes: ["Groups", "Beltline access"], outdoor: ["Patio"], hours: null,
-      happyHours: [{ days: [1, 2, 3, 4], start: "15:00", end: "18:00" }],
-      deals: ["cocktails", "food"], dealText: "\"High tide hour\" at the bar, plus the last 1.5 hrs before close Mon–Thu",
-      hhStatus: "confirmed", sources: [{ label: "bartaco.com", url: "https://bartaco.com/location/atlanta-inman/" }] },
+      happyHours: [{ days: WEEKDAYS, start: "15:00", end: "18:00", note: "At the bar; also the last 1.5 hrs before close Mon–Thu" }],
+      deals: ["cocktails", "food", "beer", "wine"], dealText: "Small bites: 1 for $3, 2 for $5, 3 for $8 · $8 piña margarita & michelada, $9 coconut mojito & coco melon margarita · $4 Oskar Blues, $4.50 Narragansett, $6 Spindrift spiked seltzer · $6.50 glass of wine, $8.50 red sangria · Spirit-free sips 2 for 1",
+      hhStatus: "confirmed", sources: [{ label: "bartaco high tide hour menu", url: "https://bartaco.com/inmanhightidehour/" }] },
 
     { id: "wrecking-bar", name: "Wrecking Bar Brewpub", neighborhood: "Inman Park",
       address: "292 Moreland Ave NE", lat: 33.76231, lng: -84.34964, price: 2, type: "Brewery",
@@ -261,8 +261,8 @@
       beltline: { min: 1, trail: "Eastside Trail" },
       cuisine: [], vibes: ["Date night", "Beltline access"], outdoor: [], hours: days({ 1: ["16:00", "24:00"], 2: ["16:00", "24:00"], 3: ["16:00", "24:00"], 4: ["16:00", "24:00"], 5: ["16:00", "02:00"], 6: ["16:00", "02:00"] }),
       happyHours: [{ days: WEEKDAYS, start: "16:00", end: "18:00" }],
-      deals: ["cocktails", "food"], dealText: "$15: cocktail + pastry pocket + pickles or popcorn",
-      hhStatus: "confirmed", sources: [S.inf] },
+      deals: ["cocktails", "food"], dealText: "$14.99 meal deal: any menu cocktail + a classic dog + popcorn or house pickles · Dog can be all-beef or veggie",
+      hhStatus: "confirmed", sources: [{ label: "Close Company Atlanta menu", url: "https://www.closecompanybar.com/menu/" }] },
 
     { id: "new-realm", name: "New Realm Brewing", neighborhood: "Eastside Beltline",
       address: "550 Somerset Terrace NE", lat: 33.76903, lng: -84.36195, price: 2, type: "Brewery",
@@ -329,7 +329,7 @@
       cuisine: ["American", "Pizza"], vibes: ["Cozy", "Late night", "Beltline access"], outdoor: [],
       hours: days({ 1: ["17:00", "23:00"], 2: ["17:00", "23:00"], 3: ["17:00", "23:00"], 4: ["17:00", "23:00"], 5: ["17:00", "00:00"], 6: ["17:00", "00:00"] }),
       happyHours: [{ days: [2, 3, 4, 5], start: "17:00", end: "19:00" }],
-      deals: ["cocktails"], dealText: "$5 martinis, vespers & Manhattans",
+      deals: ["cocktails"], dealText: "$5 martinis · $5 vespers · $5 Manhattans",
       hhStatus: "confirmed", sources: [S.bl] },
 
     { id: "buena-vida", name: "Buena Vida Tapas Bar", neighborhood: "Eastside Beltline",
@@ -632,16 +632,17 @@
       happyHours: [
         { days: [1, 2, 3, 4, 5], start: "15:00", end: "18:00" },
       ],
-      deals: ["food"], dealText: "Half-price appetizers weekdays 3–6 (dine-in)",
+      deals: ["food", "beer", "cocktails"], dealText: "Half-price appetizers weekdays 3–6 (dine-in) · $6 cocktails all week · $2.95 pints & $9.95 pitchers · Wednesday: $3 drafts all day · Tuesday: 50% off all tequila",
       hhStatus: "reported", sources: [{ label: "hudsongrille.com (specials)", url: "https://hudsongrille.com/page/specials" }] },
     { id: "brasserie-lundi", name: "Brasserie Lundi", neighborhood: "Midtown",
       address: "1375 Peachtree St NE", lat: 33.79252, lng: -84.38605, price: 3, type: "Restaurant",
       website: "https://brasserielundi.com/", zip: "30309",
-      cuisine: ["French"], vibes: ["Date night"], outdoor: [], hours: days({ 0: ["17:00", "22:00"], 1: ["17:00", "22:00"], 2: ["17:00", "22:00"], 3: ["17:00", "22:00"], 4: ["17:00", "22:00"], 5: ["17:00", "23:00"], 6: ["17:00", "23:00"] }),
+      cuisine: ["French"], vibes: ["Date night"], outdoor: [], hours: days({ 0: ["11:00", "14:30"], 1: ["11:00", "21:00"], 2: ["11:00", "21:00"], 3: ["11:00", "21:00"], 4: ["11:00", "21:00"], 5: ["11:00", "22:00"], 6: ["11:00", "22:00"] }),
       happyHours: [
+        { days: WEEKDAYS, start: "15:30", end: "18:00", note: "Limited happy hour menu" },
         { days: [1], allDay: true, note: "Half-price wine bottles" },
       ],
-      deals: ["wine"], dealText: "Half Price Mondays: half off select bottles of wine all day",
+      deals: ["wine", "food"], dealText: "Weekdays 3:30–6: limited happy hour menu · Mondays: half off select bottles of wine all day",
       hhStatus: "confirmed", sources: [{ label: "brasserielundi.com", url: "https://brasserielundi.com/" }] },
     { id: "gyu-kaku-atlantic", name: "Gyu-Kaku Japanese BBQ", neighborhood: "Atlantic Station",
       address: "265 18th St NW, #4130", lat: 33.79284, lng: -84.39668, price: 2, type: "Restaurant",
@@ -681,8 +682,8 @@
       zip: "30318",
       cuisine: ["Indian"], vibes: ["Groups"], outdoor: [], hours: null,
       happyHours: [{ days: [0, 1, 2, 3, 4, 5, 6], start: "17:00", end: "19:00" }],
-      deals: ["food", "cocktails"], dealText: "Specials under $5, $10 & $15",
-      hhStatus: "confirmed", sources: [S.inf] },
+      deals: ["food"], dealText: "$4.95: spiced peanuts or gunpowder popcorn · $9.95: green papaya salad, charred corn, pani puri or tikka fries · $14.95: tandoori chicken, saag paneer, short rib dosa or lamb hakka noodles",
+      hhStatus: "confirmed", sources: [{ label: "Ghee West Midtown happy hour menu", url: "https://www.gheeindiankitchen.com/west-midtown-menus/" }, S.inf] },
 
     { id: "flight-club", name: "Flight Club", neighborhood: "West Midtown",
       address: "1055 Howell Mill Rd NW", lat: 33.78334, lng: -84.41142, price: 2, type: "Bar",
@@ -742,8 +743,8 @@
       cuisine: ["Cajun", "Sandwiches"], vibes: ["Late night", "Sports", "Games"], outdoor: [],
       hours: [0, 1, 2, 3, 4, 5, 6].map(() => ["11:00", "02:00"]),
       happyHours: [{ days: [0, 1, 2, 3, 4, 5, 6], allDay: true }],
-      deals: ["beer"], dealText: "$6 Big Busch",
-      hhStatus: "confirmed", sources: [{ label: "thepoboyshopatl.com", url: "https://www.thepoboyshopatl.com/basementbar" }] },
+      deals: ["beer", "oysters"], dealText: "$6 Big Busch · Friday oyster night from 4PM: $12 half dozen, $18 dozen Gulf oysters (until they run out)",
+      hhStatus: "confirmed", sources: [{ label: "thepoboyshopatl.com", url: "https://www.thepoboyshopatl.com/basementbar" }, { label: "Po'Boy Shop weekly specials", url: "https://www.thepoboyshopatl.com/events" }] },
 
     // ── Decatur ───────────────────────────────────────────────────
     { id: "la-bistreaux-decatur", name: "Louisiana Bistreaux Decatur", neighborhood: "North Decatur",
