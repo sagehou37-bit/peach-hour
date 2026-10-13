@@ -313,7 +313,7 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .deal-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 1rem; line-height: 1.4; font-weight: 500; }
 .deal-list li { position: relative; padding-left: 16px; }
 .deal-list li::before { content: ""; position: absolute; left: 2px; top: .58em; width: 6px; height: 6px; border-radius: 50%; background: var(--peach); }
-.book .sched { gap: 6px; font-size: .9rem; }
+.book .sched { gap: 4px; font-size: .9rem; }
 .book .sched div { display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: 0 8px; }
 .book .sched div::after { content: ""; grid-column: 2; grid-row: 1; border-bottom: 1px dotted var(--line); transform: translateY(-3px); }
 .book .sched dt { min-width: 0; grid-column: 1; }
@@ -387,18 +387,18 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 
 /* ── Compact books: shorter photo page, tighter spacing ──────────────────── */
 .grid { gap: 32px; }
-.page-photos { min-height: 250px; gap: 6px; padding: 10px 14px 10px 10px; }
+.page-photos { min-height: 230px; gap: 6px; padding: 10px 14px 10px 10px; }
 .nameplate { padding: 8px 14px 9px; border-radius: 12px; left: 22px; right: 26px; }
 .nameplate .kicker { font-size: .68rem; margin-bottom: 1px; }
 .nameplate h4 { font-size: clamp(1.4rem, 2.2vw, 1.8rem); }
-.page-info { padding: 16px 22px 14px 30px; gap: 11px; }
+.page-info { padding: 14px 22px 12px 30px; gap: 9px; }
 .info-top .heart { width: 32px; height: 32px; }
 .sec-label { font-size: 1.12rem; margin-bottom: 5px; }
 .deal-list { gap: 4px; font-size: .96rem; line-height: 1.35; }
 .book .sched { gap: 3px; }
 .open-line { margin-top: 5px !important; }
-.info-grid, .sec-side { gap: 12px; }
-.book .card-foot { padding-top: 10px; gap: 8px; }
+.info-grid, .sec-side { gap: 10px; }
+.book .card-foot { padding-top: 8px; gap: 8px; }
 @container list (max-width: 560px) {
   .page-photos { min-height: 0; height: 150px; padding: 8px 8px 10px; }
   .nameplate { left: 50%; right: auto; }
@@ -453,19 +453,25 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .book.open .book-more .i { transform: rotate(180deg); }
 .book .card-foot { margin-top: auto; }
 @container list (min-width: 561px) {
-  .card.book:not(.open) .page-info { min-height: 330px; }
-  .card.book:not(.open) .page-photos { min-height: 330px; }
+  .card.book:not(.open) .page-info { min-height: 300px; }
+  .card.book:not(.open) .page-photos { min-height: 300px; }
 }
 /* Collapsed: long deal lines cap at 2 lines and time notes at 1 line; the dropdown shows them in full. */
 .card.book.has-more:not(.open) .deal-list li { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 .card.book.has-more:not(.open) .sched .note { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sec-deals { display: flex; flex-direction: column; }
 .sec-deals .book-more { margin-top: 10px; }
-.card.book:not(.open) .deal-list li.fit-extra { display: none !important; }
+.card.book:not(.open) .deal-list li.fit-extra, .card.book:not(.open) .sched div.fit-extra { display: none !important; }
+.card.book:not(.open) .belt.fit-hide { display: none; }
+/* Collapsed: the status stays on one line (long ones end in "…"); opening the card shows it in full. */
+.card.book:not(.open) .status-row { flex-wrap: nowrap; min-width: 0; }
+.card.book:not(.open) .status { min-width: 0; }
+.card.book:not(.open) .st-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card.book:not(.open) .status-row .confirm { flex: none; white-space: nowrap; }
 /* Collapsed: time notes (e.g. "Wine Night") live in the dropdown; the deal list already names them. */
 .card.book.has-more:not(.open) .sched .note { display: none; }
 @container list (max-width: 560px) {
-  .card.book:not(.open) .page-info { min-height: 470px; }
+  .card.book:not(.open) .page-info { min-height: 455px; }
   .card.book:not(.open) .card-foot { margin-top: auto; }
 }
 

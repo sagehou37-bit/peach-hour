@@ -713,7 +713,7 @@
       </div>
       <div class="page page-info">
         <div class="info-top">
-          <div class="status-row"><span class="status ${s.cls}">${s.label}</span>${confirm}</div>
+          <div class="status-row"><span class="status ${s.cls}"><span class="st-text">${s.label}</span></span>${confirm}</div>
           <button class="heart" data-fav="${v.id}" aria-pressed="${fav}" aria-label="Save ${esc(v.name)}">${ICON.heart}</button>
         </div>
         <div class="info-grid">
@@ -813,21 +813,45 @@
   // each kept to a single line by hiding the tags that would wrap. Never more than two lines.
   // Collapsed cards: if long deal lines make the Deals column taller than When/Where,
   // tuck the last visible deals into the dropdown too, so every card stays the same size.
+  // Height of a column's content (grid columns stretch to the taller one, so offsetHeight won't do).
+  const contentH = el => Math.max(0, ...[...el.children].filter(c => c.offsetParent).map(c => c.getBoundingClientRect().bottom)) - el.getBoundingClientRect().top;
   function fitDeals() {
     for (const card of document.querySelectorAll("#list .card.book:not(.open)")) {
       const deals = card.querySelector(".sec-deals"), side = card.querySelector(".sec-side");
       if (!deals || !side) continue;
       const items = [...deals.querySelectorAll(".deal-list li")];
-      items.forEach(li => li.classList.remove("fit-extra"));
+      const rows = [...side.querySelectorAll(".sched > div")];
+      [...items, ...rows].forEach(el => el.classList.remove("fit-extra"));
       const stacked = side.getBoundingClientRect().top >= deals.getBoundingClientRect().bottom - 1; // phones
-      const limit = stacked ? 150 : Math.max(side.offsetHeight, 155);
+      // Desktop: if When/Where makes the card taller than the standard height, tuck later times into the dropdown.
+      const info0 = card.querySelector(".page-info"), grid = card.querySelector(".info-grid");
+      const target = parseFloat(getComputedStyle(info0).minHeight) || 0;
+      // Room the Deals / When columns get inside the standard card height (measured without the min-height).
+      info0.style.minHeight = "0px";
+      const budget = target - (info0.scrollHeight - grid.offsetHeight);
+      info0.style.minHeight = "";
+      const belt = side.querySelector(".belt");
+      belt?.classList.remove("fit-hide");
+      if (!stacked && target) {
+        let shown = rows.filter(r => !r.classList.contains("extra"));
+        while (contentH(side) > budget + 1 && shown.length > 1) shown.pop().classList.add("fit-extra");
+        // Last resort: the BeltLine walk line (the Beltline tag still shows it).
+        if (belt && contentH(side) > budget + 1) belt.classList.add("fit-hide");
+      }
+      const limit = stacked ? 150 : Math.max(contentH(side), target ? budget : 155);
       let visible = items.filter(li => !li.classList.contains("extra"));
-      const info = card.querySelector(".page-info"), PHONE_H = 470;
-      const tooTall = () => stacked ? info.scrollHeight > PHONE_H + 1 : deals.offsetHeight > limit + 1;
+      const info = card.querySelector(".page-info"), PHONE_H = 455;
+      const tooTall = () => stacked ? info.scrollHeight > PHONE_H + 1 : contentH(deals) > limit + 1;
       while (tooTall() && visible.length > 2) {
         visible.pop().classList.add("fit-extra");
       }
-      const tucked = deals.querySelectorAll(".fit-extra").length;
+      // Phones: then later times, then the BeltLine line, so every card stays the same height.
+      if (stacked) {
+        const shown = rows.filter(r => !r.classList.contains("extra"));
+        while (tooTall() && shown.length > 1) shown.pop().classList.add("fit-extra");
+        if (belt && tooTall()) belt.classList.add("fit-hide");
+      }
+      const tucked = card.querySelectorAll(".fit-extra").length;
       if (tucked) {
         const btn = deals.querySelector(".book-more");
         const n = tucked + Number(btn?.dataset.base || 0);
