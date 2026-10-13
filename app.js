@@ -315,7 +315,6 @@
   qList.onmousedown = e => { const li = e.target.closest("li"); if (li) { e.preventDefault(); setQuery(sugItems[li.dataset.i].query, true); } };
   $("qClear").onclick = () => { setQuery(""); qIn.focus(); };
   $("qGo").onclick = () => setQuery(qIn.value, true);
-  all(".try").forEach(b => { b.onclick = () => setQuery(b.textContent, true); });
   // Placeholder rotates through example searches while the box is empty and idle.
   const HINTS = [["beer under $5", "patio in Midtown"], ["wine at 5pm", "watch the game"], ["date night in Inman Park", "late night"], ["cheap margs in Decatur", "dog friendly"]];
   const narrow = matchMedia("(max-width: 600px)");
