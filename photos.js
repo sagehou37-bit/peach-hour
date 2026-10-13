@@ -21,8 +21,8 @@ window.PHOTOS = {
  ],
  "beetlecat": [
   "assets/venues/beetlecat-1.jpg",
-  "assets/venues/beetlecat-2.jpg",
-  "assets/venues/beetlecat-3.jpg"
+  "assets/venues/beetlecat-3.jpg",
+  "assets/venues/beetlecat-2.jpg"
  ],
  "bartaco-ip": [
   "assets/venues/bartaco-ip-1.jpg",
@@ -94,8 +94,7 @@ window.PHOTOS = {
  ],
  "muchacho": [
   "assets/venues/muchacho-1.jpg",
-  "assets/venues/muchacho-2.jpg",
-  "assets/venues/muchacho-3.jpg"
+  "assets/venues/muchacho-2.jpg"
  ],
  "holeman-finch": [
   "assets/venues/holeman-finch-1.jpg",
@@ -200,8 +199,7 @@ window.PHOTOS = {
  ],
  "snap-thai": [
   "assets/venues/snap-thai-1.jpg",
-  "assets/venues/snap-thai-2.jpg",
-  "assets/venues/snap-thai-3.jpg"
+  "assets/venues/snap-thai-2.jpg"
  ],
  "iberian-pig-buckhead": [
   "assets/venues/iberian-pig-buckhead-2.jpg"
@@ -221,7 +219,7 @@ window.PHOTOS = {
  ],
  "atlanta-fish-market": [
   "assets/venues/atlanta-fish-market-1.jpg",
-  "assets/venues/atlanta-fish-market-3.jpg"
+  "assets/venues/atlanta-fish-market-2.jpg"
  ],
  "southern-gentleman": [
   "assets/venues/southern-gentleman-1.jpg",
@@ -391,5 +389,14 @@ window.PHOTOS = {
 };
 window.PHOTO_FOCUS = {
  "assets/venues/family-dog-3.jpg": "50% 2%",
- "assets/venues/family-dog-1.jpg": "50% 0%"
+ "assets/venues/family-dog-1.jpg": "50% 0%",
+ "assets/venues/casa-almenara-1.jpg": "50% 35%",
+ "assets/venues/casa-almenara-2.jpg": "50% 70%",
+ "assets/venues/muchacho-1.jpg": "50% 15%",
+ "assets/venues/snap-thai-2.jpg": "50% 58%",
+ "assets/venues/atlanta-fish-market-2.jpg": "50% 82%",
+ "assets/venues/beetlecat-1.jpg": "50% 25%",
+ "assets/venues/beetlecat-3.jpg": "50% 55%",
+ "assets/venues/rocky-mountain-1.jpg": "40% 66%",
+ "assets/venues/rocky-mountain-2.jpg": "50% 55%"
 };

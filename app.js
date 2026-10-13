@@ -316,6 +316,19 @@
   $("qClear").onclick = () => { setQuery(""); qIn.focus(); };
   $("qGo").onclick = () => setQuery(qIn.value, true);
   all(".try").forEach(b => { b.onclick = () => setQuery(b.textContent, true); });
+  // Placeholder rotates through example searches while the box is empty and idle.
+  const HINTS = [["beer under $5", "patio in Midtown"], ["wine at 5pm", "watch the game"], ["date night in Inman Park", "late night"], ["cheap margs in Decatur", "dog friendly"]];
+  const narrow = matchMedia("(max-width: 600px)");
+  let hint = 0;
+  // Phones only have room for one example at a time.
+  const showHint = () => { const [a, b] = HINTS[hint]; qIn.placeholder = narrow.matches ? `Try “${a}”` : `Try “${a}” or “${b}”`; };
+  showHint();
+  narrow.addEventListener("change", showHint);
+  setInterval(() => {
+    if (qIn.value || document.activeElement === qIn) return;
+    hint = (hint + 1) % HINTS.length;
+    showHint();
+  }, 4000);
   $("qChips").onclick = e => { if (e.target.closest("[data-clearq]")) { setQuery(""); return; } if (e.target.closest("[data-edit]")) { $("finder").scrollIntoView({ behavior: "smooth" }); setTimeout(() => qIn.focus(), 400); } };
   $("sort").onchange = e => {
     state.sort = e.target.value;

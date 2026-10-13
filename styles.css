@@ -493,7 +493,8 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
 .sg-label { font-weight: 600; }
 .sg-sub { margin-left: auto; color: var(--muted); font-size: .86rem; white-space: nowrap; }
 .finder .try-row { margin: 0 0 22px; }
-.finder-sub { margin: 0 0 4px; font-weight: 600; color: var(--muted); }
+.finder .finder-sub { display: flex; align-items: center; gap: 16px; margin: 6px 0 2px; font-size: clamp(1.7rem, 3.6vw, 2.1rem); color: var(--ink); }
+.finder .finder-sub::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .q-chips .link { margin-left: 4px; font-size: .86rem; }
 @media (max-width: 600px) {
   .search.big { padding-left: 42px; }
