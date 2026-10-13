@@ -130,7 +130,9 @@
     emory: { name: "Emory", lat: 33.7925, lng: -84.3240 },
     gt: { name: "Georgia Tech", lat: 33.7756, lng: -84.3963 },
   };
-  const driveMin = v => (state.campus ? Math.round(haversine(CAMPUSES[state.campus], v) * 1.35 / 20 * 60 + 2) : null);
+  // Evening drive estimate: straight-line miles × 1.35 for roads, at ~15 mph through Atlanta traffic, plus parking.
+  const driveFrom = (a, v) => Math.round(haversine(a, v) * 1.35 / 15 * 60 + 3);
+  const driveMin = v => (state.campus ? driveFrom(CAMPUSES[state.campus], v) : null);
 
   // ── filter UI ─────────────────────────────────────────────────
   // Every filter control writes to `state`, then syncUI() repaints the controls.
@@ -315,19 +317,23 @@
   qList.onmousedown = e => { const li = e.target.closest("li"); if (li) { e.preventDefault(); setQuery(sugItems[li.dataset.i].query, true); } };
   $("qClear").onclick = () => { setQuery(""); qIn.focus(); };
   $("qGo").onclick = () => setQuery(qIn.value, true);
-  // Placeholder rotates through example searches while the box is empty and idle.
-  const HINTS = [["beer under $5", "patio in Midtown"], ["wine at 5pm", "watch the game"], ["date night in Inman Park", "late night"], ["cheap margs in Decatur", "dog friendly"]];
-  const narrow = matchMedia("(max-width: 600px)");
-  let hint = 0;
-  // Phones only have room for one example at a time.
-  const showHint = () => { const [a, b] = HINTS[hint]; qIn.placeholder = narrow.matches ? `Try “${a}”` : `Try “${a}” or “${b}”`; };
-  showHint();
-  narrow.addEventListener("change", showHint);
-  setInterval(() => {
-    if (qIn.value || document.activeElement === qIn) return;
-    hint = (hint + 1) % HINTS.length;
-    showHint();
-  }, 4000);
+  // Placeholder types out example searches one at a time, pausing while someone is typing.
+  const HINTS = ["beer under $5", "patio in Midtown", "wine at 5pm", "watch the game", "date night in Inman Park", "late night", "cheap margs in Decatur", "dog friendly"];
+  const STILL = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  (function typeHints() {
+    let hint = 0, len = 0, phase = "type";
+    const tick = () => {
+      if (qIn.value || document.activeElement === qIn) return setTimeout(tick, 500);
+      const text = HINTS[hint];
+      if (STILL) { qIn.placeholder = `Try “${text}”`; hint = (hint + 1) % HINTS.length; return setTimeout(tick, 3000); }
+      if (phase === "type") len++; else len--;
+      qIn.placeholder = `Try “${text.slice(0, len)}${len === text.length ? "”" : ""}`;
+      if (phase === "type" && len === text.length) { phase = "erase"; return setTimeout(tick, 1800); }
+      if (phase === "erase" && len === 0) { phase = "type"; hint = (hint + 1) % HINTS.length; return setTimeout(tick, 350); }
+      setTimeout(tick, phase === "type" ? 70 + Math.random() * 50 : 30);
+    };
+    tick();
+  })();
   $("qChips").onclick = e => { if (e.target.closest("[data-clearq]")) { setQuery(""); return; } if (e.target.closest("[data-edit]")) { $("finder").scrollIntoView({ behavior: "smooth" }); setTimeout(() => qIn.focus(), 400); } };
   $("sort").onchange = e => {
     state.sort = e.target.value;
@@ -466,7 +472,7 @@
       else if (!FILLER.has(w)) p.words.push(w);
     }
     if (p.now) p.chips.push("Right now");
-    else if (p.mins != null || p.day != null) p.chips.push([p.day != null ? p.dayLabel || DAY_NAMES[p.day][0].toUpperCase() + DAY_NAMES[p.day].slice(1) : "", p.mins != null ? fmt(p.mins) : ""].filter(Boolean).join(" "));
+    else if (p.mins != null || p.day != null) p.chips.push([p.day != null ? p.dayLabel || DAY_NAMES[p.day][0].toUpperCase() + DAY_NAMES[p.day].slice(1) : "Today", p.mins != null ? fmt(p.mins) : ""].filter(Boolean).join(" "));
     p.hoods.forEach(h => p.chips.push(h));
     p.deals.forEach(d => p.chips.push(DEAL_LABELS[d]));
     p.vibes.forEach(v => p.chips.push(titleCase(v)));
@@ -521,11 +527,13 @@
     if (p.cheap && v.price !== 1) return false;
     if (p.maxPrice != null && !priceOK(v, p)) return false;
     if (p.now || p.mins != null) {
-      // A time with no day ("4pm") matches that time on any day of the week.
-      const days = p.now ? [atlNow().day] : p.day != null ? [p.day] : [0, 1, 2, 3, 4, 5, 6];
+      // A time with no day ("6pm") means today. A typed time needs 30+ minutes of happy hour left,
+      // so "beer at 6pm" never shows a happy hour that ends at 6 or 6:15.
+      const day = p.now || p.day == null ? atlNow().day : p.day;
       const mins = p.now ? atlNow().mins : p.mins;
-      const hit = days.some(d => (!v.hours || activeWindow(hoursAsWindows(v), d, mins)) && activeWindow(v.happyHours, d, mins));
-      if (!hit) return false;
+      const hh = activeWindow(v.happyHours, day, mins);
+      if (!hh || (v.hours && !activeWindow(hoursAsWindows(v), day, mins))) return false;
+      if (!p.now && (hh.endsAt - mins + 1440) % 1440 < 30) return false;
     } else if (p.day != null && !v.happyHours.some(w => w.days.includes(p.day))) return false;
     if (!p.words.length) return true;
     const hay = haystack(v);
@@ -576,8 +584,8 @@
   function filtered() {
     parsed = state.q ? parseQuery(state.q) : null;
     // A time typed in the search box ("4pm", "tuesday") drives the card statuses too.
-    const t = parsed && !parsed.now && parsed.day != null
-      ? { day: parsed.day, mins: parsed.mins ?? 17 * 60, live: false } : refTime();
+    const t = parsed && !parsed.now && (parsed.day != null || parsed.mins != null)
+      ? { day: parsed.day ?? atlNow().day, mins: parsed.mins ?? 17 * 60, live: false } : refTime();
     scored = VENUES.map(v => ({ v, s: statusFor(v, t), mi: milesTo(v), dm: driveMin(v) }));
     searchNote = "";
     let out = scored.filter(e => passes(e, null));
@@ -606,7 +614,13 @@
     }
     // "near Emory" / "near Inman Park": sort by distance from there (closest first), never a cutoff.
     const anchor = parsed?.campus ? CAMPUSES[parsed.campus] : parsed?.nearHood ? hoodCenter(parsed.nearHood) : null;
-    out.forEach(e => { e.near = anchor ? Math.round(haversine(anchor, e.v) * 1.35 / 20 * 60 + 2) : null; e.far = e.near != null && e.near > 12; });
+    out.forEach(e => { e.near = anchor ? driveFrom(anchor, e.v) : null; e.far = e.near != null && e.near > 12; });
+    // "Near" means near: drop anything past a 20 min drive. If that leaves nothing, keep the 5 closest and say so.
+    if (anchor) {
+      const close = out.filter(e => e.near <= 20);
+      if (close.length) out = close;
+      else { out = out.sort((a, b) => a.near - b.near).slice(0, 5); searchNote ||= "Nothing within a 20 min drive, so here are the closest."; }
+    }
     const nameFirst = e => (parsed && parsed.words.length && hits(haystack(e.v).name, parsed.words.join(" ")) ? 0 : 1);
     return out.sort((a, b) => {
       if (nameFirst(a) !== nameFirst(b)) return nameFirst(a) - nameFirst(b);
@@ -789,7 +803,7 @@
     $("toggleFilters").innerHTML = active ? `Filters <span class="n">${active}</span>` : "Filters";
     if (state.view === "list") {
       const firstFar = items.findIndex(e => e.far), anyNear = firstFar > 0;
-      $("list").innerHTML = items.length ? items.map((e, i) => (anyNear && i === firstFar ? `<p class="far-divider">A bit farther: 13+ min drive</p>` : "") + card(e)).join("")
+      $("list").innerHTML = items.length ? items.map((e, i) => (anyNear && i === firstFar ? `<p class="far-divider">A bit farther: 13–20 min drive</p>` : "") + card(e)).join("")
         : `<p class="empty">Nothing matches those filters. Try loosening a few.</p>`;
       fitTags();
     } else renderMap(items);
