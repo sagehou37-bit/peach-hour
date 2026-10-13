@@ -231,34 +231,71 @@
     let base = t;
     if (last.length >= 2 && !DEAL_WORDS[last.toLowerCase()]) {
       const vocab = [...Object.keys(DEAL_WORDS), ...uniq("neighborhood"), ...uniq("cuisine"), ...Object.keys(VIBE_WORDS), "patio", "rooftop", "tonight", "now"];
-      const done = vocab.find(w => fold(w).startsWith(fold(last)) && fold(w) !== fold(last));
+      const whole = vocab.some(w => fold(w).split(" ").includes(fold(last))) || ["emory", "tech", "gt", "now", "tonight", "today"].includes(fold(last));
+      const done = !whole && vocab.find(w => fold(w).startsWith(fold(last)) && fold(w) !== fold(last));
       if (done) base = `${lead ? lead + " " : ""}${done.toLowerCase().includes(" ") || /[A-Z]/.test(done) ? done : done}`;
     }
     const p = parseQuery(base), baseCount = countFor(base);
     const bars = VENUES.filter(v => hits(haystack(v).name, t));
     // Typed a bar's name? Just offer the bar.
     if (bars.length && baseCount <= bars.length) { bars.slice(0, 3).forEach(v => add(v.name, "Bar", v.name)); return out; }
-    bars.slice(0, 1).forEach(v => add(v.name, "Bar", v.name));
+    if (!(p.hoods.length && !p.words.length)) bars.slice(0, 1).forEach(v => add(v.name, "Bar", v.name));
     if (base !== t) add(base, "");
-    // Ideas that narrow things down — one of each kind first: when, price, where, time, vibe.
     const narrow = (label, kind) => { if (countFor(label) < baseCount) add(label, kind); };
-    const now = atlNow(), hr = Math.min(Math.max(now.mins < 15 * 60 ? 16 : Math.floor(now.mins / 60) + 1, 15), 19);
-    const hoods = !p.hoods.length && !p.nearHood && !p.campus
-      ? uniq("neighborhood").map(h => [h, countFor(`${base} in ${h}`)]).filter(([, n]) => n).sort((a, b) => b[1] - a[1]).map(([h]) => h) : [];
-    const timeFree = !p.now && p.day == null && p.mins == null;
-    if (timeFree) narrow(`${base} happy hour now`, "When");
-    if (p.maxPrice == null) [3, 5, 7].some(n => { const k = out.length; narrow(`${base} under $${n}`, "Price"); return out.length > k; });
-    if (hoods[0]) narrow(`${base} in ${hoods[0]}`, "Where");
-    if (timeFree) narrow(`${base} at ${hr > 12 ? hr - 12 : hr}pm`, "When");
-    if (!p.outdoor.length) narrow(`${base} with a patio`, "Vibe");
-    if (hoods[1]) narrow(`${base} in ${hoods[1]}`, "Where");
-    if (!p.vibes.length) narrow(`${base} for a date night`, "Vibe");
-    if (!p.campus && !p.nearHood) narrow(`${base} near Georgia Tech`, "Where");
+    const now = atlNow(), hr = Math.min(Math.max(now.mins < 15 * 60 ? 16 : Math.floor(now.mins / 60) + 1, 15), 19), at = `${hr > 12 ? hr - 12 : hr}pm`;
+    const timeFree = !p.now && p.day == null && p.mins == null, placeFree = !p.hoods.length && !p.nearHood && !p.campus;
+    const topHoods = () => placeFree ? uniq("neighborhood").map(h => [h, countFor(`${base} in ${h}`)]).filter(([, n]) => n && n < baseCount).sort((x, y) => y[1] - x[1]).map(([h]) => h) : [];
+    const drinks = ["beer", "wine", "cocktails", "oysters"].filter(d => !p.deals.includes(d));
+    // Cheapest price that makes sense for this search (from the deals that actually match).
+    const priceStep = phrase => { for (const n of [3, 5, 7, 10]) { const q = phrase(n); if (countFor(q) && countFor(q) < baseCount) { add(q, "Price"); return; } } };
+    const fb = fold(base), isFood = p.words.length && [...uniq("cuisine"), ...uniq("type"), "tacos", "wings", "pizza", "sushi", "burger", "bbq"].some(c => fold(c).startsWith(fb) || fb.startsWith(fold(c)));
+    const cap = x => x[0].toUpperCase() + x.slice(1);
+    if (p.deals.length) {
+      // A drink or deal: when, how cheap, where, outside.
+      if (timeFree) narrow(`${base} happy hour now`, "When");
+      if (p.maxPrice == null) priceStep(n => `${base} under $${n}`);
+      const h = topHoods(); if (h[0]) narrow(`${base} in ${h[0]}`, "Where");
+      if (timeFree) narrow(`${base} at ${at}`, "When");
+      if (!p.outdoor.length) narrow(`${base} on a patio`, "Vibe");
+      if (h[1]) narrow(`${base} in ${h[1]}`, "Where");
+    } else if (isFood) {
+      // A kind of place or food: which drink deals it comes with, then when / where / price.
+      drinks.forEach(d => narrow(`${base} with ${d === "oysters" ? "oyster" : d === "cocktails" ? "cocktail" : d} deals`, "Deal"));
+      if (timeFree) narrow(`${cap(base)} happy hour now`, "When");
+      const h = topHoods(); if (h[0]) narrow(`${base} in ${h[0]}`, "Where");
+      if (p.maxPrice == null) priceStep(n => `${base} deals under $${n}`);
+    } else if (p.hoods.length || p.nearHood || p.campus) {
+      // A place: what's good there.
+      const where = p.hoods[0] ? `in ${p.hoods[0]}` : p.nearHood ? `near ${p.nearHood}` : `near ${CAMPUSES[p.campus].name}`;
+      if (timeFree) narrow(`Happy hour now ${where}`, "When");
+      ["oysters", "beer", "cocktails", "wine"].map(d => [d, countFor(`${d} ${where}`)]).filter(([, n]) => n && n < baseCount)
+        .sort((x, y) => y[1] - x[1]).slice(0, 3).forEach(([d]) => add(`${cap(d)} ${where}`, "Deal"));
+      if (!p.vibes.length) narrow(`Date night ${where}`, "Vibe");
+      if (p.maxPrice == null) priceStep(n => `Deals under $${n} ${where}`);
+    } else if (p.vibes.length || p.outdoor.length) {
+      // A vibe: drinks that go with it, where, when.
+      const outside = p.outdoor.length && !p.vibes.length, place = outside ? (p.outdoor[0] === "Rooftop" ? "on a rooftop" : "on a patio") : "";
+      const phr = d => outside ? `${cap(d)} ${place}` : `${base} ${d}`;
+      drinks.map(d => [d, countFor(phr(d))]).filter(([, n]) => n && n < baseCount).sort((x, y) => y[1] - x[1]).slice(0, 2).forEach(([d]) => add(phr(d), "Deal"));
+      const h = topHoods(); if (h[0]) narrow(outside ? `${cap(base)}s in ${h[0]}` : `${base} in ${h[0]}`, "Where");
+      if (timeFree) narrow(outside ? `Happy hour now ${place}` : `${base} happy hour now`, "When");
+      if (h[1]) narrow(outside ? `${cap(base)}s in ${h[1]}` : `${base} in ${h[1]}`, "Where");
+    } else if (!timeFree) {
+      // A time: what's pouring then, and where.
+      const when = /^\d/.test(base) ? `at ${base}` : base;
+      ["beer", "cocktails", "oysters", "wine"].forEach(d => narrow(`${cap(d)} ${when}`, "Deal"));
+      const h = topHoods(); if (h[0]) narrow(`Happy hour ${when} in ${h[0]}`, "Where");
+    } else {
+      // Anything else (a keyword): narrow by drink, time, place.
+      drinks.slice(0, 2).forEach(d => narrow(`${base} ${d}`, "Deal"));
+      if (timeFree) narrow(`${base} happy hour now`, "When");
+      const h = topHoods(); if (h[0]) narrow(`${base} in ${h[0]}`, "Where");
+    }
     return out;
   }
   function openSuggest() {
     sugItems = suggestions(qIn.value); sugActive = -1;
-    qList.innerHTML = sugItems.map((x, i) => `<li role="option" id="sg${i}" data-i="${i}"><svg class="i sg-ic" viewBox="0 0 24 24" aria-hidden="true">${x.kind === "Bar" ? '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>' : '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'}</svg><span class="sg-label">${esc(x.label)}</span><span class="sg-sub">${esc(x.sub)}</span></li>`).join("");
+    qList.innerHTML = sugItems.map((x, i) => `<li role="option" id="sg${i}" data-i="${i}"><svg class="i sg-ic" viewBox="0 0 24 24" aria-hidden="true">${x.kind === "Bar" ? '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>' : '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'}</svg><span class="sg-label">${esc(x.kind === "Bar" ? x.label : x.label[0].toUpperCase() + x.label.slice(1))}</span><span class="sg-sub">${esc(x.sub)}</span></li>`).join("");
     qList.hidden = !sugItems.length; qIn.setAttribute("aria-expanded", !!sugItems.length);
   }
   function closeSuggest() { qList.hidden = true; sugItems = []; sugActive = -1; qIn.setAttribute("aria-expanded", false); }
@@ -368,7 +405,7 @@
   const VIBE_WORDS = { chill: "Cozy", cozy: "Cozy", cosy: "Cozy", quiet: "Cozy", date: "Date night", romantic: "Date night", sports: "Sports", game: "Sports",
     football: "Sports", games: "Games", arcade: "Games", dog: "Dog friendly", dogs: "Dog friendly", pup: "Dog friendly", late: "Late night", latenight: "Late night",
     group: "Groups", groups: "Groups", birthday: "Groups", music: "Live music", live: "Live music", trail: "Beltline access" };
-  const OUT_WORDS = { patio: "Patio", outside: "", outdoor: "", outdoors: "", rooftop: "Rooftop", roof: "Rooftop" };
+  const OUT_WORDS = { patio: "Patio", patios: "Patio", outside: "", outdoor: "", outdoors: "", rooftop: "Rooftop", rooftops: "Rooftop", roof: "Rooftop" };
   const escRe = x => x.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
 
   function parseQuery(raw) {
