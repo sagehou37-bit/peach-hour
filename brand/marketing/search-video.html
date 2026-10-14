@@ -61,7 +61,7 @@
   // The site runs inside the iframe with the clock pinned (Wednesday Oct 14, 2026, 5:30 PM in Atlanta),
   // no animations, eager images and no live weather, so every frame is repeatable.
   const T = Date.parse("2026-10-14T21:30:00Z");
-  const head = `<base href="/"><style>*,*::before,*::after{transition:none!important;animation:none!important;caret-color:transparent!important}html{scroll-behavior:auto!important}#nowWx{display:none!important}</style><script>(()=>{const R=Date;class D extends R{constructor(...a){a.length?super(...a):super(${T})}static now(){return ${T}}}window.Date=D;try{localStorage.clear()}catch{}new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>n.querySelectorAll&&n.querySelectorAll("img[loading=lazy]").forEach(i=>{i.loading="eager"})))).observe(document,{subtree:true,childList:true});})();<\/script>`;
+  const head = `<base href="/"><style>*,*::before,*::after{transition:none!important;animation:none!important;caret-color:transparent!important}html{scroll-behavior:auto!important}#nowWx{display:none!important}.topbar{display:none!important}</style><script>(()=>{const R=Date;class D extends R{constructor(...a){a.length?super(...a):super(${T})}static now(){return ${T}}}window.Date=D;try{localStorage.clear()}catch{}new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>n.querySelectorAll&&n.querySelectorAll("img[loading=lazy]").forEach(i=>{i.loading="eager"})))).observe(document,{subtree:true,childList:true});})();<\/script>`;
   const f = document.getElementById("site");
   window.ready = false;
   fetch("/").then(r => r.text()).then(h => { f.srcdoc = h.replace(/<head>/i, "<head>" + head); });
@@ -74,7 +74,7 @@
     outro(o) { $("outro").style.opacity = o; },
     caption(k, h) { $("capK").textContent = k; $("capH").innerHTML = h; },
     // Scroll so the search box sits near the top of the phone.
-    toSearch() { const d = site(), q = d.getElementById("q"); win().scrollTo(0, q.getBoundingClientRect().top + win().scrollY - 150); },
+    toSearch() { const d = site(), q = d.getElementById("q"); win().scrollTo(0, q.getBoundingClientRect().top + win().scrollY - 110); },
     type(text) {
       const d = site(), q = d.getElementById("q");
       q.focus(); q.value = text; q.dispatchEvent(new Event("input", { bubbles: true }));
@@ -86,7 +86,7 @@
       q.value = text; q.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
       q.blur();
     },
-    resultsTop() { const d = site(), c = d.getElementById("qChips") || d.getElementById("list"); return c.getBoundingClientRect().top + win().scrollY - 70; },
+    resultsTop() { const d = site(), c = d.getElementById("qChips") || d.getElementById("list"); return c.getBoundingClientRect().top + win().scrollY - 24; },
     scrollTo(y) { win().scrollTo(0, y); },
     tap(x, y, o) { const t = $("tap"); t.style.left = x + "px"; t.style.top = y + "px"; t.style.opacity = o; },
     // Where the Search button is, in screen pixels (for the tap dot).
