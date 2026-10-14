@@ -384,5 +384,14 @@
   "assets/venues/la-bistreaux-decatur-1.jpg",
   "assets/venues/la-bistreaux-decatur-2.jpg",
   "assets/venues/la-bistreaux-decatur-3.jpg"
+ ],
+ "jouvert": [
+  "assets/venues/jouvert-1.jpg",
+  "assets/venues/jouvert-2.jpg",
+  "assets/venues/jouvert-3.jpg"
+ ],
+ "eclipse-buckhead": [
+  "assets/venues/eclipse-buckhead-1.jpg",
+  "assets/venues/eclipse-buckhead-2.jpg"
  ]
 }

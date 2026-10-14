@@ -143,7 +143,7 @@
 
   // ── filter UI ─────────────────────────────────────────────────
   // Every filter control writes to `state`, then syncUI() repaints the controls.
-  const HOOD_ORDER = ["Buckhead", "Midtown", "Atlantic Station", "West Midtown", "Home Park", "Virginia-Highland", "Poncey-Highland", "Eastside Beltline",
+  const HOOD_ORDER = ["Buckhead", "Lindbergh", "Midtown", "Atlantic Station", "West Midtown", "Home Park", "Virginia-Highland", "Poncey-Highland", "Eastside Beltline",
     "Edgewood", "Inman Park", "Little Five Points", "Reynoldstown", "Emory / Druid Hills", "Toco Hills", "North Decatur", "Decatur"];
   const hoodRank = h => (HOOD_ORDER.includes(h) ? HOOD_ORDER.indexOf(h) : 99);
   const uniq = key => [...new Set(VENUES.flatMap(v => [].concat(v[key] || [])))].sort();
@@ -419,7 +419,7 @@
   const HOOD_ALIASES = {
     "vahi": "Virginia-Highland", "va-hi": "Virginia-Highland", "virginia highland": "Virginia-Highland",
     "o4w": "Eastside Beltline", "old fourth ward": "Eastside Beltline", "ponce city market": "Eastside Beltline",
-    "krog": "Eastside Beltline", "poncey": "Poncey-Highland", "emory village": "Emory / Druid Hills", "druid hills": "Emory / Druid Hills",
+    "krog": "Eastside Beltline", "uptown": "Lindbergh", "lindbergh city center": "Lindbergh", "poncey": "Poncey-Highland", "emory village": "Emory / Druid Hills", "druid hills": "Emory / Druid Hills",
     "emory point": "Emory / Druid Hills", "westside": "West Midtown", "l5p": "Little Five Points", "toco": "Toco Hills",
     "inman": "Inman Park", "little five": "Little Five Points", "little 5": "Little Five Points", "little 5 points": "Little Five Points", "l5": "Little Five Points",
     "decatur square": "Decatur", "the square": "Decatur", "poncey highland": "Poncey-Highland", "home park": "Home Park",
