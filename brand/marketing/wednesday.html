@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Peach Hour · Wednesday highlights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&display=swap" rel="stylesheet">
+<style>
+  /* Instagram carousel, 1080x1350 (4:5): Wednesday happy hour highlights. ?s=N renders one slide. */
+  * { box-sizing: border-box; }
+  :root { --navy: #1b1f3b; --navy2: #2b2a55; --plum: #4a2f5c; --peach: #ff6a3d; --gold: #ffb347; --paper: #fbfaf7; --cream: #f4f3f0; --ink: #141414; --muted: #6b6a66; --line: #e3e0da; }
+  html, body { margin: 0; background: #11132a; }
+  body.one { width: 1080px; height: 1350px; overflow: hidden; }
+  body:not(.one) .slide { margin: 0 0 40px; }
+  .slide { width: 1080px; height: 1350px; position: relative; overflow: hidden; color: #fff; font-family: Newsreader, Georgia, serif;
+    background: radial-gradient(1300px 760px at 50% 115%, rgba(255, 106, 61, .30), transparent 62%), radial-gradient(1900px 1150px at 50% 120%, var(--plum) 0%, var(--navy2) 42%, var(--navy) 74%); }
+  .serif { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; letter-spacing: -.01em; -webkit-text-stroke: .02em currentColor; }
+  .it { font-style: italic; }
+  .grad { background: linear-gradient(90deg, var(--gold), var(--peach)); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-stroke: 0; }
+  .kicker { display: flex; align-items: center; gap: 14px; font-weight: 600; font-size: 28px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); margin: 0; }
+  .kicker::before { content: ""; width: 34px; height: 3px; border-radius: 3px; background: var(--peach); }
+  .page-no { position: absolute; left: 80px; bottom: 60px; font-size: 26px; letter-spacing: .12em; opacity: .5; }
+  .swipe { position: absolute; right: 80px; bottom: 56px; font-size: 32px; font-style: italic; opacity: .75; }
+  .sun { width: 150px; height: 75px; border-radius: 150px 150px 0 0; background: linear-gradient(#ffb347 10%, #ff6a3d 80%);
+    -webkit-mask: linear-gradient(#000 30%, transparent 30%), repeating-linear-gradient(to bottom, #000 0 14px, transparent 14px 20px);
+    mask: linear-gradient(#000 30%, transparent 30%), repeating-linear-gradient(to bottom, #000 0 14px, transparent 14px 20px); mask-composite: add; }
+
+  /* 1 · cover */
+  .cover .top { position: absolute; left: 80px; right: 80px; top: 100px; }
+  .cover h1 { margin: 38px 0 0; font-size: 176px; line-height: .88; }
+  .cover .sub { margin: 36px 0 0; font-size: 40px; line-height: 1.35; color: rgba(255, 255, 255, .82); max-width: 880px; }
+  .fan { position: absolute; left: 0; right: 0; bottom: 120px; height: 470px; }
+  .fan .pg { position: absolute; bottom: 0; width: 320px; height: 420px; background: var(--paper); border-radius: 14px; padding: 12px; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .6); }
+  .fan .pg img { width: 100%; height: 320px; object-fit: cover; border-radius: 8px; display: block; }
+  .fan .pg span { display: block; text-align: center; margin-top: 18px; color: var(--ink); font-family: "Instrument Serif", serif; font-size: 34px; white-space: nowrap; line-height: 1; -webkit-text-stroke: .02em currentColor; }
+  .fan .a { left: 50px; transform: rotate(-8deg); } .fan .b { left: 380px; bottom: 40px; z-index: 2; transform: rotate(1.5deg); } .fan .c { right: 50px; transform: rotate(8deg); }
+
+  /* 2–6 · one spot per slide */
+  .spot .photos { position: absolute; left: 60px; right: 60px; top: 70px; height: 640px; display: grid; grid-template-columns: 1.35fr 1fr; gap: 14px; padding: 14px; background: var(--paper); border-radius: 22px; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .7); }
+  .spot .photos.solo { grid-template-columns: 1fr; }
+  .spot .photos img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; display: block; min-height: 0; }
+  .plate { position: absolute; left: 50%; bottom: -46px; transform: translateX(-50%); background: var(--paper); color: var(--ink); border-radius: 18px; padding: 16px 40px 18px; text-align: center; white-space: nowrap;
+    box-shadow: 0 18px 36px -14px rgba(17, 19, 42, .6), 0 0 0 1px var(--line); }
+  .plate small { display: block; font-size: 22px; color: var(--muted); font-weight: 600; letter-spacing: .02em; }
+  .plate b { display: block; font-family: "Instrument Serif", serif; font-weight: 400; font-size: 64px; line-height: 1; -webkit-text-stroke: .02em currentColor; margin-top: 4px; }
+  .spot .body { position: absolute; left: 80px; right: 80px; top: 790px; }
+  .spot .deal { margin: 22px 0 0; font-size: 92px; line-height: .98; }
+  .spot .more { margin: 22px 0 0; font-size: 36px; line-height: 1.35; color: rgba(255, 255, 255, .82); }
+  .meta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+  .meta span { display: inline-flex; align-items: center; gap: 10px; font-size: 27px; font-weight: 600; padding: 10px 18px; border-radius: 12px; background: rgba(255, 255, 255, .09); border: 1px solid rgba(255, 255, 255, .16); }
+  .meta .time { background: rgba(255, 179, 71, .16); border-color: rgba(255, 179, 71, .4); color: var(--gold); }
+
+  /* 7 · CTA */
+  .cta { text-align: center; }
+  .cta .inner { position: absolute; left: 80px; right: 80px; top: 230px; }
+  .cta .sun { margin: 0 auto 60px; width: 260px; height: 130px; border-radius: 260px 260px 0 0;
+    -webkit-mask: linear-gradient(#000 30%, transparent 30%), repeating-linear-gradient(to bottom, #000 0 24px, transparent 24px 34px);
+    mask: linear-gradient(#000 30%, transparent 30%), repeating-linear-gradient(to bottom, #000 0 24px, transparent 24px 34px); mask-composite: add; }
+  .cta h2 { margin: 0; font-size: 138px; line-height: .92; }
+  .url { display: inline-block; margin-top: 70px; font-weight: 600; font-size: 50px; padding: 24px 46px; border-radius: 20px; background: var(--peach); box-shadow: 0 20px 50px rgba(255, 106, 61, .45); }
+  .cta .note { margin: 40px auto 0; font-size: 36px; line-height: 1.45; color: rgba(255, 255, 255, .75); max-width: 840px; font-style: italic; }
+</style>
+</head>
+<body>
+
+<section class="slide cover" data-n="1">
+  <div class="top">
+    <p class="kicker">Hump day happy hours</p>
+    <h1 class="serif">Wednesday,<br><span class="it grad">sorted.</span></h1>
+    <p class="sub">Five Atlanta spots with Wednesday deals worth planning around. Save this for midweek.</p>
+  </div>
+  <div class="fan">
+    <div class="pg a"><img src="/assets/venues/moes-joes-2.jpg" alt=""><span>Moe's &amp; Joe's</span></div>
+    <div class="pg b"><img src="/assets/venues/wylie-rum-3.jpg" alt=""><span>Wylie &amp; Rum</span></div>
+    <div class="pg c"><img src="/assets/venues/general-muir-1.jpg" alt=""><span>The General Muir</span></div>
+  </div>
+  <div class="swipe">Swipe →</div>
+</section>
+
+<section class="slide spot" data-n="2">
+  <div class="photos"><img src="/assets/venues/moes-joes-1.jpg" alt=""><img src="/assets/venues/moes-joes-2.jpg" alt="">
+    <div class="plate"><small>Virginia-Highland · Dive bar</small><b>Moe's &amp; Joe's</b></div></div>
+  <div class="body">
+    <p class="kicker">Wednesday deal</p>
+    <h2 class="serif deal"><span class="it grad">$2</span> PBR tallboys</h2>
+    <p class="more">Plus trivia night. A VaHi institution since 1947.</p>
+    <div class="meta"><span class="time">All day Wednesday</span><span>1033 N Highland Ave NE</span></div>
+  </div>
+  <div class="page-no">1 / 5</div>
+</section>
+
+<section class="slide spot" data-n="3">
+  <div class="photos"><img src="/assets/venues/wylie-rum-1.jpg" alt=""><img src="/assets/venues/wylie-rum-3.jpg" alt="">
+    <div class="plate"><small>Edgewood · Caribbean</small><b>Wylie &amp; Rum</b></div></div>
+  <div class="body">
+    <p class="kicker">Wednesday deal</p>
+    <h2 class="serif deal">Rum Punch <span class="it grad">Wednesday</span></h2>
+    <p class="more">Their weekly rum punch special, every Wednesday.</p>
+    <div class="meta"><span class="time">All day Wednesday</span><span>45 Moreland Ave SE</span></div>
+  </div>
+  <div class="page-no">2 / 5</div>
+</section>
+
+<section class="slide spot" data-n="4">
+  <div class="photos solo"><img src="/assets/venues/srithai-emory-1.jpg" alt="">
+    <div class="plate"><small>Emory Point · Thai &amp; sushi</small><b>SriThai Emory</b></div></div>
+  <div class="body">
+    <p class="kicker">Wednesday deal</p>
+    <h2 class="serif deal"><span class="it grad">$7</span> apps &amp; cocktails</h2>
+    <p class="more">Then Wine Night: <b>$5 glasses</b> from 6 to 9. Dine-in only.</p>
+    <div class="meta"><span class="time">3–6PM · then 6–9PM</span><span>1540 Avenue Pl</span></div>
+  </div>
+  <div class="page-no">3 / 5</div>
+</section>
+
+<section class="slide spot" data-n="5">
+  <div class="photos"><img src="/assets/venues/parkers-on-ponce-2.jpg" alt=""><img src="/assets/venues/parkers-on-ponce-3.jpg" alt="">
+    <div class="plate"><small>Decatur · Steakhouse</small><b>Parker's on Ponce</b></div></div>
+  <div class="body">
+    <p class="kicker">Wednesday deal</p>
+    <h2 class="serif deal"><span class="it grad">50% off</span> bottles of wine</h2>
+    <p class="more">Split a bottle with dinner in downtown Decatur.</p>
+    <div class="meta"><span class="time">Wednesday 5–10PM</span><span>116 E Ponce de Leon Ave</span></div>
+  </div>
+  <div class="page-no">4 / 5</div>
+</section>
+
+<section class="slide spot" data-n="6">
+  <div class="photos"><img src="/assets/venues/general-muir-1.jpg" alt=""><img src="/assets/venues/general-muir-2.jpg" alt="">
+    <div class="plate"><small>Emory Point · Jewish deli</small><b>The General Muir</b></div></div>
+  <div class="body">
+    <p class="kicker">Starts Wednesday</p>
+    <h2 class="serif deal"><span class="it grad">$8</span> cocktails</h2>
+    <p class="more">Manhattans, French 75s, vodka martinis and dill palomas. Wednesday through Friday.</p>
+    <div class="meta"><span class="time">3:30–5:30PM</span><span>1540 Avenue Pl, Ste B-230</span></div>
+  </div>
+  <div class="page-no">5 / 5</div>
+</section>
+
+<section class="slide cta" data-n="7">
+  <div class="inner">
+    <div class="sun"></div>
+    <h2 class="serif">Every day has<br><span class="it grad">a happy hour.</span></h2>
+    <span class="url">peachhouratl.com</span>
+    <p class="note">Search "wednesday" on the site for every Wednesday happy hour. Link in bio.</p>
+  </div>
+</section>
+
+<script>
+  const n = new URLSearchParams(location.search).get("s");
+  if (n) { document.body.classList.add("one"); document.querySelectorAll(".slide").forEach(s => { if (s.dataset.n !== n) s.remove(); }); }
+</script>
+</body>
+</html>
