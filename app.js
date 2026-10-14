@@ -802,15 +802,37 @@
         maxZoom: 19, attribution: "&copy; OpenStreetMap contributors",
       }).addTo(map);
       layer = L.layerGroup().addTo(map);
+      map.on("zoomend", () => placeMarkers());
     }
-    setTimeout(() => map.invalidateSize(), 0);
+    mapItems = items;
+    // Show whatever the filters left: zoom to fit the results whenever they change.
+    const key = items.map(e => e.v.id).join();
+    setTimeout(() => {
+      map.invalidateSize();
+      if (key !== mapKey && items.length) { mapKey = key; map.fitBounds(L.latLngBounds(items.map(e => [e.v.lat, e.v.lng])), { padding: [40, 40], maxZoom: 16 }); }
+      placeMarkers();
+    }, 0);
+  }
+  let mapItems = [], mapKey = "";
+  // Draw the pins. Bars in the same building (Krog Street, Ponce City Market, Colony Square…) would sit
+  // on top of each other, so pins closer than ~18px fan out around their shared spot.
+  function placeMarkers() {
     layer.clearLayers();
     const color = { live: "#16804f", soon: "#e8a020", later: "#ff6a3d", none: "#9a968f" };
-    items.forEach(({ v, s }) => {
-      L.circleMarker([v.lat, v.lng], { radius: 9, color: "#fff", weight: 2, fillColor: color[s.cls], fillOpacity: 1 })
+    const pts = mapItems.map(e => ({ e, p: map.latLngToLayerPoint([e.v.lat, e.v.lng]) }));
+    const groups = [];
+    pts.forEach(x => { const g = groups.find(g => g[0].p.distanceTo(x.p) < 18); g ? g.push(x) : groups.push([x]); });
+    groups.forEach(g => g.forEach((x, i) => {
+      let at = [x.e.v.lat, x.e.v.lng];
+      if (g.length > 1) {
+        const c = g[0].p, a = (2 * Math.PI * i) / g.length - Math.PI / 2;
+        at = map.layerPointToLatLng(L.point(c.x + 13 * Math.cos(a), c.y + 13 * Math.sin(a)));
+      }
+      const { v, s } = x.e;
+      L.circleMarker(at, { radius: 9, color: "#fff", weight: 2, fillColor: color[s.cls], fillOpacity: 1 })
         .bindPopup(`<b>${esc(v.name)}</b><br>${esc(s.label)}<br><small>${esc(v.dealText)}</small><br><a href="${mapsUrl(v)}" target="_blank" rel="noopener">Directions</a>`)
         .addTo(layer);
-    });
+    }));
     if (state.userLoc) L.circleMarker([state.userLoc.lat, state.userLoc.lng], { radius: 7, color: "#1b1f3b", fillColor: "#fff", fillOpacity: 1 }).bindPopup("You").addTo(layer);
   }
 
