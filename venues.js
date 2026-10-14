@@ -488,10 +488,10 @@
     { id: "establishment", name: "Establishment", neighborhood: "Midtown",
       address: "1197 Peachtree St NE (Colony Square)", lat: 33.78685, lng: -84.38217, price: 2, type: "Bar",
       website: "https://establishmentatlanta.com/", zip: "30361",
-      cuisine: ["American"], vibes: ["Date night"], outdoor: [], hours: days({ 1: [["11:30", "15:00"], ["16:00", "22:00"]], 2: [["11:30", "15:00"], ["16:00", "22:00"]], 3: [["11:30", "15:00"], ["16:00", "22:00"]], 4: [["11:30", "15:00"], ["16:00", "22:00"]], 5: [["11:30", "15:00"], ["16:00", "23:00"]], 6: ["16:30", "23:00"] }),
+      cuisine: ["American"], vibes: ["Date night"], outdoor: [], hours: days({ 1: ["15:00", "22:00"], 2: ["15:00", "22:00"], 3: ["15:00", "22:00"], 4: ["15:00", "22:00"], 5: ["15:00", "23:00"], 6: ["16:00", "23:00"] }),
       happyHours: [{ days: [1, 2, 3, 4, 5, 6], start: "15:00", end: "19:00" }],
       deals: ["cocktails", "food"], dealText: "$9 cocktails · $10 confit duck tacos · Mon: steak, fries & martini $32",
-      hhStatus: "confirmed", sources: [S.cs, S.inf] },
+      hhStatus: "confirmed", sources: [{ label: "establishmentatlanta.com", url: "https://establishmentatlanta.com/happy-hours-specials" }, S.cs, S.inf] },
 
     { id: "serena", name: "Serena Pastificio", neighborhood: "Midtown",
       address: "Colony Square, 1197 Peachtree St NE", lat: 33.78738, lng: -84.38285, price: 2, type: "Restaurant",
@@ -828,7 +828,7 @@
       address: "525 Edgewood Ave SE", lat: 33.75408, lng: -84.37032, price: 2, type: "Restaurant",
       website: "https://www.marcusbarandgrille.com/", zip: "30312",
       cuisine: ["Southern"], vibes: ["Date night", "Groups"], outdoor: ["Patio"],
-      hours: days({ 0: ["10:30", "22:00"], 2: ["17:00", "22:00"], 3: ["17:00", "22:00"], 4: ["17:00", "22:00"], 5: ["17:00", "23:00"], 6: ["10:30", "23:00"] }),
+      hours: days({ 0: ["10:30", "22:00"], 2: ["16:00", "22:00"], 3: ["16:00", "22:00"], 4: ["16:00", "22:00"], 5: ["16:00", "23:00"], 6: ["10:30", "23:00"] }), // bar opens at 4 for happy hour
       happyHours: [{ days: [2, 3, 4, 5], start: "16:00", end: "18:00", note: "At the bar, high-tops & patio" }],
       deals: ["cocktails", "food"], dealText: "$10 cocktails · Brisket sliders, wings & jollof arancini $8–14",
       hhStatus: "confirmed", sources: [{ label: "marcusbarandgrille.com", url: "https://www.marcusbarandgrille.com/location/marcus-bar-and-grille/" }] },

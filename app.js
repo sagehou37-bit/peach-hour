@@ -138,6 +138,7 @@
   };
   // Evening drive estimate: straight-line miles × 1.35 for roads, at ~15 mph through Atlanta traffic, plus parking.
   const driveFrom = (a, v) => Math.round(haversine(a, v) * 1.35 / 15 * 60 + 3);
+  const NEAR_MAX = 22; // "near X" searches stop here: Inman Park counts as near Emory, Buckhead doesn't
   const driveMin = v => (state.campus ? driveFrom(CAMPUSES[state.campus], v) : null);
 
   // ── filter UI ─────────────────────────────────────────────────
@@ -224,9 +225,9 @@
     const saved = parsed; parsed = parseQuery(query);
     const t = !parsed.now && (parsed.day != null || parsed.mins != null)
       ? { day: parsed.day ?? atlNow().day, mins: parsed.mins ?? 17 * 60, live: false } : refTime();
-    // Same rules as the results: "near X" only counts spots within a 20 min drive.
+    // Same rules as the results: "near X" only counts spots within NEAR_MAX minutes.
     const anchor = parsed.campus ? CAMPUSES[parsed.campus] : parsed.nearHood ? hoodCenter(parsed.nearHood) : null;
-    const n = VENUES.filter(v => passes({ v, s: statusFor(v, t), dm: driveMin(v) }, null) && (!anchor || driveFrom(anchor, v) <= 20)).length;
+    const n = VENUES.filter(v => passes({ v, s: statusFor(v, t), dm: driveMin(v) }, null) && (!anchor || driveFrom(anchor, v) <= NEAR_MAX)).length;
     parsed = saved; return n;
   }
   function suggestions(text) {
@@ -404,7 +405,11 @@
     if (!navigator.geolocation) return alert("Location isn't available in this browser.");
     navigator.geolocation.getCurrentPosition(
       p => { state.userLoc = { lat: p.coords.latitude, lng: p.coords.longitude }; state.sort = "near"; $("sort").value = "near"; render(); },
-      () => alert("Couldn't get your location."));
+      () => {
+        // No location: put the sort back so the dropdown doesn't claim "Nearest" when it isn't.
+        if (state.sort === "near" && !state.userLoc && !state.campus) { state.sort = "smart"; $("sort").value = "smart"; render(); }
+        alert("Couldn't get your location. Check that location access is allowed for this site.");
+      });
   }
 
   // ── Smart search ──────────────────────────────────────────────
@@ -413,7 +418,7 @@
   // filters; any leftover words must appear somewhere in the listing.
   const HOOD_ALIASES = {
     "vahi": "Virginia-Highland", "va-hi": "Virginia-Highland", "virginia highland": "Virginia-Highland",
-    "o4w": "Eastside Beltline", "old fourth ward": "Eastside Beltline", "beltline": "Eastside Beltline", "ponce city market": "Eastside Beltline",
+    "o4w": "Eastside Beltline", "old fourth ward": "Eastside Beltline", "ponce city market": "Eastside Beltline",
     "krog": "Eastside Beltline", "poncey": "Poncey-Highland", "emory village": "Emory / Druid Hills", "druid hills": "Emory / Druid Hills",
     "emory point": "Emory / Druid Hills", "westside": "West Midtown", "l5p": "Little Five Points", "toco": "Toco Hills",
     "inman": "Inman Park", "little five": "Little Five Points", "little 5": "Little Five Points", "little 5 points": "Little Five Points", "l5": "Little Five Points",
@@ -431,7 +436,7 @@
   // Plain-English vibe & seating words -> the site's tags.
   const VIBE_WORDS = { chill: "Cozy", cozy: "Cozy", cosy: "Cozy", quiet: "Cozy", date: "Date night", romantic: "Date night", sports: "Sports", game: "Sports",
     football: "Sports", games: "Games", arcade: "Games", dog: "Dog friendly", dogs: "Dog friendly", pup: "Dog friendly", late: "Late night", latenight: "Late night",
-    group: "Groups", groups: "Groups", birthday: "Groups", music: "Live music", live: "Live music", trail: "Beltline access" };
+    group: "Groups", groups: "Groups", birthday: "Groups", music: "Live music", live: "Live music", trail: "Beltline access", beltline: "Beltline access" };
   const OUT_WORDS = { patio: "Patio", patios: "Patio", outside: "", outdoor: "", outdoors: "", rooftop: "Rooftop", rooftops: "Rooftop", roof: "Rooftop" };
   const escRe = x => x.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
 
@@ -440,6 +445,12 @@
       .replace(/\s(date night|first date)\s/g, " date ").replace(/\slate night\s/g, " late ").replace(/\sdog[- ]friendly\s/g, " dog ")
       .replace(/\slive music\s/g, " music ").replace(/\s(watch|catch) the (game|match)\s/g, " game ").replace(/\s(outdoor seating|sit outside)\s/g, " outside ");
     const p = { hoods: [], deals: [], vibes: [], outdoor: [], day: null, mins: null, now: false, campus: null, zip: null, cheap: false, words: [], chips: [] };
+    // A bar's exact name ("The Family Dog", "Bar.bacoa") is a name search, not "dog friendly" or a typo of another bar.
+    const whole = squash(raw).replace(/^the/, "");
+    if (whole.length > 2 && VENUES.some(v => squash(v.name).replace(/^the/, "") === whole)) {
+      p.words = fold(raw).split(/\s+/).filter(Boolean); p.exactName = whole;
+      p.chips.push(`"${raw.trim()}"`); return p;
+    }
     const take = re => { const m = q.match(re); if (m) q = q.replace(re, " "); return m; };
     const hoodKeys = [...uniq("neighborhood").map(n => [n.toLowerCase(), n]), ...Object.entries(HOOD_ALIASES)].sort((a, b) => b[0].length - a[0].length);
     // "near Inman Park" sorts by distance from that area instead of limiting to it.
@@ -447,6 +458,10 @@
     for (const [k, n] of hoodKeys) if (take(new RegExp(`\\s${escRe(k)}(?=\\s)`)) && !p.hoods.includes(n)) p.hoods.push(n);
     let m;
     if ((m = take(/\s(\d{1,2})(?::(\d{2}))?\s*(am|pm)(?=\s)/))) p.mins = ((+m[1] % 12) + (m[3] === "pm" ? 12 : 0)) * 60 + (+m[2] || 0);
+    // "5:30" with no am/pm: happy hours are afternoons and evenings, so 1–11 means PM.
+    else if ((m = take(/\s(?:at\s+)?(\d{1,2}):(\d{2})(?=\s)/)) && +m[1] <= 12) p.mins = ((+m[1] % 12) + 12) * 60 + +m[2];
+    else if (take(/\s(?:at\s+)?noon(?=\s)/)) p.mins = 12 * 60;
+    else if (take(/\s(?:at\s+)?midnight(?=\s)/)) p.mins = 0;
     if (take(/\s(right\s+)?now(?=\s)/)) p.now = true;
     if ((m = take(/\s(today|tonight)(?=\s)/))) { p.day = atlNow().day; p.dayLabel = m[1] === "tonight" ? "Tonight" : "Today"; }
     if (take(/\stomorrow(?=\s)/)) p.day = (atlNow().day + 1) % 7;
@@ -455,6 +470,7 @@
     if (take(/\s(georgia tech|gatech|tech|gt)(?=\s)/)) p.campus = "gt";
     if (take(/\semory(?=\s)/)) p.campus = "emory";
     if (take(/\s(cheap|budget)(?=\s)/)) p.cheap = true;
+    if ((m = take(/\s(\${1,3})(?=\s)/))) p.price = m[1].length; // "$$" = that price level
     if ((m = take(/\s(?:under|less than|below|cheaper than|max|<)\s*\$?\s*(\d+(?:\.\d+)?)(?:\s*(?:dollars?|bucks?))?(?=\s)/)) || (m = take(/\s\$(\d+(?:\.\d+)?)(?=\s)/))) p.maxPrice = +m[1];
     // Neighborhoods typed loosely: "virginia highlands", "highalnds", "inman", "little 5 points".
     const toks = q.split(/\s+/).filter(Boolean);
@@ -490,6 +506,7 @@
     if (p.nearHood) p.chips.push(`Near ${p.nearHood}`);
     if (p.zip) p.chips.push(p.zip);
     if (p.cheap) p.chips.push("$");
+    if (p.price) p.chips.push("$".repeat(p.price));
     if (p.maxPrice != null) p.chips.push(`$${p.maxPrice} or less`);
     p.words.forEach(w => p.chips.push(`"${w}"`));
     return p;
@@ -534,6 +551,7 @@
     if (!p.outdoor.every(o => o ? v.outdoor.includes(o) : v.outdoor.length)) return false;
     if (p.zip && v.zip !== p.zip) return false;
     if (p.cheap && v.price !== 1) return false;
+    if (p.price && v.price !== p.price) return false;
     if (p.maxPrice != null && !priceOK(v, p)) return false;
     if (p.now || p.mins != null) {
       // A time with no day ("6pm") means today. A typed time needs 30+ minutes of happy hour left,
@@ -622,15 +640,19 @@
       }
     }
     // "near Emory" / "near Inman Park": sort by distance from there (closest first), never a cutoff.
-    const anchor = parsed?.campus ? CAMPUSES[parsed.campus] : parsed?.nearHood ? hoodCenter(parsed.nearHood) : null;
+    const searchAnchor = parsed?.campus ? CAMPUSES[parsed.campus] : parsed?.nearHood ? hoodCenter(parsed.nearHood) : null;
+    // The Emory / Georgia Tech buttons sort closest-first too (their slider sets the distance).
+    const anchor = searchAnchor || (state.campus ? CAMPUSES[state.campus] : null);
     out.forEach(e => { e.near = anchor ? driveFrom(anchor, e.v) : null; e.far = e.near != null && e.near > 12; });
-    // "Near" means near: drop anything past a 20 min drive. If that leaves nothing, keep the 5 closest and say so.
-    if (anchor) {
-      const close = out.filter(e => e.near <= 20);
+    // "Near" means near: drop anything past NEAR_MAX minutes. If that leaves nothing, keep the 5 closest and say so.
+    if (searchAnchor) {
+      const close = out.filter(e => e.near <= NEAR_MAX);
       if (close.length) out = close;
-      else { out = out.sort((a, b) => a.near - b.near).slice(0, 5); searchNote ||= "Nothing within a 20 min drive, so here are the closest."; }
+      else { out = out.sort((a, b) => a.near - b.near).slice(0, 5); searchNote ||= `Nothing within a ${NEAR_MAX} min drive, so here are the closest.`; }
     }
-    const nameFirst = e => (parsed && parsed.words.length && hits(haystack(e.v).name, parsed.words.join(" ")) ? 0 : 1);
+    // Exact name first, then other name matches, then everything else.
+    const nameFirst = e => (parsed?.exactName && squash(e.v.name).replace(/^the/, "") === parsed.exactName ? -1
+      : parsed && parsed.words.length && hits(haystack(e.v).name, parsed.words.join(" ")) ? 0 : 1);
     return out.sort((a, b) => {
       if (nameFirst(a) !== nameFirst(b)) return nameFirst(a) - nameFirst(b);
       if (anchor && state.sort === "smart") return a.near - b.near || a.s.rank - b.s.rank;
@@ -797,7 +819,7 @@
     $("qChips").hidden = !(parsed && parsed.chips.length);
     const sortNote = parsed && (parsed.campus || parsed.nearHood) && state.sort === "smart" ? " · closest first" : "";
     $("qChips").innerHTML = parsed && parsed.chips.length
-      ? `<span>Searching for</span>${parsed.chips.map(c => `<b>${esc(c)}</b>`).join("")}<span class="q-count">${items.length} spot${items.length === 1 ? "" : "s"}${sortNote}</span><button class="link" data-edit type="button">Edit</button><button class="link" data-clearq type="button">Clear</button>${searchNote ? `<span class="q-note">${searchNote}</span>` : ""}` : "";
+      ? `<span>Searching for</span>${parsed.chips.map(c => `<b>${esc(c)}</b>`).join("")}<span class="q-count">${items.length} spot${items.length === 1 ? "" : "s"}${sortNote}</span><button class="link" data-edit type="button">Edit</button><button class="link" data-clearq type="button">Clear</button>${searchNote ? `<span class="q-note">${esc(searchNote)}</span>` : ""}` : "";
     renderItems(items);
   }
   function renderItems(items) {
@@ -812,8 +834,9 @@
     $("toggleFilters").innerHTML = active ? `Filters <span class="n">${active}</span>` : "Filters";
     if (state.view === "list") {
       const firstFar = items.findIndex(e => e.far), anyNear = firstFar > 0;
-      $("list").innerHTML = items.length ? items.map((e, i) => (anyNear && i === firstFar ? `<p class="far-divider">A bit farther: 13–20 min drive</p>` : "") + card(e)).join("")
-        : `<p class="empty">Nothing matches those filters. Try loosening a few.</p>`;
+      const farMax = Math.max(...items.map(e => e.near || 0));
+      $("list").innerHTML = items.length ? items.map((e, i) => (anyNear && i === firstFar ? `<p class="far-divider">A bit farther: 13–${farMax} min drive</p>` : "") + card(e)).join("")
+        : `<p class="empty">${state.favsOnly && !favs.size ? "No saved spots yet. Tap the ♡ on any bar to save it here." : state.favsOnly ? "None of your saved spots match those filters." : "Nothing matches those filters. Try loosening a few."}</p>`;
       fitTags();
     } else renderMap(items);
   }
