@@ -30,7 +30,10 @@
 <body>
   <nav class="topbar" id="topbar">
     <div class="wrap topbar-inner">
-      <a class="topbar-brand" href="#top"><span class="mark" aria-hidden="true"></span>Peach Hour</a>
+      <div class="topbar-left">
+        <a class="topbar-brand" href="#top"><span class="mark" aria-hidden="true"></span>Peach Hour</a>
+        <span class="topbar-now" id="now"><span id="nowTime"></span><span class="now-wx" id="nowWx" hidden></span></span>
+      </div>
       <div class="topbar-links">
         <button class="toplink" id="navSaved" aria-pressed="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>Saved <span class="n" id="savedCount">0</span></button>
         <a class="toplink" href="#contact" data-topic="listing">List Your Happy Hour</a>

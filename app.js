@@ -920,7 +920,43 @@
   function tick() {
     const n = atlNow();
     $("clock").textContent = `${DAYS[n.day]} · ${fmt(n.mins)} in Atlanta`;
+    $("nowTime").textContent = `${DAYS[n.day]} ${fmt(n.mins)}`;
   }
+
+  // Current Atlanta weather from Open-Meteo (free, no key). Hidden if it can't load.
+  const WX_ICON = {
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+    moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
+    partly: '<path d="M8 3v1.5M3.5 8H2M4.3 4.3l1 1M12.7 4.3l-1 1"/><path d="M5.6 10.4A3.5 3.5 0 1 1 11 6.6"/><path d="M8 20h9a4 4 0 0 0 .5-8 5.5 5.5 0 0 0-10.6 1.5A3.3 3.3 0 0 0 8 20z"/>',
+    cloud: '<path d="M7 19h10a4.5 4.5 0 0 0 .6-9 6 6 0 0 0-11.5 1.8A3.6 3.6 0 0 0 7 19z"/>',
+    rain: '<path d="M7 15h10a4.5 4.5 0 0 0 .6-9 6 6 0 0 0-11.5 1.8A3.6 3.6 0 0 0 7 15z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/>',
+    storm: '<path d="M7 14h10a4.5 4.5 0 0 0 .6-9 6 6 0 0 0-11.5 1.8A3.6 3.6 0 0 0 7 14z"/><path d="M12 15l-2 4h4l-2 4"/>',
+    snow: '<path d="M7 14h10a4.5 4.5 0 0 0 .6-9 6 6 0 0 0-11.5 1.8A3.6 3.6 0 0 0 7 14z"/><path d="M8 18h.01M12 20h.01M16 18h.01M10 22h.01M14 22h.01"/>',
+    fog: '<path d="M4 9h16M3 13h18M5 17h14"/>',
+  };
+  function wxKind(code, day) {
+    if (code >= 95) return ["storm", "Thunderstorms"];
+    if (code >= 71 && code <= 86 && !(code >= 80 && code <= 82)) return ["snow", "Snow"];
+    if (code >= 51) return ["rain", "Rain"];
+    if (code === 45 || code === 48) return ["fog", "Fog"];
+    if (code === 3) return ["cloud", "Cloudy"];
+    if (code === 1 || code === 2) return [day ? "partly" : "moon", "Partly cloudy"];
+    return [day ? "sun" : "moon", "Clear"];
+  }
+  async function loadWeather() {
+    try {
+      const r = await fetch("https://api.open-meteo.com/v1/forecast?latitude=33.749&longitude=-84.388&current=temperature_2m,weather_code,is_day&temperature_unit=fahrenheit&timezone=America%2FNew_York");
+      const c = (await r.json()).current;
+      const [kind, label] = wxKind(c.weather_code, c.is_day);
+      const el = $("nowWx");
+      el.innerHTML = `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${WX_ICON[kind]}</svg>${Math.round(c.temperature_2m)}°`;
+      el.title = `${label}, ${Math.round(c.temperature_2m)}°F in Atlanta`;
+      el.setAttribute("aria-label", el.title);
+      el.hidden = false;
+    } catch {}
+  }
+  loadWeather();
+  setInterval(loadWeather, 15 * 60_000);
 
   const qp = new URLSearchParams(location.search).get("q");
   if (qp) { $("q").value = qp; state.q = qp.toLowerCase(); $("qClear").hidden = false; }

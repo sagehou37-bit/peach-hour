@@ -49,6 +49,12 @@ h1, h2, h4 { font-family: var(--display); font-weight: 400; letter-spacing: -.01
 .mark { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(var(--peach-2), var(--peach)); position: relative; overflow: hidden; }
 .mark::after { content: ""; position: absolute; left: 0; right: 0; top: 58%; height: 3px; background: var(--dusk); box-shadow: 0 5px 0 var(--dusk); }
 .topbar-links { display: flex; gap: 2px; flex-wrap: wrap; }
+/* Time, weather and temperature in Atlanta, next to the brand. */
+.topbar-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.topbar-now { display: inline-flex; align-items: center; gap: 10px; color: rgba(255, 255, 255, .78); font-size: .88rem; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap;
+  padding: 5px 11px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px; }
+.now-wx { display: inline-flex; align-items: center; gap: 5px; padding-left: 10px; border-left: 1px solid rgba(255, 255, 255, .2); }
+.now-wx .i { width: 16px; height: 16px; stroke-width: 1.8; }
 .toplink { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; color: #fff; font: inherit; font-weight: 600; font-size: .95rem; text-decoration: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; opacity: .9; }
 .toplink:hover, .toplink[aria-pressed="true"] { background: rgba(255, 255, 255, .1); opacity: 1; }
 .toplink[aria-pressed="true"] .i { fill: var(--peach); stroke: var(--peach); }
@@ -248,6 +254,8 @@ select:focus, .search input:focus, .chip:focus-visible, .seg button:focus-visibl
   :root { --topbar-h: 96px; }
   .topbar-inner { padding-top: 8px; padding-bottom: 6px; }
   .toplink { padding: 6px 8px; font-size: .88rem; }
+  .topbar-now { font-size: .8rem; padding: 4px 9px; gap: 8px; }
+  .now-wx { padding-left: 8px; }
   .form-row { grid-template-columns: 1fr; }
   .finder { padding-top: 40px; }
 }
