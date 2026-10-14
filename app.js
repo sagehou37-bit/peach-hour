@@ -222,8 +222,11 @@
   // "beer for $5 or less"... Only ideas that actually return spots are shown, with how many.
   function countFor(query) {
     const saved = parsed; parsed = parseQuery(query);
-    const t = parsed.day != null && !parsed.now ? { day: parsed.day, mins: parsed.mins ?? 17 * 60, live: false } : refTime();
-    const n = VENUES.filter(v => passes({ v, s: statusFor(v, t), dm: driveMin(v) }, null)).length;
+    const t = !parsed.now && (parsed.day != null || parsed.mins != null)
+      ? { day: parsed.day ?? atlNow().day, mins: parsed.mins ?? 17 * 60, live: false } : refTime();
+    // Same rules as the results: "near X" only counts spots within a 20 min drive.
+    const anchor = parsed.campus ? CAMPUSES[parsed.campus] : parsed.nearHood ? hoodCenter(parsed.nearHood) : null;
+    const n = VENUES.filter(v => passes({ v, s: statusFor(v, t), dm: driveMin(v) }, null) && (!anchor || driveFrom(anchor, v) <= 20)).length;
     parsed = saved; return n;
   }
   function suggestions(text) {

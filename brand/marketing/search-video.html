@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Peach Hour · Search ad (video stage)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&display=swap" rel="stylesheet">
+<style>
+  /* 1080x1920 stage for the search ad. A frame script drives window.stage.* and screenshots each frame. */
+  * { box-sizing: border-box; }
+  :root { --navy: #1b1f3b; --navy2: #2b2a55; --plum: #4a2f5c; --peach: #ff6a3d; --gold: #ffb347; --paper: #fbfaf7; }
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--navy); }
+  .stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #fff; font-family: Newsreader, Georgia, serif;
+    background: radial-gradient(1300px 900px at 50% 112%, rgba(255, 106, 61, .32), transparent 62%), radial-gradient(1900px 1500px at 50% 118%, var(--plum) 0%, var(--navy2) 42%, var(--navy) 74%); }
+  .serif { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; letter-spacing: -.01em; -webkit-text-stroke: .02em currentColor; }
+  .grad { background: linear-gradient(90deg, var(--gold), var(--peach)); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-stroke: 0; font-style: italic; }
+  .kicker { display: flex; align-items: center; justify-content: center; gap: 14px; font-weight: 600; font-size: 30px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); margin: 0; }
+  .kicker::before, .kicker::after { content: ""; width: 34px; height: 3px; border-radius: 3px; background: var(--peach); }
+  .sun { width: 220px; height: 110px; margin: 0 auto; border-radius: 220px 220px 0 0; background: linear-gradient(#ffb347 10%, #ff6a3d 80%);
+    -webkit-mask: linear-gradient(#000 30%, transparent 30%), repeating-linear-gradient(to bottom, #000 0 20px, transparent 20px 29px);
+    mask: linear-gradient(#000 30%, transparent 30%), repeating-linear-gradient(to bottom, #000 0 20px, transparent 20px 29px); mask-composite: add; }
+
+  /* Caption above the phone */
+  .cap { position: absolute; left: 60px; right: 60px; top: 110px; height: 300px; text-align: center; }
+  .cap h2 { margin: 26px 0 0; font-size: 104px; line-height: .95; }
+
+  /* Phone with the live site inside (390px wide, scaled up) */
+  .phone { position: absolute; left: 50%; top: 440px; width: 900px; height: 1400px; transform: translateX(-50%); border-radius: 70px; background: #0b0d1c; padding: 18px;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, .12), 0 60px 120px -40px rgba(0, 0, 0, .8); }
+  .screen { width: 864px; height: 1364px; border-radius: 54px; overflow: hidden; background: #f4f3f0; position: relative; }
+  .screen iframe { width: 390px; height: 616px; border: 0; transform: scale(2.2154); transform-origin: 0 0; display: block; }
+  .tap { position: absolute; width: 90px; height: 90px; margin: -45px 0 0 -45px; border-radius: 50%; background: rgba(255, 106, 61, .35); box-shadow: 0 0 0 6px rgba(255, 106, 61, .25); opacity: 0; pointer-events: none; }
+
+  /* Intro / outro cards */
+  .card-full { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 80px; opacity: 0;
+    background: radial-gradient(1300px 900px at 50% 112%, rgba(255, 106, 61, .32), transparent 62%), radial-gradient(1900px 1500px at 50% 118%, var(--plum) 0%, var(--navy2) 42%, var(--navy) 74%); }
+  .card-full h1 { margin: 60px 0 0; font-size: 170px; line-height: .9; }
+  .card-full p { margin: 44px 0 0; font-size: 46px; line-height: 1.35; color: rgba(255, 255, 255, .82); }
+  .url { display: inline-block; margin-top: 70px; font-weight: 700; font-size: 56px; padding: 26px 52px; border-radius: 22px; background: var(--peach); box-shadow: 0 20px 50px rgba(255, 106, 61, .45); color: #fff; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="cap" id="cap"><p class="kicker" id="capK">New on Peach Hour</p><h2 class="serif" id="capH">Search it like<br><span class="grad">you'd say it.</span></h2></div>
+  <div class="phone"><div class="screen"><iframe id="site"></iframe><div class="tap" id="tap"></div></div></div>
+
+  <div class="card-full" id="intro">
+    <div class="sun"></div>
+    <h1 class="serif">Where's<br><span class="grad">happy hour?</span></h1>
+    <p>Just ask Peach Hour.</p>
+  </div>
+  <div class="card-full" id="outro">
+    <div class="sun"></div>
+    <h1 class="serif">Find your<br><span class="grad">happy hour.</span></h1>
+    <p>Every happy hour from Buckhead to Decatur, searchable like a text to a friend.</p>
+    <span class="url">peachhouratl.com</span>
+  </div>
+</div>
+<script>
+  // The site runs inside the iframe with the clock pinned (Wednesday Oct 14, 2026, 5:30 PM in Atlanta),
+  // no animations, eager images and no live weather, so every frame is repeatable.
+  const T = Date.parse("2026-10-14T21:30:00Z");
+  const head = `<base href="/"><style>*,*::before,*::after{transition:none!important;animation:none!important;caret-color:transparent!important}html{scroll-behavior:auto!important}#nowWx{display:none!important}</style><script>(()=>{const R=Date;class D extends R{constructor(...a){a.length?super(...a):super(${T})}static now(){return ${T}}}window.Date=D;try{localStorage.clear()}catch{}new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>n.querySelectorAll&&n.querySelectorAll("img[loading=lazy]").forEach(i=>{i.loading="eager"})))).observe(document,{subtree:true,childList:true});})();<\/script>`;
+  const f = document.getElementById("site");
+  window.ready = false;
+  fetch("/").then(r => r.text()).then(h => { f.srcdoc = h.replace(/<head>/i, "<head>" + head); });
+  f.addEventListener("load", () => setTimeout(() => { window.ready = true; }, 1500));
+
+  const $ = id => document.getElementById(id);
+  const site = () => f.contentDocument, win = () => f.contentWindow;
+  window.stage = {
+    intro(o) { $("intro").style.opacity = o; },
+    outro(o) { $("outro").style.opacity = o; },
+    caption(k, h) { $("capK").textContent = k; $("capH").innerHTML = h; },
+    // Scroll so the search box sits near the top of the phone.
+    toSearch() { const d = site(), q = d.getElementById("q"); win().scrollTo(0, q.getBoundingClientRect().top + win().scrollY - 150); },
+    type(text) {
+      const d = site(), q = d.getElementById("q");
+      q.focus(); q.value = text; q.dispatchEvent(new Event("input", { bubbles: true }));
+      if (!text) d.getElementById("qSuggest").hidden = true;
+    },
+    // Submit like pressing Enter, then put the results summary at the top of the phone.
+    submit(text) {
+      const d = site(), q = d.getElementById("q");
+      q.value = text; q.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+      q.blur();
+    },
+    resultsTop() { const d = site(), c = d.getElementById("qChips") || d.getElementById("list"); return c.getBoundingClientRect().top + win().scrollY - 70; },
+    scrollTo(y) { win().scrollTo(0, y); },
+    tap(x, y, o) { const t = $("tap"); t.style.left = x + "px"; t.style.top = y + "px"; t.style.opacity = o; },
+    // Where the Search button is, in screen pixels (for the tap dot).
+    goButton() { const r = site().getElementById("qGo").getBoundingClientRect(), k = 2.2154; return [(r.left + r.width / 2) * k, (r.top + r.height / 2) * k]; },
+    reset() {
+      const d = site(), q = d.getElementById("q");
+      q.value = ""; q.dispatchEvent(new Event("input", { bubbles: true })); q.blur();
+      d.getElementById("qSuggest").hidden = true;
+    },
+  };
+</script>
+</body>
+</html>
